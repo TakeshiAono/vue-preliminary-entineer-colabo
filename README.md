@@ -1,3 +1,7 @@
+#　サーバーの立ち上げ方
+- 一番最初のdockerコンテナ立ち上げ時に `docker compose up`コマンドでvueサーバーを立ち上げる
+- 以降はdocker desktopからコンテナを直接立ち上げれば自動でサーバーも立ち上がるようになる。
+
 # vue-preliminary-entineer-colabo
 
 This template should help get you started developing with Vue 3 in Vite.
