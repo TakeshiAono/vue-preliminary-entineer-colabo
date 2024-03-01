@@ -8,6 +8,6 @@ services:
       - NODE_ENV=development
     volumes:
     - ./:/app
-    command: sh -c "npm i @rollup/rollup-linux-arm64-gnu && npm run dev"
+    command: sh -c "npm run dev --host"
     ports:
     - "5173:5173"
