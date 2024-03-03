@@ -1,0 +1,78 @@
+<script setup lang="ts">
+import router from '@/router';
+import axios from 'axios';
+import { ref } from 'vue';
+
+type AccountModel = {
+  email: string | null
+  password: string | null
+  name: string | null
+  introduce: string | null
+}
+
+const API_URL = import.meta.env.VITE_API_SERVER_URI;
+const accountModel = ref<AccountModel>({
+  email: null,
+  password: null,
+  name: null,
+  introduce: null,
+})
+
+const submitHandler = (): void => {
+  axios.post(`${API_URL}/account`, { "name": accountModel.value.name,"password": accountModel.value.password, "email": accountModel.value.email })
+    .then((data) => {
+      console.log(data)
+      router.push("myPage")
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
+</script>
+
+<template>
+  <main>
+    <div id="login-container">
+      <h2 id="login-title">Account</h2>
+      <n-form ref="formRef" :model="accountModel" id="login-form">
+        <n-form-item path="name" label="Name">
+          <n-input v-model:value="accountModel.name" type="name" @keydown.enter.prevent />
+        </n-form-item>
+        <n-form-item path="email" label="Email">
+          <n-input v-model:value="accountModel.email" type="email" @keydown.enter.prevent />
+        </n-form-item>
+        <n-form-item path="password" label="Password">
+          <n-input v-model:value="accountModel.password" type="password" @keydown.enter.prevent />
+        </n-form-item>
+        <div style="display: flex; justify-content: flex-end">
+          <n-button :disabled="(accountModel.name == null || accountModel.email == null || accountModel.password == null)" round type="primary"
+            @click="submitHandler">
+            Register
+          </n-button>
+        </div>
+      </n-form>
+    </div>
+  </main>
+</template>
+
+<style scoped>
+main {
+  height: 100vh;
+  margin: 0px 0px;
+  display: flex;
+  align-items: center;
+}
+
+#login-title {
+  margin-bottom: 30px;
+}
+
+#login-container {
+  width: 50%;
+  margin: 0 auto;
+  padding: 30px;
+  border: solid;
+  border-color: gray;
+  border-radius: 30px;
+}
+</style>
