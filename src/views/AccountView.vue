@@ -3,19 +3,23 @@ import router from '@/router';
 import axios from 'axios';
 import { ref } from 'vue';
 
-type LoginModel = {
+type AccountModel = {
   email: string | null
   password: string | null
+  name: string | null
+  introduce: string | null
 }
 
 const API_URL = import.meta.env.VITE_API_SERVER_URI;
-const loginModel = ref<LoginModel>({
+const accountModel = ref<AccountModel>({
   email: null,
   password: null,
+  name: null,
+  introduce: null,
 })
 
 const submitHandler = (): void => {
-  axios.post(`${API_URL}/login`, { "password": loginModel.value.password, "email": loginModel.value.email })
+  axios.post(`${API_URL}/account`, { "name": accountModel.value.name,"password": accountModel.value.password, "email": accountModel.value.email })
     .then((data) => {
       console.log(data)
       router.push("myPage")
@@ -29,18 +33,21 @@ const submitHandler = (): void => {
 <template>
   <main>
     <div id="login-container">
-      <h2 id="login-title">Login</h2>
-      <n-form ref="formRef" :model="loginModel" id="login-form">
+      <h2 id="login-title">Account</h2>
+      <n-form ref="formRef" :model="accountModel" id="login-form">
+        <n-form-item path="name" label="Name">
+          <n-input v-model:value="accountModel.name" type="name" @keydown.enter.prevent />
+        </n-form-item>
         <n-form-item path="email" label="Email">
-          <n-input v-model:value="loginModel.email" @keydown.enter.prevent />
+          <n-input v-model:value="accountModel.email" type="email" @keydown.enter.prevent />
         </n-form-item>
         <n-form-item path="password" label="Password">
-          <n-input v-model:value="loginModel.password" type="password" @keydown.enter.prevent />
+          <n-input v-model:value="accountModel.password" type="password" @keydown.enter.prevent />
         </n-form-item>
         <div style="display: flex; justify-content: flex-end">
-          <n-button :disabled="(loginModel.email == null || loginModel.password == null)" round type="primary"
+          <n-button :disabled="(accountModel.name == null || accountModel.email == null || accountModel.password == null)" round type="primary"
             @click="submitHandler">
-            Login
+            Register
           </n-button>
         </div>
       </n-form>
