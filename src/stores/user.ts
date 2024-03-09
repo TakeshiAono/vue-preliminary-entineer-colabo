@@ -10,13 +10,13 @@ export const useUserStore = defineStore('user', () => {
   async function login(email: string, password: string): Promise<any> {
     const response = await axios.post(`${API_URL}/login`, { password: password, email: email })
     // setToken(response.token)
-    setToken(true)
-    isLogin.value = true
+    setToken("true")
+    isLogin.value = "true"
     return response
   }
 
   async function logout(): Promise<any> {
-    setToken(false)
+    setToken("false")
     isLogin.value = false
   }
 
@@ -27,7 +27,7 @@ export const useUserStore = defineStore('user', () => {
       email: email
     })
     // setToken(response.token)
-    setToken(true)
+    setToken("true")
     isLogin.value = true
     return response
   }

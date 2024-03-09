@@ -10,7 +10,7 @@ const userStore = useUserStore()
 
 <template>
   <main>
-    <h1>MyPage</h1>
+    <h1>ProjectShow</h1>
     <p>ログイン中: {{userStore.isLogin}}</p>
   </main>
 </template>
