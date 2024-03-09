@@ -17,7 +17,7 @@ console.log("すとあの変化", computed(() => userStore.getIsLogin))
   <main>
       <header>
         <nav>
-          <div class="wrapper" v-if="userStore.isLogin">
+          <div class="wrapper" v-if="userStore.isLogin == true">
             <RouterLink to="/myPage" class="nav-content">MyPage</RouterLink>
             <RouterLink to="/logout" class="nav-content">Logout</RouterLink>
           </div>
