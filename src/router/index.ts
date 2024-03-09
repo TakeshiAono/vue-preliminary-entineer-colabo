@@ -17,8 +17,8 @@ const router = createRouter({
       component: AccountView
     },
     {
-      path: '/mypage',
-      name: 'mypage',
+      path: '/myPage',
+      name: 'myPage',
       component: MyPageView
     }
   ]

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import router from '@/router';
+import { useUserStore } from '@/stores/user';
 import axios from 'axios';
 import { ref } from 'vue';
 
@@ -14,10 +15,12 @@ const loginModel = ref<LoginModel>({
   password: null,
 })
 
+const userStore = useUserStore()
+
 const submitHandler = (): void => {
   axios.post(`${API_URL}/login`, { "password": loginModel.value.password, "email": loginModel.value.email })
     .then((data) => {
-      console.log(data)
+      userStore.login()
       router.push("myPage")
     })
     .catch((error) => {
