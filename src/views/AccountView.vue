@@ -22,14 +22,11 @@ const accountModel = ref<AccountModel>({
 const userStore = useUserStore()
 
 const submitHandler = (): void => {
-  axios.post(`${API_URL}/account`, { "name": accountModel.value.name,"password": accountModel.value.password, "email": accountModel.value.email })
-    .then((data) => {
-      userStore.login()
+  userStore.accountCreate(accountModel.value.name, accountModel.value.email, accountModel.value.password)
+    .then(() => {
       router.push("myPage")
     })
-    .catch((error) => {
-      console.log(error)
-    })
+    .catch((error) => {console.log(error)})
 }
 </script>
 
