@@ -28,7 +28,7 @@ export const useUserStore = defineStore('user', () => {
     })
     // setToken(response.token)
     setToken("true")
-    isLogin.value = true
+    isLogin.value = "true"
     return response
   }
 
