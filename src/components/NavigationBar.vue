@@ -5,20 +5,18 @@ import axios from 'axios';
 import { computed, ref } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 
-// const isLogin = ref(false)
-// const props = defineProps(["isLogin"])
 const userStore = useUserStore()
-
-console.log("すとあの変化", computed(() => userStore.getIsLogin))
-
 </script>
 
 <template>
   <main>
       <header>
         <nav>
-          <div class="wrapper" v-if="userStore.isLogin == true">
+          <div class="wrapper" v-if="userStore.isLogin == 'true'">
             <RouterLink to="/myPage" class="nav-content">MyPage</RouterLink>
+            <!-- 仮でパスパラメータにid1を入れている。 -->
+            <RouterLink to="/user/1" class="nav-content">Profile</RouterLink>
+            <RouterLink to="/projects/search" class="nav-content">projectsSearch</RouterLink>
             <RouterLink to="/logout" class="nav-content">Logout</RouterLink>
           </div>
           <div class="wrapper" v-else>
@@ -32,7 +30,8 @@ console.log("すとあの変化", computed(() => userStore.getIsLogin))
 
 <style scoped>
 nav {
-  background-color: rgb(212, 212, 212);
+  /* background-color: skyblue; */
+  background: linear-gradient(skyblue, white);
   height: 2.5rem;
 }
 
