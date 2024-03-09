@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import router from '@/router';
+import { useUserStore } from '@/stores/user';
 import axios from 'axios';
 import { ref } from 'vue';
 
@@ -18,15 +19,14 @@ const accountModel = ref<AccountModel>({
   introduce: null,
 })
 
+const userStore = useUserStore()
+
 const submitHandler = (): void => {
-  axios.post(`${API_URL}/account`, { "name": accountModel.value.name,"password": accountModel.value.password, "email": accountModel.value.email })
-    .then((data) => {
-      console.log(data)
+  userStore.accountCreate(accountModel.value.name, accountModel.value.email, accountModel.value.password)
+    .then(() => {
       router.push("myPage")
     })
-    .catch((error) => {
-      console.log(error)
-    })
+    .catch((error) => {console.log(error)})
 }
 </script>
 

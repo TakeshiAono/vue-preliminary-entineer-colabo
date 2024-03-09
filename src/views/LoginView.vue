@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import router from '@/router';
+import { useUserStore } from '@/stores/user';
 import axios from 'axios';
 import { ref } from 'vue';
 
@@ -8,21 +9,17 @@ type LoginModel = {
   password: string | null
 }
 
-const API_URL = import.meta.env.VITE_API_SERVER_URI;
 const loginModel = ref<LoginModel>({
   email: null,
   password: null,
 })
 
-const submitHandler = (): void => {
-  axios.post(`${API_URL}/login`, { "password": loginModel.value.password, "email": loginModel.value.email })
-    .then((data) => {
-      console.log(data)
-      router.push("myPage")
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+const userStore = useUserStore()
+
+const submitHandler = async (): void => {
+  userStore.login(loginModel.value.email, loginModel.value.password)
+  .then(() => {router.push("myPage")})
+  .catch((error) => {console.log(error)})
 }
 </script>
 
@@ -32,7 +29,7 @@ const submitHandler = (): void => {
       <h2 id="login-title">Login</h2>
       <n-form ref="formRef" :model="loginModel" id="login-form">
         <n-form-item path="email" label="Email">
-          <n-input v-model:value="loginModel.email" @keydown.enter.prevent />
+          <n-input v-model:value="loginModel.email" type="email" @keydown.enter.prevent />
         </n-form-item>
         <n-form-item path="password" label="Password">
           <n-input v-model:value="loginModel.password" type="password" @keydown.enter.prevent />
