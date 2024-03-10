@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import router from '@/router';
 import { useUserStore } from '@/stores/user';
-import axios from 'axios';
 import { ref } from 'vue';
 
 type AccountModel = {
@@ -11,13 +10,13 @@ type AccountModel = {
   introduce: string | null
 }
 
-const API_URL = import.meta.env.VITE_API_SERVER_URI;
 const accountModel = ref<AccountModel>({
   email: null,
   password: null,
   name: null,
   introduce: null,
 })
+const errorVisible = ref<boolean>(false)
 
 const userStore = useUserStore()
 
@@ -26,15 +25,21 @@ const submitHandler = (): void => {
     .then(() => {
       router.push("myPage")
     })
-    .catch((error) => {console.log(error)})
+    .catch((error) => {
+      console.log(error)
+      errorVisible.value = true
+    })
 }
 </script>
 
 <template>
   <main>
-    <div id="login-container">
-      <h2 id="login-title">Account</h2>
-      <n-form ref="formRef" :model="accountModel" id="login-form">
+    <div id="account-container">
+      <h2 id="account-title">Account</h2>
+      <n-alert title="認証エラー" type="error" v-if="errorVisible">
+        このメールアドレスはすでに登録済みです。
+      </n-alert>
+      <n-form ref="formRef" :model="accountModel" id="account-form">
         <n-form-item path="name" label="Name">
           <n-input v-model:value="accountModel.name" type="name" @keydown.enter.prevent />
         </n-form-item>
@@ -63,12 +68,12 @@ main {
   align-items: center;
 }
 
-#login-title {
+#account-title {
   margin-bottom: 30px;
 }
 
-#login-container {
-  width: 50%;
+#account-container {
+  width: 400px;
   margin: 0 auto;
   padding: 30px;
   border: solid;

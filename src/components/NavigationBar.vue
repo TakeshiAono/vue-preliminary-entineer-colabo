@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import router from '@/router';
 import { useUserStore } from '@/stores/user';
-import axios from 'axios';
-import { computed, ref } from 'vue';
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterLink } from 'vue-router';
 
 const userStore = useUserStore()
 </script>
@@ -12,7 +9,7 @@ const userStore = useUserStore()
   <main>
       <header>
         <nav>
-          <div class="wrapper" v-if="userStore.isLogin == 'true'">
+          <div class="wrapper" v-if="userStore.isLogin == 'true' || userStore.isLogin == true">
             <RouterLink to="/myPage" class="nav-content">MyPage</RouterLink>
             <!-- 仮でパスパラメータにid1を入れている。 -->
             <RouterLink to="/user/1" class="nav-content">Profile</RouterLink>
