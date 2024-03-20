@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import ProjectSummary from '@/components/ProjectSummary.vue';
 import router from '@/router';
 import { useProjectStore } from '@/stores/projectStore';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/userStore';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 import { RouterView } from 'vue-router';
@@ -11,7 +12,7 @@ const projectStore = useProjectStore()
 
 <template>
   <main>
-    <h1> {{ projectStore.belongsProjects[0].name }}</h1>
+    <ProjectSummary :projects="projectStore.belongsProjects" v-if="projectStore.belongsProjects.length > 0" />
   </main>
 </template>
 
