@@ -1,38 +1,27 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import ProjectDescription from './ProjectDescription.vue';
 const props = defineProps(["memberNames"])
 </script>
 
 <template>
-  <p v-for="name in props.memberNames" :key="name">{{ name }}</p>
+  <h1 id="project-member-title">メンバー</h1>
+  <div id="project-member-content">
+    <p class="member" v-for="name in props.memberNames" :key="name">{{ name }}</p>
+  </div>
 </template>
 
 <style scoped>
-#project-name {
+#project-member-title {
   text-decoration: underline;
 }
 
-nav {
-  /* background-color: skyblue; */
-  background: linear-gradient(skyblue, white);
-  height: 2.5rem;
+#project-member-content {
+  width: 200px;
+  height: 100px;
+  border-radius: 10px;
+  border: solid;
 }
 
-.wrapper {
-  display: flex;
-  justify-content: end;
-  align-items: center;
-  margin-top: auto;
-  height: 100%;
-  gap: 0 3%;
-  margin-right: 10px;
-  font-size: 1.2em;
-  text-decoration: none;
-}
-
-.nav-content {
-  text-decoration: none;
-  color: black;
+.member{
+  margin: 5px;
 }
 </style>

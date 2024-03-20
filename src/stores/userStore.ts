@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import VueCookies from 'vue-cookies'
 import axios from 'axios'
@@ -26,6 +26,11 @@ export const useUserStore = defineStore('user', () => {
     const responseUser = await axios.get<GetResponseUser>(`${API_URL}/users/${id}`)
     currentUser.value = responseUser.data
     haveProjectIds.value = responseUser.data.projectIds
+  }
+
+  async function getUserInfo(id: number): Promise<GetResponseUser> {
+    const responseUser = await axios.get<GetResponseUser>(`${API_URL}/users/${id}`)
+    return responseUser
   }
 
   async function accountCreate(name: string, email: string, password: string): Promise<any> {
@@ -65,6 +70,7 @@ export const useUserStore = defineStore('user', () => {
     currentUser,
     fetchUserInfo,
     getCurrentUser,
-    haveProjectIds
+    haveProjectIds,
+    getUserInfo
   }
 })
