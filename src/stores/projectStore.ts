@@ -14,11 +14,11 @@ export const useProjectStore = defineStore('project', () => {
   }
 
   async function setProjects(projectIds: string[]) {
-    console.log(projectIds)
-    await projectIds.forEach(async (projectId) => {
+    const projectList: Project[] = await Promise.all(projectIds.map(async (projectId) => {
       const project = await getProject(projectId)
-      belongsProjects.value.push(project.data)
-    })
+      return project.data
+    }))
+    belongsProjects.value = projectList
   }
 
   return { belongsProjects, getProject, setProjects }
