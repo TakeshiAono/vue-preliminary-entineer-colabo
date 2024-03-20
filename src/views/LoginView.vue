@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import router from '@/router';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/userStore';
+import { bulkFetch } from '@/utils/bulk';
 import { ref } from 'vue';
 
 type LoginModel = {
@@ -18,11 +19,14 @@ const userStore = useUserStore()
 
 const submitHandler = async (): void => {
   userStore.login(loginModel.value.email, loginModel.value.password)
-  .then(() => {router.push("myPage")})
-  .catch((error) => {
-    console.log(error)
-    errorVisible.value = true
-  })
+    .then(() => {
+      bulkFetch()
+      router.push("myPage")
+    })
+    .catch((error) => {
+      console.log(error)
+      errorVisible.value = true
+    })
 }
 </script>
 

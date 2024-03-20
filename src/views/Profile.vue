@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import router from '@/router';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/userStore';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 import { RouterView } from 'vue-router';
 
 const userStore = useUserStore()
+// const data = ref(0)
 </script>
 
 <template>
   <main>
     <h1>Profile</h1>
-    <p>ログイン中: {{userStore.isLogin}}</p>
+    <p>氏名1{{ userStore.currentUserModel.name }}</p>
+    <p>登録メールアドレス{{ userStore.currentUserModel.email }}</p>
   </main>
 </template>
 
