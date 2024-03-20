@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/LoginView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import AccountView from '@/views/AccountView.vue'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStore'
 import ProjectShow from '@/views/ProjectShow.vue'
 import ChatShow from '@/views/ChatShow.vue'
 import Profile from '@/views/Profile.vue'
@@ -53,10 +53,10 @@ const router = createRouter({
       path: '/logout',
       name: 'logout',
       // @ts-ignore
-      beforeEnter: (to: any, from: any, next: (path: string) =>{}) => {
+      beforeEnter: (to: any, from: any, next: (path: string) => {}) => {
         const userStore = useUserStore()
         userStore.logout()
-        next("/login");
+        next('/login')
       }
     }
   ]

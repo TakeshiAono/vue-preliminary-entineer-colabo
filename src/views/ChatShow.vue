@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import router from '@/router';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/userStore';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 import { RouterView } from 'vue-router';
@@ -10,7 +10,7 @@ const userStore = useUserStore()
 
 <template>
   <main>
-    <p>ログイン中: {{userStore.isLogin}}</p>
+    <p>ログイン中: {{ userStore.isLogin }}</p>
   </main>
 </template>
 

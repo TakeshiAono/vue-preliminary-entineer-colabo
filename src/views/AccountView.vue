@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import router from '@/router';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/userStore';
 import { ref } from 'vue';
 
 type AccountModel = {
@@ -50,8 +50,9 @@ const submitHandler = (): void => {
           <n-input v-model:value="accountModel.password" type="password" @keydown.enter.prevent />
         </n-form-item>
         <div style="display: flex; justify-content: flex-end">
-          <n-button :disabled="(accountModel.name == null || accountModel.email == null || accountModel.password == null)" round type="primary"
-            @click="submitHandler">
+          <n-button
+            :disabled="(accountModel.name == null || accountModel.email == null || accountModel.password == null)" round
+            type="primary" @click="submitHandler">
             Register
           </n-button>
         </div>

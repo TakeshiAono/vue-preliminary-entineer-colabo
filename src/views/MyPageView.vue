@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import router from '@/router';
-import { useUserStore } from '@/stores/user';
-import axios from 'axios';
-import { computed, ref } from 'vue';
-import { RouterView } from 'vue-router';
+import ProjectSummary from '@/components/ProjectSummary.vue';
+import { useProjectStore } from '@/stores/projectStore';
+import { useUserStore } from '@/stores/userStore';
 
+const projectStore = useProjectStore()
 const userStore = useUserStore()
 </script>
 
 <template>
   <main>
-    <h1>MyPage</h1>
-    <p>ログイン中: {{userStore.isLogin}}</p>
+    <ProjectSummary :projects="projectStore.belongsProjects" :user-store="userStore" v-if="projectStore.belongsProjects.length > 0" />
   </main>
 </template>
 
