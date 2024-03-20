@@ -6,5 +6,5 @@ export const bulkFetch = async () => {
   const projectStore = useProjectStore()
   const userStore = useUserStore()
   await userStore.login(VueCookies.get('email'), VueCookies.get('password'))
-  projectStore.setProjects(userStore.currentUserModel.projectIds)
+  projectStore.setProjects(userStore.haveProjectIds)
 }

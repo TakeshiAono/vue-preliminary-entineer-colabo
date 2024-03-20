@@ -6,24 +6,26 @@ import axios from 'axios'
 export const useUserStore = defineStore('user', () => {
   const API_URL = import.meta.env.VITE_API_SERVER_URI
   const isLogin = ref(VueCookies.get('token'))
-  const currentUserModel = ref<GetResponseUser | null>(null)
+  const currentUser = ref<GetResponseUser | null>(null)
+  const haveProjectIds = ref<string[] | null>(null)
 
   async function login(email: string, password: string): Promise<any> {
     const response = await axios.post(`${API_URL}/login`, { password: password, email: email })
-    setToken("true", email, password)
-    isLogin.value = "true"
-    await setCurrentUserModel(response.data.id)
+    setToken('true', email, password)
+    isLogin.value = 'true'
+    await fetchUserInfo(response.data.id)
     return response
   }
 
   async function logout(): Promise<any> {
-    setToken("false", "", "")
+    setToken('false', '', '')
     isLogin.value = false
   }
 
-  async function setCurrentUserModel(id: number): Promise<void> {
+  async function fetchUserInfo(id: number): Promise<void> {
     const responseUser = await axios.get<GetResponseUser>(`${API_URL}/users/${id}`)
-    currentUserModel.value = responseUser.data
+    currentUser.value = responseUser.data
+    haveProjectIds.value = responseUser.data.projectIds
   }
 
   async function accountCreate(name: string, email: string, password: string): Promise<any> {
@@ -32,9 +34,9 @@ export const useUserStore = defineStore('user', () => {
       password: password,
       email: email
     })
-    setToken("true", email, password)
-    await setCurrentUserModel(response.data.id)
-    isLogin.value = "true"
+    setToken('true', email, password)
+    await fetchUserInfo(response.data.id)
+    isLogin.value = 'true'
     return response
   }
 
@@ -49,10 +51,20 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function getCurrentUser() {
-    return currentUserModel.value
+    return currentUser.value
   }
 
   const getIsLogin = isLogin.value
 
-  return { isLogin, login, getIsLogin, accountCreate, logout, currentUserModel, setCurrentUserModel, getCurrentUser }
+  return {
+    isLogin,
+    login,
+    getIsLogin,
+    accountCreate,
+    logout,
+    currentUser,
+    fetchUserInfo,
+    getCurrentUser,
+    haveProjectIds
+  }
 })

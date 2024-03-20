@@ -12,8 +12,8 @@ const userStore = useUserStore()
 <template>
   <main>
     <h1>Profile</h1>
-    <p>氏名1{{ userStore.currentUserModel.name }}</p>
-    <p>登録メールアドレス{{ userStore.currentUserModel.email }}</p>
+    <p>氏名1{{ userStore.currentUser.name }}</p>
+    <p>登録メールアドレス{{ userStore.currentUser.email }}</p>
   </main>
 </template>
 
