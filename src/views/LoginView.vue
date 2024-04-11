@@ -3,6 +3,7 @@ import router from '@/router';
 import { useUserStore } from '@/stores/userStore';
 import { bulkFetch } from '@/utils/bulk';
 import { ref } from 'vue';
+import { AxiosError } from 'axios';
 
 type LoginModel = {
   email: string | null
@@ -14,19 +15,28 @@ const loginModel = ref<LoginModel>({
   password: null,
 })
 const errorVisible = ref<boolean>(false)
+const validationMessage = ref<string>("")
 
 const userStore = useUserStore()
 
 const submitHandler = async (): void => {
-  userStore.login(loginModel.value.email, loginModel.value.password)
-    .then(() => {
-      bulkFetch()
-      router.push("myPage")
-    })
-    .catch((error) => {
-      console.log(error)
-      errorVisible.value = true
-    })
+  try {
+    await userStore.login(loginModel.value.email, loginModel.value.password)
+    bulkFetch()
+    router.push("myPage")
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      const code = error.code
+      if(code == "ERR_BAD_REQUEST") {
+        validationMessage.value = "メールアドレスまたはパスワードが間違っています。"
+      } else {
+        validationMessage.value = "通信エラーが発生しました。時間を置いて再度ログインをしてください。"
+      }
+    } else {
+      validationMessage.value = "予期せぬエラーが発生しました。"
+    }
+    errorVisible.value = true
+  }
 }
 </script>
 
@@ -35,7 +45,7 @@ const submitHandler = async (): void => {
     <div id="login-container">
       <h2 id="login-title">Login</h2>
       <n-alert title="認証エラー" type="error" v-if="errorVisible">
-        メールアドレスまたはパスワードが間違っています。
+        {{validationMessage}}
       </n-alert>
       <n-form ref="formRef" :model="loginModel" id="login-form">
         <n-form-item path="email" label="Email">
