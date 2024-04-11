@@ -5,18 +5,22 @@ import ProjectMemberSummary from './ProjectMemberSummary.vue';
 import MessageLog from './MessageLog.vue';
 import axios from 'axios';
 import _ from "lodash"
+import UserNotice from './UserNotice.vue';
 
 const API_URL = import.meta.env.VITE_API_SERVER_URI
+
 const props = defineProps(["projects", "userStore"])
 const headProject = ref<string | null>(null)
 const members = ref([])
 const chatLogs = ref([])
+const userNoticeLogs = ref([])
 
 onMounted(async () => {
   if (props.projects && props.projects.length > 0) {
     headProject.value = props.projects[0]
     members.value = await getProjectMemberNames()
     chatLogs.value = await fetchChatMessage()
+    userNoticeLogs.value = await fetchUserNotice()
   }
 })
 
@@ -57,6 +61,15 @@ async function fetchChatMessage(): Promise<Project> {
   const sortedMessagesByUpdatedAt = _.sortBy(messages, message => new Date(message.updatedAt)).reverse().map( message => message.text)
   return sortedMessagesByUpdatedAt
 }
+
+async function fetchUserNotice() {
+  const userNoticeIds = props.userStore.currentUser.userNoticeIds
+  const userNoticeLogs = await Promise.all(userNoticeIds.map(async (id) => {
+    const userNotice = await axios.get(`${API_URL}/userNotices/${id}`)
+    return userNotice.data.log
+  }))
+  return userNoticeLogs
+}
 </script>
 
 <template>
@@ -77,6 +90,7 @@ async function fetchChatMessage(): Promise<Project> {
         <ProjectDescription :description="headProject.description"/>
         <ProjectMemberSummary :member-names="members"/>
         <MessageLog :chat-logs="chatLogs"/>
+        <UserNotice :userNoticeLogs="userNoticeLogs"/>
       </n-layout-content>
     </n-layout>
 </template>

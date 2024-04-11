@@ -1,9 +1,22 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 import VueCookies from 'vue-cookies'
 import axios from 'axios'
 
-export const useUserStore = defineStore('user', () => {
+export interface UserStore {
+  isLogin: Ref<boolean | string>;
+  login: (email: string, password: string) => Promise<any>;
+  getIsLogin: boolean | string;
+  accountCreate: (name: string, email: string, password: string) => Promise<any>;
+  logout: () => Promise<any>;
+  currentUser: Ref<GetResponseUser | null>;
+  fetchUserInfo: (id: number) => Promise<void>;
+  getCurrentUser: () => GetResponseUser | null;
+  haveProjectIds: Ref<string[] | null>;
+  getUserInfo: (id: number) => Promise<GetResponseUser>;
+}
+
+export const useUserStore = defineStore('user', (): UserStore => {
   const API_URL = import.meta.env.VITE_API_SERVER_URI
   const isLogin = ref(VueCookies.get('token'))
   const currentUser = ref<GetResponseUser | null>(null)
