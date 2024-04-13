@@ -7,6 +7,7 @@ import axios from 'axios';
 import _ from "lodash"
 import UserNotice from './UserNotice.vue';
 import OperationLog from './OperationLog.vue';
+import Dashboard from './Dashboard.vue';
 
 const API_URL = import.meta.env.VITE_API_SERVER_URI
 
@@ -16,6 +17,7 @@ const members = ref([])
 const chatLogs = ref([])
 const userNoticeLogs = ref([])
 const operationLogs = ref([])
+const tasks = ref([])
 
 onMounted(async () => {
   if (props.projects && props.projects.length > 0) {
@@ -24,6 +26,7 @@ onMounted(async () => {
     chatLogs.value = await fetchChatMessage()
     userNoticeLogs.value = await fetchUserNotice()
     operationLogs.value = await fetchOperationLog()
+    tasks.value = await fetchTasks()
   }
 })
 
@@ -65,22 +68,8 @@ async function fetchChatMessage(): Promise<any> {
   return sortedMessagesByUpdatedAt
 }
 
-// const fetchOperationIds = async () => {
-//   if(headProject.value){
-//     const operationIds = headProject.value.operationIds
-//     const chatChannelIds = await Promise.all(operationIds.map(async (id) => {
-//       const operation = await axios.get(`${API_URL}/operations/${id}`)
-//       return operation.data.channelIds
-//     }));
-//     return _.flatten(chatChannelIds)
-//   }
-// }
-
-// fetchOperationIds()
-
 async function fetchOperationLog(): Promise<any> {
   const operationIds = headProject.value.operationIds
-  console.log(operationIds)
   const operations = await Promise.all(operationIds.map(async (id) => {
     const operation = await axios.get(`${API_URL}/operations/${id}`)
     return operation.data
@@ -96,6 +85,14 @@ async function fetchUserNotice() {
     return userNotice.data.log
   }))
   return userNoticeLogs
+}
+
+async function fetchTasks(): Promise<any> {
+  const taskIds = headProject.value.taskIds
+  return await Promise.all(taskIds.map(async (id) => {
+    const task = await axios.get(`${API_URL}/tasks/${id}`)
+    return task.data
+  }));
 }
 </script>
 
@@ -119,6 +116,7 @@ async function fetchUserNotice() {
         <MessageLog :chat-logs="chatLogs"/>
         <UserNotice :userNoticeLogs="userNoticeLogs"/>
         <OperationLog :operation-logs="operationLogs"/>
+        <Dashboard :tasks="tasks" :project="headProject"/>
       </n-layout-content>
     </n-layout>
 </template>
