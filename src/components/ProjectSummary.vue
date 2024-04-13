@@ -6,6 +6,7 @@ import MessageLog from './MessageLog.vue';
 import axios from 'axios';
 import _ from "lodash"
 import UserNotice from './UserNotice.vue';
+import OperationLog from './OperationLog.vue';
 
 const API_URL = import.meta.env.VITE_API_SERVER_URI
 
@@ -14,6 +15,7 @@ const headProject = ref<string | null>(null)
 const members = ref([])
 const chatLogs = ref([])
 const userNoticeLogs = ref([])
+const operationLogs = ref([])
 
 onMounted(async () => {
   if (props.projects && props.projects.length > 0) {
@@ -21,6 +23,7 @@ onMounted(async () => {
     members.value = await getProjectMemberNames()
     chatLogs.value = await fetchChatMessage()
     userNoticeLogs.value = await fetchUserNotice()
+    operationLogs.value = await fetchOperationLog()
   }
 })
 
@@ -52,7 +55,7 @@ const fetchChannelIds = async () => {
   }
 }
 
-async function fetchChatMessage(): Promise<Project> {
+async function fetchChatMessage(): Promise<any> {
   const channelIds = await fetchChannelIds()
   const messages = await Promise.all(channelIds.map(async (id) => {
     const message = await axios.get(`${API_URL}/messages/${id}`)
@@ -60,6 +63,30 @@ async function fetchChatMessage(): Promise<Project> {
   }));
   const sortedMessagesByUpdatedAt = _.sortBy(messages, message => new Date(message.updatedAt)).reverse().map( message => message.text)
   return sortedMessagesByUpdatedAt
+}
+
+// const fetchOperationIds = async () => {
+//   if(headProject.value){
+//     const operationIds = headProject.value.operationIds
+//     const chatChannelIds = await Promise.all(operationIds.map(async (id) => {
+//       const operation = await axios.get(`${API_URL}/operations/${id}`)
+//       return operation.data.channelIds
+//     }));
+//     return _.flatten(chatChannelIds)
+//   }
+// }
+
+// fetchOperationIds()
+
+async function fetchOperationLog(): Promise<any> {
+  const operationIds = headProject.value.operationIds
+  console.log(operationIds)
+  const operations = await Promise.all(operationIds.map(async (id) => {
+    const operation = await axios.get(`${API_URL}/operations/${id}`)
+    return operation.data
+  }));
+  const sortedoperationsByUpdatedAt = _.sortBy(operations, operation => new Date(operation.updatedAt)).reverse().map( operation => operation.log)
+  return sortedoperationsByUpdatedAt
 }
 
 async function fetchUserNotice() {
@@ -91,6 +118,7 @@ async function fetchUserNotice() {
         <ProjectMemberSummary :member-names="members"/>
         <MessageLog :chat-logs="chatLogs"/>
         <UserNotice :userNoticeLogs="userNoticeLogs"/>
+        <OperationLog :operation-logs="operationLogs"/>
       </n-layout-content>
     </n-layout>
 </template>
