@@ -16,7 +16,7 @@ const props = defineProps(["operationLogs"])
 
 #project-operation-log-content {
   width: 200px;
-  height: 100px;
+  height: 80%;
   border-radius: 10px;
   border: solid;
 }

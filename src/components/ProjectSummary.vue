@@ -101,7 +101,7 @@ async function fetchTasks(): Promise<any> {
       <n-layout-sider
         collapse-mode="transform"
         :collapsed-width="80"
-        :width="300"
+        :width="200"
         show-trigger="arrow-circle"
         content-style="padding: 24px;"
         bordered="true"
@@ -110,18 +110,51 @@ async function fetchTasks(): Promise<any> {
         <p v-for="projectName in projectNames" :key="projectName">{{ projectName }}</p>
       </n-layout-sider>
       <n-layout-content content-style="padding: 24px;" v-if="headProject">
-        <h1 id="project-name">{{ headProject.name }}</h1>
-        <ProjectDescription :description="headProject.description"/>
-        <ProjectMemberSummary :member-names="members"/>
-        <MessageLog :chat-logs="chatLogs"/>
-        <UserNotice :userNoticeLogs="userNoticeLogs"/>
-        <OperationLog :operation-logs="operationLogs"/>
-        <Dashboard :tasks="tasks" :project="headProject"/>
+        <div id="my-page-info">
+          <div>
+            <div id="project-info">
+              <div id="project-member">
+                <h1 id="project-name">{{ headProject.name }}</h1>
+                <ProjectDescription :description="headProject.description"/>
+                <ProjectMemberSummary :member-names="members"/>
+              </div>
+              <div id="chat-log">
+                <MessageLog :chat-logs="chatLogs"/>
+              </div>
+              <div id="operation-log">
+                <OperationLog :operation-logs="operationLogs"/>
+              </div>
+            </div>
+            <Dashboard v-if="projects.length != 0" :tasks="tasks" :projects="projects" :target-project-id="1"/>
+          </div>
+          <div id="user-notice">
+            <UserNotice :userNoticeLogs="userNoticeLogs"/>
+          </div>
+        </div>
       </n-layout-content>
     </n-layout>
 </template>
 
 <style scoped>
+#project-member,#chat-log {
+  margin-right: 0.5rem;
+}
+
+#user-notice {
+  margin-left: 0.5rem;
+}
+
+#my-page-info {
+  display: flex;
+  flex-direction: row;
+}
+
+#project-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 #project-name {
   text-decoration: underline;
 }

@@ -16,7 +16,7 @@ const props = defineProps(["userNoticeLogs"])
 
 #project-user-notice-content {
   width: 200px;
-  height: 100px;
+  height: 90%;
   border-radius: 10px;
   border: solid;
 }
