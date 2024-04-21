@@ -10,7 +10,6 @@ export interface UserStore {
   accountCreate: (name: string, email: string, password: string) => Promise<any>;
   logout: () => Promise<any>;
   currentUser: Ref<GetResponseUser | null>;
-  fetchUserInfo: (id: number) => Promise<void>;
   getCurrentUser: () => GetResponseUser | null;
   haveProjectIds: Ref<string[] | null>;
   getUserInfo: (id: number) => Promise<GetResponseUser>;
@@ -20,25 +19,20 @@ export const useUserStore = defineStore('user', (): UserStore => {
   const API_URL = import.meta.env.VITE_API_SERVER_URI
   const isLogin = ref(VueCookies.get('token'))
   const currentUser = ref<GetResponseUser | null>(null)
+  const users = ref([])
   const haveProjectIds = ref<string[] | null>(null)
 
   async function login(email: string, password: string): Promise<any> {
     const response = await axios.post(`${API_URL}/login`, { password: password, email: email })
-    setToken('true', email, password)
+    _setToken('true', email, password)
     isLogin.value = 'true'
-    await fetchUserInfo(response.data.id)
+    await _fetchUserInfo(response.data.id)
     return response
   }
 
   async function logout(): Promise<any> {
-    setToken('false', '', '')
+    _setToken('false', '', '')
     isLogin.value = false
-  }
-
-  async function fetchUserInfo(id: number): Promise<void> {
-    const responseUser = await axios.get<GetResponseUser>(`${API_URL}/users/${id}`)
-    currentUser.value = responseUser.data
-    haveProjectIds.value = responseUser.data.projectIds
   }
 
   async function getUserInfo(id: number): Promise<GetResponseUser> {
@@ -52,24 +46,35 @@ export const useUserStore = defineStore('user', (): UserStore => {
       password: password,
       email: email
     })
-    setToken('true', email, password)
-    await fetchUserInfo(response.data.id)
+    _setToken('true', email, password)
+    await _fetchUserInfo(response.data.id)
     isLogin.value = 'true'
     return response
   }
 
-  function setToken(token: string | boolean, email: string, password: string) {
+  function getCurrentUser() {
+    return currentUser.value
+  }
+
+  async function _fetchUserInfo(id: number): Promise<void> {
+    const responseUser = await axios.get<GetResponseUser>(`${API_URL}/users/${id}`)
+    currentUser.value = responseUser.data
+    _addUser(responseUser.data)
+    haveProjectIds.value = responseUser.data.projectIds
+  }
+
+  function _setToken(token: string | boolean, email: string, password: string) {
     VueCookies.set('token', token)
     VueCookies.set('email', email)
     VueCookies.set('password', password)
   }
 
-  function getToken(): string | boolean {
+  function _getToken(): string | boolean {
     return VueCookies.get('token')
   }
 
-  function getCurrentUser() {
-    return currentUser.value
+  function _addUser(user: User): void {
+    users.value = users.value.some(u => u.id === user.id) ? users : [...users, user];
   }
 
   const getIsLogin = isLogin.value
@@ -81,7 +86,6 @@ export const useUserStore = defineStore('user', (): UserStore => {
     accountCreate,
     logout,
     currentUser,
-    fetchUserInfo,
     getCurrentUser,
     haveProjectIds,
     getUserInfo
