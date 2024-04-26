@@ -4,22 +4,24 @@ import VueCookies from 'vue-cookies'
 import axios from 'axios'
 
 export interface UserStore {
-  isLogin: Ref<boolean | string>;
-  login: (email: string, password: string) => Promise<any>;
-  getIsLogin: boolean | string;
-  accountCreate: (name: string, email: string, password: string) => Promise<any>;
-  logout: () => Promise<any>;
-  currentUser: Ref<GetResponseUser | null>;
-  getCurrentUser: () => GetResponseUser | null;
-  haveProjectIds: Ref<string[] | null>;
-  getUserInfo: (id: number) => Promise<GetResponseUser>;
+  isLogin: Ref<boolean | string>
+  login: (email: string, password: string) => Promise<any>
+  getIsLogin: boolean | string
+  accountCreate: (name: string, email: string, password: string) => Promise<any>
+  logout: () => Promise<any>
+  currentUser: Ref<ResponseUser | null>
+  getCurrentUser: () => ResponseUser | null
+  haveProjectIds: Ref<string[] | null>
+  getUserInfo: (id: number) => Promise<ResponseUser>
+  addUsersByProject: (project: Project) => void
+  getUsers: () => void
 }
 
 export const useUserStore = defineStore('user', (): UserStore => {
   const API_URL = import.meta.env.VITE_API_SERVER_URI
   const isLogin = ref(VueCookies.get('token'))
-  const currentUser = ref<GetResponseUser | null>(null)
-  const users = ref([])
+  const currentUser = ref<ResponseUser | null>(null)
+  const users = ref<User[]>([])
   const haveProjectIds = ref<string[] | null>(null)
 
   async function login(email: string, password: string): Promise<any> {
@@ -35,8 +37,8 @@ export const useUserStore = defineStore('user', (): UserStore => {
     isLogin.value = false
   }
 
-  async function getUserInfo(id: number): Promise<GetResponseUser> {
-    const responseUser = await axios.get<GetResponseUser>(`${API_URL}/users/${id}`)
+  async function getUserInfo(id: number): Promise<ResponseUser> {
+    const responseUser = await axios.get<ResponseUser>(`${API_URL}/users/${id}`)
     return responseUser
   }
 
@@ -52,15 +54,35 @@ export const useUserStore = defineStore('user', (): UserStore => {
     return response
   }
 
+  async function addUsersByProject(project: Project): Promise<void> {
+    const users = await Promise.all(
+      project.userIds.map(async (userId) => await _fetchUser(Number(userId)))
+    )
+
+    _addUsers(users as User[])
+  }
+
   function getCurrentUser() {
     return currentUser.value
   }
 
+  function getUsers() {
+    return users.value
+  }
+
   async function _fetchUserInfo(id: number): Promise<void> {
-    const responseUser = await axios.get<GetResponseUser>(`${API_URL}/users/${id}`)
-    currentUser.value = responseUser.data
-    _addUser(responseUser.data)
-    haveProjectIds.value = responseUser.data.projectIds
+    currentUser.value = await _fetchUser(id)
+    _addUser(currentUser.value)
+    _storeProjectIds(currentUser.value.projectIds)
+  }
+
+  async function _fetchUser(userId: number) {
+    const responseUser = await axios.get<ResponseUser>(`${API_URL}/users/${userId}`)
+    return responseUser.data
+  }
+
+  async function _storeProjectIds(projectIds: nubmer[]) {
+    haveProjectIds.value = projectIds
   }
 
   function _setToken(token: string | boolean, email: string, password: string) {
@@ -74,7 +96,17 @@ export const useUserStore = defineStore('user', (): UserStore => {
   }
 
   function _addUser(user: User): void {
-    users.value = users.value.some(u => u.id === user.id) ? users : [...users, user];
+    if (!users.value.some((u) => u.id === user.id)) {
+      users.value.push(user)
+    }
+  }
+
+  function _addUsers(users: User[]): void {
+    console.log('vv', users)
+    users.forEach((user) => {
+      console.log('cc', user)
+      _addUser(user)
+    })
   }
 
   const getIsLogin = isLogin.value
@@ -88,6 +120,8 @@ export const useUserStore = defineStore('user', (): UserStore => {
     currentUser,
     getCurrentUser,
     haveProjectIds,
-    getUserInfo
+    getUserInfo,
+    addUsersByProject,
+    getUsers
   }
 })

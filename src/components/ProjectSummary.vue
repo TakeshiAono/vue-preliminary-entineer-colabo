@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onBeforeMount, ref } from 'vue';
 import ProjectDescription from './ProjectDescription.vue';
 import ProjectMemberSummary from './ProjectMemberSummary.vue';
 import MessageLog from './MessageLog.vue';
@@ -11,7 +11,7 @@ import Dashboard from './Dashboard.vue';
 
 const API_URL = import.meta.env.VITE_API_SERVER_URI
 
-const props = defineProps(["projects", "userStore"])
+const props = defineProps(["projects", "userStore", "users"])
 const headProject = ref<string | null>(null)
 const members = ref([])
 const chatLogs = ref([])
@@ -21,13 +21,16 @@ const tasks = ref([])
 
 onMounted(async () => {
   if (props.projects && props.projects.length > 0) {
-    headProject.value = props.projects[0]
     members.value = await getProjectMemberNames()
     chatLogs.value = await fetchChatMessage()
     userNoticeLogs.value = await fetchUserNotice()
     operationLogs.value = await fetchOperationLog()
-    tasks.value = await fetchTasks()
   }
+})
+
+onBeforeMount(async () => {
+  headProject.value = props.projects[0]
+  tasks.value = await fetchTasks()
 })
 
 const projectNames = computed(() => {
@@ -90,8 +93,12 @@ async function fetchUserNotice() {
 async function fetchTasks(): Promise<any> {
   const taskIds = headProject.value.taskIds
   return await Promise.all(taskIds.map(async (id) => {
-    const task = await axios.get(`${API_URL}/tasks/${id}`)
-    return task.data
+    const task = (await axios.get<Task>(`${API_URL}/tasks/${id}`)).data
+    task.createdAt = new Date(task.createdAt)
+    task.updatedAt = new Date(task.updatedAt)
+    task.deadline = new Date(task.deadline)
+    task.doneAt = task.doneAt && new Date(task.doneAt)
+    return task
   }));
 }
 </script>
@@ -125,7 +132,7 @@ async function fetchTasks(): Promise<any> {
                 <OperationLog :operation-logs="operationLogs"/>
               </div>
             </div>
-            <Dashboard v-if="projects.length != 0" :tasks="tasks" :projects="projects" :target-project-id="1"/>
+            <Dashboard v-if="projects.length != 0 && tasks.length != 0" :tasks="tasks" :projects="projects" :target-project-id="1" :users="users"/>
           </div>
           <div id="user-notice">
             <UserNotice :userNoticeLogs="userNoticeLogs"/>

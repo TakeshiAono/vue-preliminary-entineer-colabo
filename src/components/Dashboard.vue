@@ -2,8 +2,10 @@
 import { ref } from 'vue';
 import DashboardDeadline from './DashboardDeadline.vue';
 import TaskSummary from './TaskSummary.vue';
+import TaskGraph from './TaskGraph.vue';
+import type { useUserStore } from '@/stores/userStore';
 
-const {tasks, projects, targetProjectId} = defineProps<{tasks: Task[], projects: Project[], targetProjectId: string}>()
+const {tasks, projects, targetProjectId, users} = defineProps<{tasks: Task[], projects: Project[], targetProjectId: string, users: User[]}>()
 const project = ref<Project | undefined>(projects.find(project => project.id == targetProjectId))
 
 </script>
@@ -18,7 +20,8 @@ const project = ref<Project | undefined>(projects.find(project => project.id == 
       <TaskSummary v-if="tasks.length != 0" :tasks="tasks" :task-id="'1'"/>
     </div>
     <div id="tasks-graph">
-      <p>グラフ</p>
+      <TaskGraph :users="users" :tasks="tasks"/>
+      {{ console.log("asdewq",tasks) }}
     </div>
   </div>
 
@@ -41,6 +44,7 @@ const project = ref<Project | undefined>(projects.find(project => project.id == 
 }
 
 #tasks-graph {
-  margin: auto 0;
+  /* margin: auto 0; */
+  width: 60%;
 }
 </style>
