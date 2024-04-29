@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import VueApexCharts from 'vue3-apexcharts'
+import { ref } from 'vue';
 import UserTaskSelector from './UserTaskSelector.vue';
 import _ from 'lodash';
 
 const {users, tasks} = defineProps<{users: User[], tasks: Task[]}>()
 
 const sortedTasksByDate = _.sortBy(tasks.filter(task => task.doneAt != null), (task) => {return task.doneAt})
+const initUser = users[0]
 const leastTask = _.last(sortedTasksByDate)
 const headTask = _.head(sortedTasksByDate)
+
+const selectedUser = ref(users[0])
+const selectHandler = (selectedUserId: number) => {selectedUser.value = users.find(user => user.id == selectedUserId) as User}
 
 var options = {
   yaxis: {
@@ -35,7 +38,7 @@ const series = [
 </script>
 
 <template>
-  <UserTaskSelector :users="users"/>
+  <UserTaskSelector :users="users" :initUser="initUser" @select="selectHandler"/>
   <apexchart width="350" type="area" :options="options" :series="series"/>
 </template>
 

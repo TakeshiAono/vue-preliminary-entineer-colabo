@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import VueApexCharts from 'vue-apexcharts'
-
-const {users} = defineProps<{users: User[]}>()
+const {users, initUser} = defineProps<{users: User[], initUser: User}>()
 const options = users.map( user => ({ label: user.name, value: user.id, disabled: false }))
-const value = ref(options[0].value)
+
+const emit = defineEmits(["select"])
+const selectedUserNotify = (user: User) => {emit("select", user)}
 </script>
 
 <template>
   <div id="user-select-content">
     <p>ユーザー</p>
-    {{console.log("aasfssdfasdfa", value)}}
-    <n-select id="user-selector" v-model:value="value" :options="options" />
+    <n-select id="user-selector" :default-value="initUser.name" :options="options" @update:value="selectedUserNotify" />
   </div>
 </template>
 
