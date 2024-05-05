@@ -102,9 +102,7 @@ export const useUserStore = defineStore('user', (): UserStore => {
   }
 
   function _addUsers(users: User[]): void {
-    console.log('vv', users)
     users.forEach((user) => {
-      console.log('cc', user)
       _addUser(user)
     })
   }
