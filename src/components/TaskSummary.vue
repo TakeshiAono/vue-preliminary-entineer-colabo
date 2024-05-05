@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
-const props = defineProps<{ tasks: Task[], taskId: string, user: User[] }>()
+const props = defineProps<{ tasks: Task[] }>()
 const tasksNumber = ref(0)
 const incompleteTaskNumber = ref(0)
 
@@ -20,7 +20,6 @@ watch(() => props.tasks, () => {
     <p>全体進捗率</p>
     {{ Math.round((props.tasks.length - incompleteTaskNumber) / tasksNumber * 100) }} %
   </div>
-
 </template>
 
 <style scoped>

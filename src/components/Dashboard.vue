@@ -52,11 +52,11 @@ const selectTasksFromTasksByUserMaps = (tasksByUserMaps: TasksByUserMap[], selec
       <DashboardDeadline :project="project" />
     </div>
     <div id="task-summary">
-      <TaskSummary v-if="tasks.length != 0" :tasks="selectedTasks" :task-id="'1'" :user="selectedUser" />
+      <TaskSummary v-if="tasks.length != 0" :tasks="selectedTasks" />
     </div>
     <div id="tasks-graph">
       <UserTaskSelector :users="users" :initUser="initUser" @select="selectHandler" />
-      <TaskGraph :users="users" :project="project" :user="selectedUser" :tasks="selectedTasks" />
+      <TaskGraph :user="selectedUser" :tasks="selectedTasks" />
     </div>
   </div>
 </template>

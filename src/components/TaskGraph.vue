@@ -1,41 +1,24 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import dayjs from 'dayjs'
 
-const props = defineProps<{ users: User[], project: Project, user: User, tasks: Task[] | [] }>()
-const data = ref([
-  {
-    data: []
-  }
-]);
+const props = defineProps<{ user: User, tasks: Task[] | [] }>()
+const data = ref<{data: number[]}[]>([]);
 const graphStartDay = ref<dayjs.Dayjs>(dayjs().subtract(4, 'year'))
 const options = ref({})
 
-const setDateList = (sectionNumber: number, period: number, unit: "year" | "month" | "day") => {
-  const dayList: dayjs.Dayjs[] = []
-  let baseDate = graphStartDay.value
-  for (let index = 0; index <= sectionNumber; index++) {
-    const nextDate = dayjs(baseDate).add(period, unit)
-    dayList.push(nextDate)
-    baseDate = nextDate
-  }
+watch([() => props.tasks, () => props.user], () => {
+  updateGraph()
+})
 
+const updateGraph = () => {
+  const dayList = createDayList(12, 6, "month")
+  updateData(getTaskNumberListByPeriod(dayList))
+  updateGraphSetting(dayList)
+}
+
+const updateGraphSetting = (dayList: dayjs.Dayjs[]) => {
   const stringDayList = dayList.map(dayjs => dayjs.format("YY/MM/DD"))
-
-  const dataByPeriod = dayList.map((day, index) => {
-    const nextIndex = index + 1
-    if (nextIndex <= dayList.length - 1) {
-      return props.tasks.filter(task => dayList[index] <= dayjs(task.doneAt) && dayjs(task.doneAt) < dayList[nextIndex]).length
-    } else {
-      return props.tasks.filter(task => dayList[index] <= dayjs(task.doneAt) && dayjs(task.doneAt) < dayList[index].add(1, "month")).length
-    }
-  })
-
-  data.value = [{
-    name: "Series 1",
-    data: dataByPeriod
-  }]
-  console.log(dataByPeriod, stringDayList)
 
   options.value = {
     yaxis: {
@@ -54,23 +37,37 @@ const setDateList = (sectionNumber: number, period: number, unit: "year" | "mont
   }
 }
 
-onMounted(async () => {
-  updateDateList()
-})
+const createDayList = (sectionNumber: number, period: number, unit: "year" | "month" | "day") => {
+  const dayList: dayjs.Dayjs[] = []
+  let baseDate = graphStartDay.value
+  for (let index = 0; index <= sectionNumber; index++) {
+    const nextDate = dayjs(baseDate).add(period, unit)
+    dayList.push(nextDate)
+    baseDate = nextDate
+  }
 
-watch(() => props.tasks, () => {
-  updateDateList()
-})
-
-watch(() => props.user, () => {
-  updateDateList()
-})
-
-const updateDateList = () => {
-  setDateList(12, 6, "month")
+  return dayList
 }
 
+const getTaskNumberListByPeriod = (dayList: dayjs.Dayjs[]): number[] => {
+  const taskNumberList: number[] = []
+  dayList.map((day, index) => {
+    const nextIndex = index + 1
+    if (nextIndex <= dayList.length - 1) {
+      taskNumberList.push(props.tasks.filter(task => dayList[index] <= dayjs(task.doneAt) && dayjs(task.doneAt) < dayList[nextIndex]).length)
+    } else {
+      taskNumberList.push(props.tasks.filter(task => dayList[index] <= dayjs(task.doneAt) && dayjs(task.doneAt) < dayList[index].add(1, "month")).length)
+    }
+  })
 
+  return taskNumberList
+}
+
+const updateData = (dataList: number[]) => {
+  data.value = [{
+    data: dataList
+  }]
+}
 </script>
 
 <template>
