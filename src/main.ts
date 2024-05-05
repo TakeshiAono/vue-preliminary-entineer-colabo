@@ -5,13 +5,16 @@ import router from './router'
 import naive from 'naive-ui/es/preset'
 import VueApexCharts from 'vue3-apexcharts';
 import io from 'socket.io-client';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const app = createApp(App)
-
-app.use(createPinia())
+const pinia = createPinia()
+app.use(pinia)
 app.use(router)
 app.use(naive)
 app.use(VueApexCharts)
+
+pinia.use(piniaPluginPersistedstate)
 
 const socket = io(); // Socket.ioのインスタンスを作成
 
