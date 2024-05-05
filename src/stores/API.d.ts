@@ -1,6 +1,6 @@
 // / <reference types="vite/client" />
 type ResponseUser = {
-  id: number | null
+  id: number
   name: string | null
   email: string
   password: string
@@ -20,9 +20,10 @@ type ResponseUser = {
   followers: Follower[]
   projects: Project[]
 }
+type User = ResponseUser
 
 type ResponseChannel = {
-  id: number | null
+  id: number
   name: string
   userId: number | null
   chatRoomId: number | null
@@ -32,7 +33,7 @@ type ResponseChannel = {
 }
 
 type ResponseChatRoom = {
-  id: number | null
+  id: number
   name: string
   projectId: number | null
   createdAt: Date | null
@@ -41,7 +42,7 @@ type ResponseChatRoom = {
 }
 
 type ResponseDirectory = {
-  id: number | null
+  id: number
   name: string
   projectId: number | null
   createdAt: Date | null
@@ -50,7 +51,7 @@ type ResponseDirectory = {
 }
 
 type ResponseFile = {
-  id: number | null
+  id: number
   name: string
   fileUrl: string
   directoryId: number | null
@@ -59,7 +60,7 @@ type ResponseFile = {
 }
 
 type ResponseMessage = {
-  id: number | null
+  id: number
   text: string
   content: string
   userId: number | null
@@ -69,7 +70,7 @@ type ResponseMessage = {
 }
 
 type ResponseProject = {
-  id: number | null
+  id: number
   name: string
   iconUrl: string | null
   description: string | null
@@ -86,13 +87,27 @@ type ResponseProject = {
 }
 
 type ResponseTask = {
-  id: number | null
+  id: number
   name: string
   doneAt: Date | null
-  deadline: Date | null
-  description: string | null
+  deadline: Date | null //
+  description: string | null //
   projectId: number | null
   inChargeUserId: number | null
-  createdAt: Date | null
+  createdAt: Date | null //
   updatedAt: Date | null
+}
+
+type Task = ResponseTask
+
+type TasksOfProject = {
+  projectId: number
+  tasks: Task[]
+}
+
+type TasksMap = TasksOfProject
+
+type TasksByUserMap = {
+  userId: number
+  tasks: Task[]
 }

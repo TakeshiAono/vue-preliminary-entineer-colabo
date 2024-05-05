@@ -1,9 +1,9 @@
 <script setup lang="ts">
-const {users, initUser} = defineProps<{users: User[], initUser: User}>()
-const options = users.map( user => ({ label: user.name, value: user.id, disabled: false }))
+const { users, initUser } = defineProps<{ users: User[] | null, initUser: User }>()
+const options = users && users.map(user => ({ label: user.name, value: user.id, disabled: false }))
 
 const emit = defineEmits(["select"])
-const selectedUserNotify = (user: User) => {emit("select", user)}
+const selectedUserNotify = (user: User) => { emit("select", user) }
 </script>
 
 <template>

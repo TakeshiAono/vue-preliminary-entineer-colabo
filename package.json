@@ -16,6 +16,7 @@
   "dependencies": {
     "@vue/cli-service": "^5.0.8",
     "axios": "^1.6.7",
+    "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
     "engine.io-client": "^6.5.3",
     "engine.io-parser": "^5.2.2",

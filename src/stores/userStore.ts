@@ -10,7 +10,7 @@ export interface UserStore {
   accountCreate: (name: string, email: string, password: string) => Promise<any>
   logout: () => Promise<any>
   currentUser: Ref<ResponseUser | null>
-  getCurrentUser: () => ResponseUser | null
+  getCurrentUser: () => User
   haveProjectIds: Ref<string[] | null>
   getUserInfo: (id: number) => Promise<ResponseUser>
   addUsersByProject: (project: Project) => void
