@@ -1,27 +1,36 @@
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import VueCookies from 'vue-cookies'
 import axios from 'axios'
-import { useUserStore } from './userStore'
 
 export const useProjectStore = defineStore('project', () => {
   const API_URL = import.meta.env.VITE_API_SERVER_URI
-  const belongsProjects = ref<Project[]>([])
+  const belongingProjects = ref<ResponseProject[]>([])
+  const projectUsersMaps = ref<{projectId: number, userIds: number[]}[]>([])
 
-  async function getProjectInfo(id: string): Promise<Project> {
+  async function fetchProject(id: string): Promise<ResponseProject> {
     const response = await axios.get(`${API_URL}/projects/${id}`)
     return response.data
   }
 
+  function getBelongingProjectIds() {
+    return belongingProjects.value.map((belongingProject) => belongingProject.id)
+  }
+
   async function setProjects(projectIds: string[]) {
-    const projectList: Project[] = await Promise.all(
+    const projectList: ResponseProject[] = await Promise.all(
       projectIds.map(async (projectId) => {
-        const project = await getProjectInfo(projectId)
+        const project = await fetchProject(projectId)
         return project
       })
     )
-    belongsProjects.value = projectList
+    const createdProjectUsersMaps = projectList.map( project => {return { projectId: project.id, userIds: project.userIds }} )
+    projectUsersMaps.value = [...projectUsersMaps.value, ...createdProjectUsersMaps]
+    belongingProjects.value = projectList
   }
 
-  return { belongsProjects, getProjectInfo, setProjects }
+  function getUserIdsByProject (projectId: number) {
+    return projectUsersMaps.value.find(projectUsersMap => projectUsersMap.projectId == projectId)?.userIds
+  }
+
+  return { belongingProjects, projectUsersMaps, fetchProject, setProjects, getBelongingProjectIds, getUserIdsByProject }
 })

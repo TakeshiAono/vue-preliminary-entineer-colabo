@@ -1,98 +1,66 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, onBeforeMount, ref, watch } from 'vue';
 import ProjectDescription from './ProjectDescription.vue';
 import ProjectMemberSummary from './ProjectMemberSummary.vue';
 import MessageLog from './MessageLog.vue';
-import axios from 'axios';
-import _ from "lodash"
 import UserNotice from './UserNotice.vue';
 import OperationLog from './OperationLog.vue';
 import Dashboard from './Dashboard.vue';
+import { useProjectStore } from '@/stores/projectStore';
+import { useUserStore } from '@/stores/userStore';
+import { fetchMessagesByChannels, fetchUserNotices, fetchOperationLog, fetchTasks, fetchChannels } from "@/utils/request"
+import { sortByUpdatedAt } from "@/utils/utils"
 
-const API_URL = import.meta.env.VITE_API_SERVER_URI
+const props = defineProps<{projects: Project[], users: User[]}>()
+const projectStore = useProjectStore()
+const userStore = useUserStore()
 
-const props = defineProps(["projects", "userStore"])
-const headProject = ref<string | null>(null)
-const members = ref([])
-const chatLogs = ref([])
-const userNoticeLogs = ref([])
-const operationLogs = ref([])
-const tasks = ref([])
+const headProject = ref<Project>(props.projects[0])
+const chatLogs = ref<string[]>([])
+const userNoticeLogs = ref<ResponseUserNotice["log"][]>([])
+const operationLogs = ref<string[]>([])
+const tasks = ref<ResponseTask[]>([])
+const selectedProjectId = ref<number>(headProject.value.id)
+const usersByProject = ref<User[]>([])
+
+const currentUser = userStore.currentUser
+
+onBeforeMount(async () => {
+  usersByProject.value = getUsersByProject()
+  tasks.value = await fetchTasks(headProject.value as ResponseProject)
+})
 
 onMounted(async () => {
   if (props.projects && props.projects.length > 0) {
-    headProject.value = props.projects[0]
-    members.value = await getProjectMemberNames()
-    chatLogs.value = await fetchChatMessage()
-    userNoticeLogs.value = await fetchUserNotice()
-    operationLogs.value = await fetchOperationLog()
-    tasks.value = await fetchTasks()
+    chatLogs.value = sortByUpdatedAt<ResponseMessage>(await fetchMessagesByChannels(await fetchChannels(selectedProject()))).map(message => message.text)
+    userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(await fetchUserNotices(currentUser)).map(userNotice => userNotice.log)
+    operationLogs.value = sortByUpdatedAt<ResponseOperation>(await fetchOperationLog(selectedProject())).map(operation => operation.log)
   }
 })
 
-const projectNames = computed(() => {
-  return props.projects.map(project => 
-    project.name
-  );
+watch( () => selectedProjectId.value, async () => {
+  if (props.projects && props.projects.length > 0) {
+    chatLogs.value = sortByUpdatedAt<ResponseMessage>(await fetchMessagesByChannels(await fetchChannels(selectedProject()))).map(message => message.text)
+    userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(await fetchUserNotices(currentUser)).map(userNotice => userNotice.log)
+    operationLogs.value = sortByUpdatedAt<ResponseOperation>(await fetchOperationLog(selectedProject())).map(operation => operation.log)
+  }
+  const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[]
+  usersByProject.value = userIds.map( userId => (userStore.users.find((user) => userId == user.id)) as User )
 })
 
-const getProjectMemberNames = async () => {
-  if(headProject.value){
-    const userIds = headProject.value.userIds
-    const names = await Promise.all(userIds.map(async (id) => {
-      const userInfo = await props.userStore.getUserInfo(id)
-      return userInfo.data.name
-    }));
-    return names
-  }
+const getUsersByProject = (): User[] => {
+  const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
+  return userIds.map( userId => userStore.users.find((user) => userId == user.id) ) as User[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
 }
 
-const fetchChannelIds = async () => {
-  if(headProject.value){
-    const chatRoomIds = headProject.value.chatRoomIds
-    const chatChannelIds = await Promise.all(chatRoomIds.map(async (id) => {
-      const chatRoom = await axios.get(`${API_URL}/chatRooms/${id}`)
-      return chatRoom.data.channelIds
-    }));
-    return _.flatten(chatChannelIds)
-  }
+const selectedProject = (): ResponseProject  => {
+  return projectStore.belongingProjects.find( project => project.id == selectedProjectId.value) as ResponseProject
 }
 
-async function fetchChatMessage(): Promise<any> {
-  const channelIds = await fetchChannelIds()
-  const messages = await Promise.all(channelIds.map(async (id) => {
-    const message = await axios.get(`${API_URL}/messages/${id}`)
-    return message.data
-  }));
-  const sortedMessagesByUpdatedAt = _.sortBy(messages, message => new Date(message.updatedAt)).reverse().map( message => message.text)
-  return sortedMessagesByUpdatedAt
-}
+const menuOptions = props.projects.map(project => {return {label: project.name, key: project.id}})
 
-async function fetchOperationLog(): Promise<any> {
-  const operationIds = headProject.value.operationIds
-  const operations = await Promise.all(operationIds.map(async (id) => {
-    const operation = await axios.get(`${API_URL}/operations/${id}`)
-    return operation.data
-  }));
-  const sortedoperationsByUpdatedAt = _.sortBy(operations, operation => new Date(operation.updatedAt)).reverse().map( operation => operation.log)
-  return sortedoperationsByUpdatedAt
-}
-
-async function fetchUserNotice() {
-  const userNoticeIds = props.userStore.currentUser.userNoticeIds
-  const userNoticeLogs = await Promise.all(userNoticeIds.map(async (id) => {
-    const userNotice = await axios.get(`${API_URL}/userNotices/${id}`)
-    return userNotice.data.log
-  }))
-  return userNoticeLogs
-}
-
-async function fetchTasks(): Promise<any> {
-  const taskIds = headProject.value.taskIds
-  return await Promise.all(taskIds.map(async (id) => {
-    const task = await axios.get(`${API_URL}/tasks/${id}`)
-    return task.data
-  }));
+const getProject = (id: number): Project => {
+  return projectStore.belongingProjects.find(project => project.id == id) as Project // NOTE: 所属プロジェクトがない場合はprojectSummaryは表示しないため型アサーション
 }
 </script>
 
@@ -107,7 +75,14 @@ async function fetchTasks(): Promise<any> {
         bordered="true"
       >
         <n-h3 id="project-summary">プロジェクト一覧</n-h3>
-        <p v-for="projectName in projectNames" :key="projectName">{{ projectName }}</p>
+        <ProjectSummarySidebar/>
+        <n-menu
+            :inverted="inverted"
+            :collapsed-width="64"
+            :collapsed-icon-size="22"
+            :options="menuOptions"
+            :on-update:value="(projectId: number) => {selectedProjectId = projectId}"
+          />
       </n-layout-sider>
       <n-layout-content content-style="padding: 24px;" v-if="headProject">
         <div id="my-page-info">
@@ -115,8 +90,8 @@ async function fetchTasks(): Promise<any> {
             <div id="project-info">
               <div id="project-member">
                 <h1 id="project-name">{{ headProject.name }}</h1>
-                <ProjectDescription :description="headProject.description"/>
-                <ProjectMemberSummary :member-names="members"/>
+                <ProjectDescription :description="getProject(selectedProjectId).description"/>
+                <ProjectMemberSummary :member-names="usersByProject.map(user => user.name)"/>
               </div>
               <div id="chat-log">
                 <MessageLog :chat-logs="chatLogs"/>
@@ -125,7 +100,7 @@ async function fetchTasks(): Promise<any> {
                 <OperationLog :operation-logs="operationLogs"/>
               </div>
             </div>
-            <Dashboard v-if="projects.length != 0" :tasks="tasks" :projects="projects" :target-project-id="1"/>
+            <Dashboard v-if="projects.length != 0 && tasks.length != 0" :tasks="tasks" :projects="projects" :selectedProjectId="selectedProjectId" :users="usersByProject"/>
           </div>
           <div id="user-notice">
             <UserNotice :userNoticeLogs="userNoticeLogs"/>

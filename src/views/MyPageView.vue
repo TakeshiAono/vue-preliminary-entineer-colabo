@@ -9,7 +9,8 @@ const userStore = useUserStore()
 
 <template>
   <main>
-    <ProjectSummary :projects="projectStore.belongsProjects" :user-store="userStore" v-if="projectStore.belongsProjects.length > 0" />
+    <ProjectSummary :users="userStore.getUsers()" :projects="projectStore.belongingProjects" :user-store="userStore"
+      v-if="projectStore.belongingProjects.length > 0" />
   </main>
 </template>
 

@@ -22,7 +22,7 @@ const userStore = useUserStore()
 const submitHandler = async (): void => {
   try {
     await userStore.login(loginModel.value.email, loginModel.value.password)
-    bulkFetch()
+    await bulkFetch()
     router.push("myPage")
   } catch (error: unknown) {
     if (error instanceof AxiosError) {

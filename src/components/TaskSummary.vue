@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-const {tasks, taskId} = defineProps<{tasks: Task[], taskId: string}>()
-// const task = ref(tasks.find(task => task.id == taskId))
-const tasksNumber = ref(tasks.length)
-const incompleteTaskNumber = ref(tasks.filter(task => !task.isDone).length)
+const props = defineProps<{ tasks: Task[] }>()
+const tasksNumber = ref(0)
+const incompleteTaskNumber = ref(0)
+
+watch(() => props.tasks, () => {
+  tasksNumber.value = props.tasks.length
+  incompleteTaskNumber.value = props.tasks.filter(task => !task.doneAt).length
+})
 </script>
 
 <template>
   <div id="task-summary-content">
-    <p>残課題</p>
+    <p>❌ 残課題</p>
     {{ incompleteTaskNumber }}
-    <p>完了課題</p>
-    {{ (tasks.length - incompleteTaskNumber) }}
+    <p>✅ 完了課題</p>
+    {{ (props.tasks.length - incompleteTaskNumber) }}
     <p>全体進捗率</p>
-    {{ Math.round((tasks.length - incompleteTaskNumber) / tasksNumber * 100) }} %
+    {{ Math.round((props.tasks.length - incompleteTaskNumber) / tasksNumber * 100) }} %
   </div>
-
 </template>
 
 <style scoped>
@@ -31,7 +34,7 @@ const incompleteTaskNumber = ref(tasks.filter(task => !task.isDone).length)
   border: solid;
 }
 
-.task-summary{
+.task-summary {
   font-size: 2em;
 }
 </style>
