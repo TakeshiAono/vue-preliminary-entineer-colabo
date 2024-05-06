@@ -9,7 +9,7 @@ export interface UserStore {
   getIsLogin: boolean | string
   accountCreate: (name: string, email: string, password: string) => Promise<any>
   logout: () => Promise<any>
-  currentUser: Ref<ResponseUser | null>
+  currentUser: Ref<ResponseUser>
   getCurrentUser: () => User
   haveProjectIds: Ref<string[] | null>
   getUserInfo: (id: number) => Promise<ResponseUser>

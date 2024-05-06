@@ -7,8 +7,8 @@ type ResponseUser = {
   iconUrl: string | null
   introduce: string | null
   isOwner: boolean | null
-  createdAt: string | null
-  updatedAt: string | null
+  createdAt: string
+  updatedAt: string
   userNoticeIds: number[]
   messageIds: number[]
   skillIds: number[]
@@ -27,8 +27,8 @@ type ResponseChannel = {
   name: string
   userId: number | null
   chatRoomId: number | null
-  createdAt: string | null
-  updatedAt: string | null
+  createdAt: string
+  updatedAt: string
   messageIds: number[]
 }
 
@@ -36,8 +36,8 @@ type ResponseChatRoom = {
   id: number
   name: string
   projectId: number | null
-  createdAt: string | null
-  updatedAt: string | null
+  createdAt: string
+  updatedAt: string
   channelIds: number[]
 }
 
@@ -45,8 +45,8 @@ type ResponseDirectory = {
   id: number
   name: string
   projectId: number | null
-  createdAt: string | null
-  updatedAt: string | null
+  createdAt: string
+  updatedAt: string
   fileIds: number[]
 }
 
@@ -55,8 +55,8 @@ type ResponseFile = {
   name: string
   fileUrl: string
   directoryId: number | null
-  createdAt: string | null
-  updatedAt: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 type ResponseMessage = {
@@ -65,8 +65,8 @@ type ResponseMessage = {
   content: string
   userId: number | null
   channelId: number | null
-  createdAt: string | null
-  updatedAt: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 type ResponseProject = {
@@ -75,8 +75,8 @@ type ResponseProject = {
   iconUrl: string | null
   description: string | null
   deadline: string | null
-  createdAt: string | null
-  updatedAt: string | null
+  createdAt: string
+  updatedAt: string
   ownerIds: number[]
   projectNoticeIds: number[]
   directoryIds: number[]
@@ -90,12 +90,28 @@ type ResponseTask = {
   id: number
   name: string
   doneAt: staring | null
-  deadline: staring | null //
-  description: string | null //
+  deadline: staring | null
+  description: string | null
   projectId: number | null
   inChargeUserId: number | null
-  createdAt: staring | null //
-  updatedAt: staring | null
+  createdAt: staring
+  updatedAt: staring
+}
+
+type ResponseUserNotice = {
+  id: number
+  log: string
+  userId: number
+  createdAt: staring
+  updatedAt: staring
+}
+
+type ResponseOperation = {
+  id: number
+  projectId: number
+  log: string
+  createdAt: staring
+  updatedAt: staring
 }
 
 type Task = ResponseTask

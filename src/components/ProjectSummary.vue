@@ -1,148 +1,66 @@
 <script setup lang="ts">
-import { computed, onMounted, onBeforeMount, ref, h, watch } from 'vue';
+import { onMounted, onBeforeMount, ref, watch } from 'vue';
 import ProjectDescription from './ProjectDescription.vue';
 import ProjectMemberSummary from './ProjectMemberSummary.vue';
 import MessageLog from './MessageLog.vue';
-import axios from 'axios';
-import _ from "lodash"
 import UserNotice from './UserNotice.vue';
 import OperationLog from './OperationLog.vue';
 import Dashboard from './Dashboard.vue';
 import { useProjectStore } from '@/stores/projectStore';
 import { useUserStore } from '@/stores/userStore';
+import { fetchMessagesByChannels, fetchUserNotices, fetchOperationLog, fetchTasks, fetchChannels } from "@/utils/request"
+import { sortByUpdatedAt } from "@/utils/utils"
 
-const API_URL = import.meta.env.VITE_API_SERVER_URI
-
-const props = defineProps(["projects", "users"])
+const props = defineProps<{projects: Project[], users: User[]}>()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
 
 const headProject = ref<Project>(props.projects[0])
-const members = ref([])
-const chatLogs = ref([])
-const userNoticeLogs = ref([])
-const operationLogs = ref([])
-const tasks = ref([])
+const chatLogs = ref<string[]>([])
+const userNoticeLogs = ref<ResponseUserNotice["log"][]>([])
+const operationLogs = ref<string[]>([])
+const tasks = ref<ResponseTask[]>([])
 const selectedProjectId = ref<number>(headProject.value.id)
+const usersByProject = ref<User[]>([])
 
+const currentUser = userStore.currentUser
+
+onBeforeMount(async () => {
+  usersByProject.value = getUsersByProject()
+  tasks.value = await fetchTasks(headProject.value as ResponseProject)
+})
 
 onMounted(async () => {
   if (props.projects && props.projects.length > 0) {
-    members.value = await getProjectMemberNames()
-    chatLogs.value = await fetchMessage()
-    userNoticeLogs.value = await fetchUserNotice()
-    operationLogs.value = await fetchOperationLog()
+    chatLogs.value = sortByUpdatedAt<ResponseMessage>(await fetchMessagesByChannels(await fetchChannels(selectedProject()))).map(message => message.text)
+    userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(await fetchUserNotices(currentUser)).map(userNotice => userNotice.log)
+    operationLogs.value = sortByUpdatedAt<ResponseOperation>(await fetchOperationLog(selectedProject())).map(operation => operation.log)
   }
-})
-
-onBeforeMount(async () => {
-  tasks.value = await fetchTasks()
 })
 
 watch( () => selectedProjectId.value, async () => {
   if (props.projects && props.projects.length > 0) {
-    members.value = await getProjectMemberNames()
-    chatLogs.value = await fetchMessage()
-    userNoticeLogs.value = await fetchUserNotice()
-    operationLogs.value = await fetchOperationLog()
+    chatLogs.value = sortByUpdatedAt<ResponseMessage>(await fetchMessagesByChannels(await fetchChannels(selectedProject()))).map(message => message.text)
+    userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(await fetchUserNotices(currentUser)).map(userNotice => userNotice.log)
+    operationLogs.value = sortByUpdatedAt<ResponseOperation>(await fetchOperationLog(selectedProject())).map(operation => operation.log)
   }
-  const userIds = projectStore.getUserIdsByProject(selectedProjectId.value)
-  usersByProject.value = userIds.map( userId => userStore.users.find((user) => userId == user.id) )
+  const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[]
+  usersByProject.value = userIds.map( userId => (userStore.users.find((user) => userId == user.id)) as User )
 })
 
-const getUsersByProject = () => {
-  const userIds = projectStore.getUserIdsByProject(selectedProjectId.value)
-  return userIds.map( userId => userStore.users.find((user) => userId == user.id) )
+const getUsersByProject = (): User[] => {
+  const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
+  return userIds.map( userId => userStore.users.find((user) => userId == user.id) ) as User[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
 }
 
-const usersByProject = ref<User[]>(getUsersByProject())
-
-const projectNames = computed(() => {
-  return props.projects.map(project => 
-    project.name
-  );
-})
-
-const getProjectMemberNames = async () => {
-  if(headProject.value){
-    const userIds = headProject.value.userIds
-    const names = await Promise.all(userIds.map(async (id) => {
-      const userInfo = await userStore.getUserInfo(id)
-      return userInfo.data.name
-    }));
-    return names
-  }
-}
-
-const fetchChannelIds = async () => {
-  if(selectedProjectId.value){
-    const chatRoomIds = selectedProject().chatRoomIds
-    const chatChannelIds = await Promise.all(chatRoomIds.map(async (id) => {
-      const chatRoom = await axios.get(`${API_URL}/chatRooms/${id}`)
-      return chatRoom.data.channelIds
-    }));
-    return _.flatten(chatChannelIds)
-  }
-}
-
-const selectedProject = (): Project | undefined  => {
-  return projectStore.belongingProjects.find( project => project.id == selectedProjectId.value)
-}
-
-async function fetchChannels(): Promise<ResponseChannel> {
-  const channelIds = await fetchChannelIds()
-  return await Promise.all(channelIds.map(async (id) => {
-    const channel = await axios.get(`${API_URL}/channels/${id}`)
-    return channel.data
-  }));
-}
-
-const fetchMessage = async () => {
-  const channels: ResponseChannel[] = await fetchChannels()
-  const messageIds = channels.map( channel => channel.messageIds ).flat()
-  const messages = await Promise.all(messageIds.map(async messageId => 
-    (await axios.get(`${API_URL}/messages/${messageId}`)).data
-  ))
-
-  const sortedMessagesByUpdatedAt = _.sortBy(messages, message => new Date(message.updatedAt)).reverse().map( message => message.text)
-  return sortedMessagesByUpdatedAt
-}
-
-async function fetchOperationLog(): Promise<any> {
-  const operationIds = selectedProject().operationIds
-  const operations = await Promise.all(operationIds.map(async (id) => {
-    const operation = await axios.get(`${API_URL}/operations/${id}`)
-    return operation.data
-  }));
-  const sortedoperationsByUpdatedAt = _.sortBy(operations, operation => new Date(operation.updatedAt)).reverse().map( operation => operation.log)
-  return sortedoperationsByUpdatedAt
-}
-
-async function fetchUserNotice() {
-  const userNoticeIds = userStore.currentUser.userNoticeIds
-  const userNoticeLogs = await Promise.all(userNoticeIds.map(async (id) => {
-    const userNotice = await axios.get(`${API_URL}/userNotices/${id}`)
-    return userNotice.data.log
-  }))
-  return userNoticeLogs
-}
-
-async function fetchTasks(): Promise<any> {
-  const taskIds = headProject.value.taskIds
-  return await Promise.all(taskIds.map(async (id) => {
-    const task = (await axios.get<Task>(`${API_URL}/tasks/${id}`)).data
-    task.createdAt = new Date(task.createdAt)
-    task.updatedAt = new Date(task.updatedAt)
-    task.deadline = new Date(task.deadline)
-    task.doneAt = task.doneAt && new Date(task.doneAt)
-    return task
-  }));
+const selectedProject = (): ResponseProject  => {
+  return projectStore.belongingProjects.find( project => project.id == selectedProjectId.value) as ResponseProject
 }
 
 const menuOptions = props.projects.map(project => {return {label: project.name, key: project.id}})
 
-const getProject = (id: number) => {
-  return projectStore.belongingProjects.find(project => project.id == id)
+const getProject = (id: number): Project => {
+  return projectStore.belongingProjects.find(project => project.id == id) as Project // NOTE: 所属プロジェクトがない場合はprojectSummaryは表示しないため型アサーション
 }
 </script>
 
