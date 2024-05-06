@@ -56,7 +56,7 @@ const selectTasksFromTasksByUserMaps = (tasksByUserMaps: TasksByUserMap[], selec
       <TaskSummary v-if="tasks.length != 0" :tasks="selectedTasks" />
     </div>
     <div id="tasks-graph">
-      <UserTaskSelector :users="users" :initUser="initUser" @select="selectHandler" />
+      <UserTaskSelector :users="users" :initUser="initUser" @select="selectHandler" :projectId="props.selectedProjectId" />
       <TaskGraph :user="selectedUser" :tasks="selectedTasks" />
     </div>
   </div>

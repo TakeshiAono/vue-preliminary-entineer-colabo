@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
-const props = defineProps<{ users: User[] | null, initUser: User }>()
+const props = defineProps<{ users: User[] | null, initUser: User, projectId: number }>()
 const options = ref(props.users && props.users.map(user => ({ label: user.name, value: user.id, disabled: false })))
 
 const emit = defineEmits(["select"])
@@ -15,7 +15,7 @@ watch(() => props.users, () => {
 <template>
   <div id="user-select-content">
     <p>ユーザー</p>
-    <n-select id="user-selector" :default-value="props.initUser.name" :options="options" @update:value="selectedUserNotify" />
+    <n-select :key="props.projectId" id="user-selector" :default-value="props.initUser.name" :options="options" @update:value="selectedUserNotify" />
   </div>
 </template>
 
