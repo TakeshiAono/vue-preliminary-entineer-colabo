@@ -36,6 +36,7 @@ export const useUserStore = defineStore('user', (): UserStore => {
   async function logout(): Promise<any> {
     _setToken('false', '', '')
     isLogin.value = false
+    users.value = []
   }
 
   async function getUserInfo(id: number): Promise<ResponseUser> {
