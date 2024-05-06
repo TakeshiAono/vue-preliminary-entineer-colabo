@@ -7,19 +7,20 @@ import { useUserStore } from '@/stores/userStore';
 import UserTaskSelector from './UserTaskSelector.vue';
 import { useTaskStore } from '@/stores/taskStore';
 
-const props = defineProps<{ tasks: Task[], projects: Project[], targetProjectId: string, users: User[] }>()
+const props = defineProps<{ tasks: Task[], projects: Project[], selectedProjectId: number, users: User[] }>()
 const userStore = useUserStore()
-const project = ref<Project>(props.projects.find(project => project.id.toString() == props.targetProjectId) as Project) // NOTE: Dashboard.vueはプロジェクトがないと表示させないため型アサーションを使用
+const taskStore = useTaskStore()
+
+const project = ref<Project>(props.projects.find(project => project.id == props.selectedProjectId) as Project) // NOTE: Dashboard.vueはプロジェクトがないと表示させないため型アサーションを使用
 const initUser = userStore.getCurrentUser()
 const selectedUser = ref<User>(props.users[0])
-const taskStore = useTaskStore()
 const selectedTasks = ref<Task[] | []>([])
 
 onMounted(() => {
   updateTasks()
 })
 
-watch(() => selectedUser.value, () => {
+watch([() => selectedUser.value, () => props.selectedProjectId], () => {
   updateTasks()
 })
 
@@ -34,7 +35,7 @@ const updateTasks = () => {
 
 const createTasksByUserMaps = (userIds: number[]): TasksByUserMap[] => {
   const tasks = userIds.map((userId) => {
-    return { userId: userId, tasks: taskStore.getTasksByUserByProject(parseInt(props.targetProjectId), userId) }
+    return { userId: userId, tasks: taskStore.getTasksByUserByProject(props.selectedProjectId, userId) }
   })
   return tasks
 }

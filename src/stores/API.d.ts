@@ -7,18 +7,18 @@ type ResponseUser = {
   iconUrl: string | null
   introduce: string | null
   isOwner: boolean | null
-  createdAt: Date | null
-  updatedAt: Date | null
-  userNotices: UserNotice[]
-  messages: Message[]
-  skills: Skill[]
-  roles: Role[]
-  channels: Channel[]
-  offers: Offer[]
-  tasks: Task[]
-  scoutedOffers: Offer[]
-  followers: Follower[]
-  projects: Project[]
+  createdAt: string | null
+  updatedAt: string | null
+  userNoticeIds: number[]
+  messageIds: number[]
+  skillIds: number[]
+  roleIds: number[]
+  channelIds: number[]
+  offerIds: number[]
+  taskIds: number[]
+  scoutedOfferIds: number[]
+  followerIds: number[]
+  projectIds: number[]
 }
 type User = ResponseUser
 
@@ -27,27 +27,27 @@ type ResponseChannel = {
   name: string
   userId: number | null
   chatRoomId: number | null
-  createdAt: Date | null
-  updatedAt: Date | null
-  messages: Message[]
+  createdAt: string | null
+  updatedAt: string | null
+  messageIds: number[]
 }
 
 type ResponseChatRoom = {
   id: number
   name: string
   projectId: number | null
-  createdAt: Date | null
-  updatedAt: Date | null
-  channels: Channel[]
+  createdAt: string | null
+  updatedAt: string | null
+  channelIds: number[]
 }
 
 type ResponseDirectory = {
   id: number
   name: string
   projectId: number | null
-  createdAt: Date | null
-  updatedAt: Date | null
-  files: File[]
+  createdAt: string | null
+  updatedAt: string | null
+  fileIds: number[]
 }
 
 type ResponseFile = {
@@ -55,8 +55,8 @@ type ResponseFile = {
   name: string
   fileUrl: string
   directoryId: number | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  createdAt: string | null
+  updatedAt: string | null
 }
 
 type ResponseMessage = {
@@ -65,8 +65,8 @@ type ResponseMessage = {
   content: string
   userId: number | null
   channelId: number | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  createdAt: string | null
+  updatedAt: string | null
 }
 
 type ResponseProject = {
@@ -74,28 +74,28 @@ type ResponseProject = {
   name: string
   iconUrl: string | null
   description: string | null
-  deadline: Date | null
-  createdAt: Date | null
-  updatedAt: Date | null
-  owners: Owner[]
-  projectNotices: ProjectNotice[]
-  directories: Directory[]
-  chatRooms: ChatRoom[]
-  operations: Operation[]
-  tasks: Task[]
-  users: User[]
+  deadline: string | null
+  createdAt: string | null
+  updatedAt: string | null
+  ownerIds: number[]
+  projectNoticeIds: number[]
+  directoryIds: number[]
+  chatRoomIds: number[]
+  operationIds: number[]
+  taskIds: number[]
+  userIds: number[]
 }
 
 type ResponseTask = {
   id: number
   name: string
-  doneAt: Date | null
-  deadline: Date | null //
+  doneAt: staring | null
+  deadline: staring | null //
   description: string | null //
   projectId: number | null
   inChargeUserId: number | null
-  createdAt: Date | null //
-  updatedAt: Date | null
+  createdAt: staring | null //
+  updatedAt: staring | null
 }
 
 type Task = ResponseTask

@@ -1,15 +1,21 @@
 <script setup lang="ts">
-const { users, initUser } = defineProps<{ users: User[] | null, initUser: User }>()
-const options = users && users.map(user => ({ label: user.name, value: user.id, disabled: false }))
+import { ref, watch } from 'vue';
+
+const props = defineProps<{ users: User[] | null, initUser: User }>()
+const options = ref(props.users && props.users.map(user => ({ label: user.name, value: user.id, disabled: false })))
 
 const emit = defineEmits(["select"])
 const selectedUserNotify = (user: User) => { emit("select", user) }
+
+watch(() => props.users, () => {
+  options.value = props.users && props.users.map(user => ({ label: user.name, value: user.id, disabled: false }))
+})
 </script>
 
 <template>
   <div id="user-select-content">
     <p>ユーザー</p>
-    <n-select id="user-selector" :default-value="initUser.name" :options="options" @update:value="selectedUserNotify" />
+    <n-select id="user-selector" :default-value="props.initUser.name" :options="options" @update:value="selectedUserNotify" />
   </div>
 </template>
 

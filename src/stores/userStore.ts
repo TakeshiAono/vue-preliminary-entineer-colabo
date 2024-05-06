@@ -15,6 +15,7 @@ export interface UserStore {
   getUserInfo: (id: number) => Promise<ResponseUser>
   addUsersByProject: (project: Project) => void
   getUsers: () => void
+  users: User[]
 }
 
 export const useUserStore = defineStore('user', (): UserStore => {
@@ -111,6 +112,7 @@ export const useUserStore = defineStore('user', (): UserStore => {
 
   return {
     isLogin,
+    users,
     login,
     getIsLogin,
     accountCreate,
@@ -121,5 +123,12 @@ export const useUserStore = defineStore('user', (): UserStore => {
     getUserInfo,
     addUsersByProject,
     getUsers
+  }
+}, {
+  persist: {
+    storage: sessionStorage,
+    paths: [
+      'users'
+    ]
   }
 })
