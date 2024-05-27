@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 const keyword = ref("")
 const fromDate = ref<Date | null>(null)
@@ -32,15 +32,6 @@ const selectSkill = (event) => {
   event.target.value = null
 }
 
-const formValue = computed(() => {
-  return {
-    keyword: keyword.value,
-  }
-})
-
-const rules = {
-}
-
 const submit = () => {
   console.log(keyword.value, fromDate.value, selectedMeetingFrequency.value, projectMemberCount.value)
 }
@@ -48,14 +39,6 @@ const submit = () => {
 
 <template>
   <div id="searchContent">
-    <n-form
-      ref="formRef"
-      inline
-      :label-width="80"
-      :model="formValue"
-      :rules="rules"
-    >
-    </n-form>
     <span>検索キーワード</span>
     <n-input
       id = "keyword"
