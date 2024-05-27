@@ -10,11 +10,11 @@ const selectedMeetingFrequency = ref<string[]>([])
 
 const selectableSkills = [
   [null, null],
-  ["AWS", 4],
-  ["Java", 3],
-  ["Vue.js", 2],
-  ["React", 1],
-  ["JavaScript", 0]
+  ["AWS", 4, "red", "black"],
+  ["Java", 3, "blue", "white"],
+  ["Vue.js", 2, "green", "white"],
+  ["React", 1, "yellow", "black"],
+  ["JavaScript", 0, "pink", "black"]
 ]
 
 const meetingFrequencies: {label: string, value: number, disabled: boolean}[] = [
@@ -26,8 +26,9 @@ const meetingFrequencies: {label: string, value: number, disabled: boolean}[] = 
 ]
 
 const selectSkill = (event) => {
-  const skillName = selectableSkills.find(skill => skill[1] == event.target.value)[0]
-  selectedSkills.value.push(skillName)
+  const skill = selectableSkills.find(skill => skill[1] == event.target.value)
+  selectedSkills.value.push(skill)
+  selectedSkills.value = Array.from(new Set(selectedSkills.value))
   event.target.value = null
 }
 
@@ -43,7 +44,6 @@ const rules = {
 const submit = () => {
   console.log(keyword.value, fromDate.value, selectedMeetingFrequency.value, projectMemberCount.value)
 }
-
 </script>
 
 <template>
@@ -81,7 +81,7 @@ const submit = () => {
       <span>
         <div id="tagSearchBox">
           <div v-for="skill in selectedSkills">
-            <div :key="skill">{{skill}}</div>
+            <div class="tag" :key="skill[1]" :style="{ backgroundColor: skill[2], color: skill[3] }">{{skill[0]}}</div>
           </div>
           <select id="tagPicker" @change="selectSkill($event)">
             <option :key="skill[1]" v-for="skill in selectableSkills" :value="skill[1]">{{skill[0]}}</option>
@@ -105,7 +105,6 @@ const submit = () => {
       検索
       </n-button>
     </div>
-    {{ keyword }}
   </div>
 </template>
 
@@ -130,12 +129,11 @@ const submit = () => {
 }
 
 #tagSearchBox {
-  display: flex;
+  display: inline-flex;
   justify-content: flex-start;
   align-items: center;
   border: 1px solid;
   height: 1.8rem;
-  width: 300px;
   border-radius: 3px;
   border-color:rgb(214, 212, 212)
 }
@@ -143,6 +141,7 @@ const submit = () => {
 #tagPicker {
   margin-left: auto;
   margin-right: 5px;
+  width: 50px;
 }
 
 #searchSubmit {
@@ -151,7 +150,6 @@ const submit = () => {
 }
 
 .tag {
-  background-color: green;
   border-radius: 20px;
   padding: 0px 10px;
   margin: 5px 2px;
