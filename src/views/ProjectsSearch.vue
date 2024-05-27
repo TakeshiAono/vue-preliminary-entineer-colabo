@@ -2,6 +2,7 @@
 import { useUserStore } from '@/stores/userStore';
 import axios from 'axios';
 import { onMounted, ref, watch } from 'vue';
+import ProjectSearchBox from '@/components/ProjectSearchBox.vue';
 
 const userStore = useUserStore()
 const projects = ref([])
@@ -22,6 +23,7 @@ async function fetchProjects() {
     <p>{{ projects.map(project => project.name) }}</p>
     <h1>ProjectsSearchPage</h1>
     <p>ログイン中: {{ userStore.isLogin }}</p>
+    <ProjectSearchBox/>
   </main>
 </template>
 
