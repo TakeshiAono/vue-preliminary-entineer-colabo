@@ -143,6 +143,7 @@ const submit = () => {
   border: solid;
   border-radius: 20px;
   padding: 30px;
+  margin: 20px;
 }
 
 #tagSearchBox {
