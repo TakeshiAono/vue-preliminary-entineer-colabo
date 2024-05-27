@@ -33,34 +33,58 @@ const selectSkill = (event) => {
 }
 
 const submit = () => {
-  console.log(keyword.value, fromDate.value, selectedMeetingFrequency.value, projectMemberCount.value)
 }
 </script>
 
 <template>
   <div id="searchContent">
-    <span>検索キーワード</span>
-    <n-input
-      id = "keyword"
-      v-model:value="keyword"
-      type="text"
-      placeholder=""
-    />
-    <span>目標完了日</span>
-    <n-input
-      class="datePicker"
-      v-model:value="fromDate"
-      type="date"
-      placeholder=""
-    /> ~
-    <n-input
-      class="datePicker"
-      v-model:value="toDate"
-      type="date"
-      placeholder=""
-    />
+    <div id="row1SearchGridContainer">
+      <div>
+        <span>検索キーワード: </span>
+        <n-input
+          id = "keyword"
+          v-model:value="keyword"
+          type="text"
+          placeholder=""
+        />
+      </div>
+      <div>
+        <span>目標完了日: </span>
+        <n-input
+          class="datePicker"
+          v-model:value="fromDate"
+          type="date"
+          placeholder=""
+        /> ~
+        <n-input
+          class="datePicker"
+          v-model:value="toDate"
+          type="date"
+          placeholder=""
+        />
+      </div>
+    </div>
+    <div id="row2SearchGridContainer">
+      <div>
+        <span>プロジェクトメンバ数: </span>
+        <n-input
+          class="input"
+          v-model:value="projectMemberCount"
+          type="number"
+          min="0"
+          pattern="^[0-9]+$"
+          placeholder=""
+        />
+      </div>
+      <div class="flex-container">
+        <span>ミーティング頻度: </span>
+        <span>
+          <n-select id="meetingFrequency" class="input" v-model:value="selectedMeetingFrequency" :options="meetingFrequencies" placeholder="" />
+        </span>
+      </div>
+    </div>
     <div>
-      <span>関連技術</span>
+      <span>関連技術(and条件)</span>
       <span>
         <div id="tagSearchBox">
           <div v-for="skill in selectedSkills">
@@ -72,17 +96,6 @@ const submit = () => {
         </div>
       </span>
     </div>
-    <span>プロジェクトメンバ数</span>
-    <n-input
-      class="input"
-      v-model:value="projectMemberCount"
-      type="number"
-      min="0"
-      pattern="^[0-9]+$"
-      placeholder=""
-    />
-    <span>ミーティング頻度</span>
-    <n-select class="input" v-model:value="selectedMeetingFrequency" :options="meetingFrequencies" placeholder="" />
     <div>
       <n-button type="primary" id="searchSubmit" @click="submit()">
       検索
@@ -96,6 +109,23 @@ const submit = () => {
   width: 200px;
 }
 
+.flex-container {
+  display: flex;
+  align-items: center;
+}
+
+#row1SearchGridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 20px;
+}
+
+#row2SearchGridContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 20px;
+}
+
 .datePicker {
   width: 150px;
 }
@@ -103,6 +133,10 @@ const submit = () => {
 #tagPicker {
   border: none;
   outline: none;
+}
+
+#meetingFrequency {
+  display: block;
 }
 
 #searchContent {
@@ -116,7 +150,7 @@ const submit = () => {
   justify-content: flex-start;
   align-items: center;
   border: 1px solid;
-  height: 1.8rem;
+  height: 2rem;
   border-radius: 3px;
   border-color:rgb(214, 212, 212)
 }
