@@ -32,7 +32,7 @@ const router = createRouter({
       component: ProjectsSearch
     },
     {
-      path: '/project/:id',
+      path: '/projects/:id',
       name: 'projectShow',
       component: ProjectView,
       props: true

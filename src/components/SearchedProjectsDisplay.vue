@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import router from '@/router';
 import axios from 'axios';
 import _ from 'lodash';
 import { ref, watch } from 'vue';
@@ -29,12 +30,11 @@ const getProjectUser = (projectId: number) => {
   const projectUserMap = projectUserMaps.value.find(projectUserMap => projectUserMap.projectId === projectId)
   return projectUserMap && projectUserMap.user
 }
-
 </script>
 
 <template>
   <div :key="project.id" v-for="project in props.searchedProjects">
-    <div class="projectCard">
+    <div class="projectCard" @click="router.push({path: `/projects/${project.id}`})">
       <div class="cardHeader">
         <h1>{{ project.name }}</h1>
         <div>
@@ -92,6 +92,7 @@ h2 {
   padding: 10px;
   border-radius: 10px;
   width: 90%;
+  cursor: pointer;
 }
 
 .descriptionContent,.technologyContent,.recruitingMemberJobContent,.recruitingTextContent {
