@@ -80,7 +80,7 @@ type ResponseProject = {
   useTechnology: Object
   recruitingMemberJob: Object
   recruitingText: string
-  ownerIds: number[]
+  ownerId: number
   projectNoticeIds: number[]
   directoryIds: number[]
   chatRoomIds: number[]

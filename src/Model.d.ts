@@ -3,6 +3,7 @@ type Project = Pick<
   | 'id'
   | 'name'
   | 'iconUrl'
+  | 'ownerId'
   | 'description'
   | 'useTechnology'
   | 'chatRoomIds'
