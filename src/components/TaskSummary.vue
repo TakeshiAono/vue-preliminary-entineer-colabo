@@ -18,7 +18,7 @@ watch(() => props.tasks, () => {
     <p>✅ 完了課題</p>
     {{ (props.tasks.length - incompleteTaskNumber) }}
     <p>全体進捗率</p>
-    {{ Math.round((props.tasks.length - incompleteTaskNumber) / tasksNumber * 100) }} %
+    {{ Math.round((props.tasks.length - incompleteTaskNumber) / tasksNumber * 100) || 0 }} %
   </div>
 </template>
 

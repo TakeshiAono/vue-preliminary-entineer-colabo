@@ -1,4 +1,4 @@
-type Project = Pick<ResponseProject, 'id' | 'name' | 'iconUrl' | 'description'>
+type Project = Pick<ResponseProject, 'id' | 'name' | 'iconUrl' | 'description' | 'deadline'>
 
 type Task = Pick<
   ResponseTask,
@@ -9,6 +9,7 @@ type Task = Pick<
   | 'projectId'
   | 'inChargeUserId'
   | 'description'
+  | 'milestoneId'
   | 'createdAt'
   | 'updatedAt'
 >
@@ -37,6 +38,16 @@ type User = Pick<
   | 'password'
   | 'iconUrl'
   | 'introduce'
+  | 'createdAt'
+  | 'updatedAt'
+>
+
+type Milestone = Pick<
+  ResponseMilestone,
+  | 'id'
+  | 'name'
+  | 'deadline'
+  | 'taskIds'
   | 'createdAt'
   | 'updatedAt'
 >
