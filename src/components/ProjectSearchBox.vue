@@ -1,15 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import router from '@/router';
+import { nextTick, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { useProjectStore } from '@/stores/projectStore';
 
-const keyword = ref("")
+const emits = defineEmits<{e: "searchedProjects", value: Project}>()
+const route = useRoute()
+const projectStore = useProjectStore();
+
+const keyword = ref(null)
 const fromDate = ref<Date | null>(null)
 const toDate = ref<Date | null>(null)
 const projectMemberCount = ref<number | null>(null)
 const selectedSkills = ref<string[]>([])
-const selectedMeetingFrequency = ref<string[]>([])
+const selectedMeetingFrequency = ref<string>(null)
 
 const selectableSkills = [
   [null, null],
+  ["FastAPI", 8, "blue", "white"],
+  ["Rails", 7, "red", "black"],
+  ["Python", 6, "skyblue", "black"],
+  ["Ruby", 5, "red", "black"],
   ["AWS", 4, "red", "black"],
   ["Java", 3, "blue", "white"],
   ["Vue.js", 2, "green", "white"],
@@ -17,12 +28,12 @@ const selectableSkills = [
   ["JavaScript", 0, "pink", "black"]
 ]
 
-const meetingFrequencies: {label: string, value: number, disabled: boolean}[] = [
-  {label: "週3回以上", value: 4, disabled: false},
-  {label: "週1回~2回", value: 3, disabled: false},
-  {label: "月2回~3回", value: 2, disabled: false},
-  {label: "月1回~2回", value: 1, disabled: false},
-  {label: "月1回以下", value: 0, disabled: false},
+const meetingFrequencies: {label: string, value: string, disabled: boolean}[] = [
+  {label: "週3回以上", value: "4", disabled: false},
+  {label: "週1回~2回", value: "3", disabled: false},
+  {label: "月2回~3回", value: "2", disabled: false},
+  {label: "月1回~2回", value: "1", disabled: false},
+  {label: "月1回以下", value: "0", disabled: false},
 ]
 
 const selectSkill = (event) => {
@@ -32,7 +43,22 @@ const selectSkill = (event) => {
   event.target.value = null
 }
 
-const submit = () => {
+const submit = async () => {
+  const keywordParams = !keyword.value ? null : `keyword=${keyword.value}`
+  const fromDateParams = !fromDate.value ? null : `fromDate=${fromDate.value}`
+  const toDateParams = !toDate.value ? null : `toDate=${toDate.value}`
+  const projectMemberCountParams = projectMemberCount.value == null ? null : `projectMemberCount=${projectMemberCount.value}`
+  const selectedMeetingFrequencyParams = !selectedMeetingFrequency.value ? null : `selectedMeetingFrequency=${selectedMeetingFrequency.value}`
+
+  const arrayToQueryString = (key, array) => {
+    return array.map(value => `${key}=${encodeURIComponent(value)}`).join("&");
+  };
+
+  const selectedSkillsParams = selectedSkills.value.length === 0 ? null : arrayToQueryString('selectedSkills', selectedSkills.value.map(skillArray => skillArray[0]))
+  const paramsArray = [keywordParams, fromDateParams, toDateParams, projectMemberCountParams, selectedSkillsParams, selectedMeetingFrequencyParams]
+  const queryString = paramsArray.filter(value => value).join("&")
+  const response = await projectStore.searchProjects(queryString)
+  emits("searchedProjects", response)
 }
 </script>
 
@@ -84,7 +110,7 @@ const submit = () => {
       </div>
     </div>
     <div>
-      <span>関連技術(and条件)</span>
+      <span>関連技術(and条件): </span>
       <span>
         <div id="tagSearchBox">
           <div v-for="skill in selectedSkills">

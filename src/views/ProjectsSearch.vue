@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/userStore';
 import axios from 'axios';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import ProjectSearchBox from '@/components/ProjectSearchBox.vue';
 import SearchedProjectsDisplay from "@/components/SearchedProjectsDisplay.vue"
 
-const userStore = useUserStore()
 const projects = ref([])
 
 onMounted(async () => {
@@ -22,7 +21,7 @@ async function fetchProjects() {
 <template>
   <main>
     <h1>ProjectsSearchPage</h1>
-    <ProjectSearchBox/>
+    <ProjectSearchBox @searchedProjects="(searchedProjects) => {projects = searchedProjects}"/>
     <SearchedProjectsDisplay :searchedProjects="projects" />
   </main>
 </template>
