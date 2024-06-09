@@ -97,6 +97,7 @@ type ResponseTask = {
   description: string | null
   projectId: number | null
   inChargeUserId: number | null
+  milestoneId: number | null
   createdAt: staring
   updatedAt: staring
 }
@@ -129,4 +130,19 @@ type TasksMap = TasksOfProject
 type TasksByUserMap = {
   userId: number
   tasks: Task[]
+}
+
+type ResponseMilestone = {
+  id: number
+  name: string
+  deadline: string | null
+  taskIds: number[]
+  createdAt?: string
+  updatedAt?: string
+}
+
+type ResponseSearchTasks = {
+  projectId: number;
+  userId: number;
+  tasks: ResponseTask[]
 }

@@ -45,9 +45,20 @@ export const useTaskStore = defineStore('task', () => {
     return tasksMaps.value.filter((tasksMap: TasksMap) => tasksMap.projectId == projectId)[0].tasks
   }
 
-  function getTasksByUserByProject(projectId: number, userId: number): Task[] {
-    const tasksByProject = getTasksByProject(projectId)
-    return _.groupBy(tasksByProject, (task) => task.inChargeUserId)[userId]
+  async function searchTasks(projectId: number, userId: number, milestoneId: number | undefined): Promise<ResponseTask[]> {
+    const params = {
+      projectId,
+      userId,
+      milestoneId
+    }
+
+    const response = await axios.get<ResponseSearchTasks>(
+      `${API_URL}/tasks`,
+      { params }
+    )
+    const responseTasks: ResponseTask[] = response.data.tasks
+
+    return responseTasks
   }
 
   return {
@@ -58,7 +69,7 @@ export const useTaskStore = defineStore('task', () => {
     setProjectIds,
     getTasksMaps,
     getTasksByProject,
-    getTasksByUserByProject
+    searchTasks
   }
 }, {
   persist: {

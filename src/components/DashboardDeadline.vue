@@ -1,11 +1,24 @@
 <script setup lang="ts">
-const {project} = defineProps(["project"])
+import { computed } from "vue";
+
+const props = defineProps<{
+  deadline: string;
+}>();
+
+const calcDeadline = (date: string) => {
+  return Math.round(
+    (new Date(date).getTime() - Date.now()) / (1000 * 3600 * 24)
+  ).toString()
+}
+
+const deadline = computed(() => calcDeadline(props.deadline))
+
 </script>
 
 <template>
   <div id="deadline-content">
-    <p>完成予定日まで</p>
-    <span>あと</span><span class="deadline">{{ Math.round((new Date(project.deadline).getTime() - Date.now()) / (1000 * 3600 * 24)) }}日</span>
+    <p>期日まで</p>
+    <span>あと</span><span class="deadline">{{ deadline }}日</span>
   </div>
 
 </template>

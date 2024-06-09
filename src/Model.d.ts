@@ -24,6 +24,7 @@ type Task = Pick<
   | 'updatedAt'
   | 'project'
   | 'user'
+  | 'milestoneId'
 >
 
 type User = Pick<
@@ -35,6 +36,16 @@ type User = Pick<
   | 'password'
   | 'iconUrl'
   | 'introduce'
+  | 'createdAt'
+  | 'updatedAt'
+>
+
+type Milestone = Pick<
+  ResponseMilestone,
+  | 'id'
+  | 'name'
+  | 'deadline'
+  | 'taskIds'
   | 'createdAt'
   | 'updatedAt'
 >
