@@ -77,7 +77,10 @@ type ResponseProject = {
   deadline: string | null
   createdAt: string
   updatedAt: string
-  ownerIds: number[]
+  useTechnology: Object
+  recruitingMemberJob: Object
+  recruitingText: string
+  ownerId: number
   projectNoticeIds: number[]
   directoryIds: number[]
   chatRoomIds: number[]

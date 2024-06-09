@@ -12,6 +12,11 @@ export const useProjectStore = defineStore('project', () => {
     return response.data
   }
 
+  async function searchProjects(queryParamasString: string): Promise<ResponseProject> {
+    const response = await axios.get(`${API_URL}/projects/search?${queryParamasString}`)
+    return response.data
+  }
+
   function getBelongingProjectIds() {
     return belongingProjects.value.map((belongingProject) => belongingProject.id)
   }
@@ -32,5 +37,5 @@ export const useProjectStore = defineStore('project', () => {
     return projectUsersMaps.value.find(projectUsersMap => projectUsersMap.projectId == projectId)?.userIds
   }
 
-  return { belongingProjects, projectUsersMaps, fetchProject, setProjects, getBelongingProjectIds, getUserIdsByProject }
+  return { belongingProjects, projectUsersMaps, fetchProject, setProjects, getBelongingProjectIds, getUserIdsByProject, searchProjects }
 })
