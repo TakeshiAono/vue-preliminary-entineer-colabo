@@ -1,20 +1,18 @@
-type Project = Pick<ResponseProject, 'id' | 'name' | 'iconUrl' | 'description'>
-
-type Task = Pick<
-  ResponseTask,
+type Project = Pick<
+  ResponseProject,
   | 'id'
   | 'name'
-  | 'deadline'
-  | 'doneAt'
-  | 'projectId'
-  | 'inChargeUserId'
+  | 'iconUrl'
+  | 'ownerId'
   | 'description'
-  | 'createdAt'
-  | 'updatedAt'
+  | 'useTechnology'
+  | 'chatRoomIds'
+  | 'recruitingText'
+  | 'recruitingMemberJob'
 >
 
 type Task = Pick<
-  Task,
+  ResponseTask,
   | 'id'
   | 'name'
   | 'doneAt'
