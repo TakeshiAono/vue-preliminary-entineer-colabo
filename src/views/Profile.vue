@@ -1,32 +1,22 @@
-<script setup lang="ts">
-import router from '@/router';
-import { useUserStore } from '@/stores/userStore';
-import axios from 'axios';
-import { computed, ref } from 'vue';
-import { RouterView } from 'vue-router';
-
-const userStore = useUserStore()
-// const data = ref(0)
-</script>
-
 <template>
   <main>
-    <h1>Profile</h1>
-    <p>氏名1{{ userStore.currentUser.name }}</p>
-    <p>登録メールアドレス{{ userStore.currentUser.email }}</p>
+    <h1 v-if="userStore.currentUser">{{ userStore.currentUser.name }}さんのプロフィール</h1>
+    <UserIntroduction v-if="userStore.currentUser" />
+    <UserProjects />
   </main>
 </template>
 
-<style scoped>
-p {
-  background-color: red;
-}
+<script setup lang="ts">
+import UserIntroduction from '@/components/UserIntroduction.vue';
+import UserProjects from '@/components/UserProjects.vue';
+import { useProjectStore } from '@/stores/projectStore';
+import { useUserStore } from '@/stores/userStore';
+import { onMounted } from 'vue';
 
-header {
-  background-color: blue;
-}
+const userStore = useUserStore();
+const projectStore = useProjectStore();
 
-footer {
-  background-color: yellow;
-}
-</style>
+onMounted(async () => {
+  await projectStore.fetchAllProjects();
+});
+</script>
