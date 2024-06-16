@@ -38,3 +38,18 @@ export default defineConfig({
 参考:
 https://zenn.dev/hctaw_srp/articles/1f7f67de03d710
 
+
+
+# PUSH時とか
+
+push前に以下のコマンドを実行してformat/lintする｡
+
+format
+```
+npm run format
+```
+
+lint
+```
+npm run lint
+```
