@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
-import axios from 'axios'
+import { defineStore } from "pinia"
+import axios from "axios"
 
-export const useMilestoneStore = defineStore('milestone', () => {
+export const useMilestoneStore = defineStore("milestone", () => {
   const API_URL = import.meta.env.VITE_API_SERVER_URI
 
   async function fetchMilestones(projectId: number): Promise<ResponseMilestone[]> {

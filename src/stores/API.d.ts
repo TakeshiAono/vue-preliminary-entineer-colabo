@@ -142,7 +142,7 @@ type ResponseMilestone = {
 }
 
 type ResponseSearchTasks = {
-  projectId: number;
-  userId: number;
+  projectId: number
+  userId: number
   tasks: ResponseTask[]
 }

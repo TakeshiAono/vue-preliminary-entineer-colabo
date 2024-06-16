@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import router from '@/router';
-import { useUserStore } from '@/stores/userStore';
-import { ref } from 'vue';
+import router from "@/router"
+import { useUserStore } from "@/stores/userStore"
+import { ref } from "vue"
 
 type AccountModel = {
   email: string | null
@@ -21,7 +21,8 @@ const errorVisible = ref<boolean>(false)
 const userStore = useUserStore()
 
 const submitHandler = (): void => {
-  userStore.accountCreate(accountModel.value.name, accountModel.value.email, accountModel.value.password)
+  userStore
+    .accountCreate(accountModel.value.name, accountModel.value.email, accountModel.value.password)
     .then(() => {
       router.push("myPage")
     })
@@ -51,8 +52,15 @@ const submitHandler = (): void => {
         </n-form-item>
         <div style="display: flex; justify-content: flex-end">
           <n-button
-            :disabled="(accountModel.name == null || accountModel.email == null || accountModel.password == null)" round
-            type="primary" @click="submitHandler">
+            :disabled="
+              accountModel.name == null ||
+              accountModel.email == null ||
+              accountModel.password == null
+            "
+            round
+            type="primary"
+            @click="submitHandler"
+          >
             Register
           </n-button>
         </div>

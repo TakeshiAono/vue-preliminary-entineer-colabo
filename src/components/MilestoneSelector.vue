@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from "vue";
-import { useMilestoneStore } from '@/stores/milestoneStore';
+import { ref, computed, watch, onMounted } from "vue"
+import { useMilestoneStore } from "@/stores/milestoneStore"
 
 const props = defineProps<{
-	projectId: number;
-}>();
+  projectId: number
+}>()
 
 const milestoneStore = useMilestoneStore()
 
-const emit = defineEmits(["select"]);
-
+const emit = defineEmits(["select"])
 
 const milestones = ref<Milestone[]>([])
 const selectedMilestone = ref<number | undefined>(undefined)
@@ -19,27 +18,29 @@ const fetchMilestones = async () => {
   selectedMilestone.value = undefined
 }
 
-watch(() => props.projectId, () => {
-  fetchMilestones()
-})
+watch(
+  () => props.projectId,
+  () => {
+    fetchMilestones()
+  },
+)
 
 watch(selectedMilestone, (milestoneId) => {
-  const milestone = milestones.value.find(milestone => milestone.id === milestoneId);
-  emit("select", milestone);
-});
+  const milestone = milestones.value.find((milestone) => milestone.id === milestoneId)
+  emit("select", milestone)
+})
 
 onMounted(() => {
   fetchMilestones()
 })
 
-
 const milestoneOptions = computed(() => [
-  {label: "プロジェクト全体", value: undefined},
-  ...milestones.value.map(milestone => ({
-    label: milestone.name, value: milestone.id
-  }))
+  { label: "プロジェクト全体", value: undefined },
+  ...milestones.value.map((milestone) => ({
+    label: milestone.name,
+    value: milestone.id,
+  })),
 ])
-
 </script>
 
 <template>

@@ -5,7 +5,9 @@ const props = defineProps(["userNoticeLogs"])
 <template>
   <h1 id="project-user-notice-title">お知らせ</h1>
   <div id="project-user-notice-content">
-    <p class="user-notice" v-for="userNotice in props.userNoticeLogs" :key="userNotice">{{ userNotice }}</p>
+    <p class="user-notice" v-for="userNotice in props.userNoticeLogs" :key="userNotice">
+      {{ userNotice }}
+    </p>
   </div>
 </template>
 
@@ -21,7 +23,7 @@ const props = defineProps(["userNoticeLogs"])
   border: solid;
 }
 
-.user-notice{
+.user-notice {
   margin: 5px;
 }
 </style>

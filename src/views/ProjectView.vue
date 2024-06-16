@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import router from '@/router';
-import { useUserStore } from '@/stores/userStore';
-import axios from 'axios';
-import { computed, ref } from 'vue';
-import { RouterView } from 'vue-router';
+import router from "@/router"
+import { useUserStore } from "@/stores/userStore"
+import axios from "axios"
+import { computed, ref } from "vue"
+import { RouterView } from "vue-router"
 
 const userStore = useUserStore()
 </script>

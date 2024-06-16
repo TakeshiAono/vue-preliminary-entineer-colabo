@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from "vue"
 
 const props = defineProps<{
-  deadline: string;
-}>();
+  deadline: string
+}>()
 
 const calcDeadline = (date: string) => {
-  return Math.round(
-    (new Date(date).getTime() - Date.now()) / (1000 * 3600 * 24)
-  ).toString()
+  return Math.round((new Date(date).getTime() - Date.now()) / (1000 * 3600 * 24)).toString()
 }
 
 const deadline = computed(() => calcDeadline(props.deadline))
-
 </script>
 
 <template>
@@ -20,7 +17,6 @@ const deadline = computed(() => calcDeadline(props.deadline))
     <p>期日まで</p>
     <span>あと</span><span class="deadline">{{ deadline }}日</span>
   </div>
-
 </template>
 
 <style scoped>
@@ -35,7 +31,7 @@ const deadline = computed(() => calcDeadline(props.deadline))
   border: solid;
 }
 
-.deadline{
+.deadline {
   font-size: 2em;
 }
 </style>

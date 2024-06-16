@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import NavigationBar from './components/NavigationBar.vue';
-import { bulkFetch } from './utils/bulk';
+import { RouterView } from "vue-router"
+import NavigationBar from "./components/NavigationBar.vue"
+import { bulkFetch } from "./utils/bulk"
 
 bulkFetch()
 </script>
