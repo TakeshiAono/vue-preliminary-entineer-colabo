@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useProjectStore } from '@/stores/projectStore';
 import { useUserStore } from '@/stores/userStore';
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 
 const userStore = useUserStore();
 const projectStore = useProjectStore();
@@ -17,6 +17,10 @@ function getUserProjectNames(projectIds: number[]) {
     return project ? project.name : 'Unknown Project';
   });
 }
+
+onMounted(async () => {
+  await projectStore.fetchAllProjects();
+});
 </script>
 
 <template>

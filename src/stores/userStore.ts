@@ -1,7 +1,7 @@
-import { ref, type Ref } from 'vue'
-import { defineStore } from 'pinia'
-import VueCookies from 'vue-cookies'
 import axios from 'axios'
+import { defineStore } from 'pinia'
+import { ref, type Ref } from 'vue'
+import VueCookies from 'vue-cookies'
 
 export interface UserStore {
   isLogin: Ref<boolean | string>
@@ -11,7 +11,7 @@ export interface UserStore {
   logout: () => Promise<any>
   currentUser: Ref<ResponseUser>
   getCurrentUser: () => User
-  haveProjectIds: Ref<string[] | null>
+  haveProjectIds: Ref<number[] | null>
   getUserInfo: (id: number) => Promise<ResponseUser>
   addUsersByProject: (project: Project) => void
   getUsers: () => void
@@ -23,7 +23,7 @@ export const useUserStore = defineStore('user', (): UserStore => {
   const isLogin = ref(VueCookies.get('token'))
   const currentUser = ref<ResponseUser | null>(null)
   const users = ref<User[]>([])
-  const haveProjectIds = ref<string[] | null>(null)
+  const haveProjectIds = ref<number[] | null>(null)
 
   async function login(email: string, password: string): Promise<any> {
     const response = await axios.post(`${API_URL}/login`, { password: password, email: email })
@@ -83,7 +83,7 @@ export const useUserStore = defineStore('user', (): UserStore => {
     return responseUser.data
   }
 
-  async function _storeProjectIds(projectIds: nubmer[]) {
+  async function _storeProjectIds(projectIds: number[]) {
     haveProjectIds.value = projectIds
   }
 
