@@ -59,3 +59,13 @@ type Skill = Pick<
   | 'createdAt'
   | 'updatedAt'
 >
+
+type Role = Pick<
+  ResponseRole,
+  | 'id'
+  | 'name'
+  | 'countLog'
+  | 'userId'
+  | 'createdAt'
+  | 'updatedAt'
+>

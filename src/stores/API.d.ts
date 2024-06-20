@@ -155,3 +155,12 @@ type ResponseSkill = {
   createdAt?: string
   updatedAt?: string
 }
+
+type ResponseRole = {
+  id: number
+  name: string
+  countLog: number
+  UserId: number
+  createdAt?: string
+  updatedAt?: string
+}

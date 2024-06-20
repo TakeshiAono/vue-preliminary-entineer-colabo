@@ -5,7 +5,6 @@
     <UserProjects />
     <UserFollowers />
     <UserSkills />
-    <p>ロール経験{{ userStore.currentUser.roleIds }}</p>
   </main>
 </template>
 
