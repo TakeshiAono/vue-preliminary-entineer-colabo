@@ -146,3 +146,12 @@ type ResponseSearchTasks = {
   userId: number;
   tasks: ResponseTask[]
 }
+
+type ResponseSkill = {
+  id: number
+  name: string
+  countLog: number
+  UserId: number
+  createdAt?: string
+  updatedAt?: string
+}

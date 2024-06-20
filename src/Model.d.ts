@@ -49,3 +49,13 @@ type Milestone = Pick<
   | 'createdAt'
   | 'updatedAt'
 >
+
+type Skill = Pick<
+  ResponseSkill,
+  | 'id'
+  | 'name'
+  | 'countLog'
+  | 'userId'
+  | 'createdAt'
+  | 'updatedAt'
+>
