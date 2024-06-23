@@ -4,7 +4,6 @@
     <UserIntroduction />
     <UserProjects />
     <UserFollowers />
-    <UserSkills />
   </main>
 </template>
 
@@ -12,7 +11,6 @@
 import UserFollowers from '@/components/UserFollowers.vue';
 import UserIntroduction from '@/components/UserIntroduction.vue';
 import UserProjects from '@/components/UserProjects.vue';
-import UserSkills from '@/components/UserSkills.vue';
 import { useUserStore } from '@/stores/userStore';
 
 const userStore = useUserStore();
