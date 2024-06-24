@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue"
 
 const props = defineProps<{ tasks: Task[] }>()
 const tasksNumber = ref(0)
 const incompleteTaskNumber = ref(0)
 
-watch(() => props.tasks, () => {
-  tasksNumber.value = props.tasks.length
-  incompleteTaskNumber.value = props.tasks.filter(task => !task.doneAt).length
-})
+watch(
+  () => props.tasks,
+  () => {
+    tasksNumber.value = props.tasks.length
+    incompleteTaskNumber.value = props.tasks.filter((task) => !task.doneAt).length
+  },
+)
 </script>
 
 <template>
@@ -16,9 +19,9 @@ watch(() => props.tasks, () => {
     <p>❌ 残課題</p>
     {{ incompleteTaskNumber }}
     <p>✅ 完了課題</p>
-    {{ (props.tasks.length - incompleteTaskNumber) }}
+    {{ props.tasks.length - incompleteTaskNumber }}
     <p>全体進捗率</p>
-    {{ Math.round((props.tasks.length - incompleteTaskNumber) / tasksNumber * 100) || 0 }} %
+    {{ Math.round(((props.tasks.length - incompleteTaskNumber) / tasksNumber) * 100) || 0 }} %
   </div>
 </template>
 

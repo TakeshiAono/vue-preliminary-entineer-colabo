@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import router from '@/router';
-import { useUserStore } from '@/stores/userStore';
-import { bulkFetch } from '@/utils/bulk';
-import { ref } from 'vue';
-import { AxiosError } from 'axios';
+import router from "@/router"
+import { useUserStore } from "@/stores/userStore"
+import { bulkFetch } from "@/utils/bulk"
+import { ref } from "vue"
+import { AxiosError } from "axios"
 
 type LoginModel = {
   email: string | null
@@ -27,10 +27,11 @@ const submitHandler = async (): void => {
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
       const code = error.code
-      if(code == "ERR_BAD_REQUEST") {
+      if (code == "ERR_BAD_REQUEST") {
         validationMessage.value = "メールアドレスまたはパスワードが間違っています。"
       } else {
-        validationMessage.value = "通信エラーが発生しました。時間を置いて再度ログインをしてください。"
+        validationMessage.value =
+          "通信エラーが発生しました。時間を置いて再度ログインをしてください。"
       }
     } else {
       validationMessage.value = "予期せぬエラーが発生しました。"
@@ -45,7 +46,7 @@ const submitHandler = async (): void => {
     <div id="login-container">
       <h2 id="login-title">Login</h2>
       <n-alert title="認証エラー" type="error" v-if="errorVisible">
-        {{validationMessage}}
+        {{ validationMessage }}
       </n-alert>
       <n-form ref="formRef" :model="loginModel" id="login-form">
         <n-form-item path="email" label="Email">
@@ -55,8 +56,12 @@ const submitHandler = async (): void => {
           <n-input v-model:value="loginModel.password" type="password" @keydown.enter.prevent />
         </n-form-item>
         <div style="display: flex; justify-content: flex-end">
-          <n-button :disabled="(loginModel.email == null || loginModel.password == null)" round type="primary"
-            @click="submitHandler">
+          <n-button
+            :disabled="loginModel.email == null || loginModel.password == null"
+            round
+            type="primary"
+            @click="submitHandler"
+          >
             Login
           </n-button>
         </div>

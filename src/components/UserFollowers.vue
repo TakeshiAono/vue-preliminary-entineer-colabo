@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores/userStore';
-import { onMounted, ref } from 'vue';
+import { useUserStore } from "@/stores/userStore"
+import { onMounted, ref } from "vue"
 
-const userStore = useUserStore();
+const userStore = useUserStore()
 
-const followerInfo = ref<Record<number, any>>({});
+const followerInfo = ref<Record<number, any>>({})
 
 const fetchFollowerInfo = async (followerId: number) => {
-  followerInfo.value[followerId] = await userStore.getUserInfo(followerId);
+  followerInfo.value[followerId] = await userStore.getUserInfo(followerId)
 }
 
 onMounted(async () => {
-  await Promise.all(userStore.currentUser.followerIds.map(userId => fetchFollowerInfo(userId)));
-});
+  await Promise.all(userStore.currentUser.followerIds.map((userId) => fetchFollowerInfo(userId)))
+})
 </script>
 
 <template>
@@ -28,6 +28,4 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

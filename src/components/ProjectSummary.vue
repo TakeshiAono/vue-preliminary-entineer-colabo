@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { onMounted, onBeforeMount, ref, watch } from 'vue';
-import ProjectDescription from './ProjectDescription.vue';
-import ProjectMemberSummary from './ProjectMemberSummary.vue';
-import MessageLog from './MessageLog.vue';
-import UserNotice from './UserNotice.vue';
-import OperationLog from './OperationLog.vue';
-import Dashboard from './Dashboard.vue';
-import { useProjectStore } from '@/stores/projectStore';
-import { useUserStore } from '@/stores/userStore';
-import { fetchMessagesByChannels, fetchUserNotices, fetchOperationLog, fetchTasks, fetchChannels } from "@/utils/request"
+import { onMounted, onBeforeMount, ref, watch } from "vue"
+import ProjectDescription from "./ProjectDescription.vue"
+import ProjectMemberSummary from "./ProjectMemberSummary.vue"
+import MessageLog from "./MessageLog.vue"
+import UserNotice from "./UserNotice.vue"
+import OperationLog from "./OperationLog.vue"
+import Dashboard from "./Dashboard.vue"
+import { useProjectStore } from "@/stores/projectStore"
+import { useUserStore } from "@/stores/userStore"
+import {
+  fetchMessagesByChannels,
+  fetchUserNotices,
+  fetchOperationLog,
+  fetchTasks,
+  fetchChannels,
+} from "@/utils/request"
 import { sortByUpdatedAt } from "@/utils/utils"
 
-const props = defineProps<{projects: Project[], users: User[]}>()
+const props = defineProps<{ projects: Project[]; users: User[] }>()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
 
@@ -32,86 +38,118 @@ onBeforeMount(async () => {
 
 onMounted(async () => {
   if (props.projects && props.projects.length > 0) {
-    chatLogs.value = sortByUpdatedAt<ResponseMessage>(await fetchMessagesByChannels(await fetchChannels(selectedProject()))).map(message => message.text)
-    userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(await fetchUserNotices(currentUser)).map(userNotice => userNotice.log)
-    operationLogs.value = sortByUpdatedAt<ResponseOperation>(await fetchOperationLog(selectedProject())).map(operation => operation.log)
+    chatLogs.value = sortByUpdatedAt<ResponseMessage>(
+      await fetchMessagesByChannels(await fetchChannels(selectedProject())),
+    ).map((message) => message.text)
+    userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(
+      await fetchUserNotices(currentUser),
+    ).map((userNotice) => userNotice.log)
+    operationLogs.value = sortByUpdatedAt<ResponseOperation>(
+      await fetchOperationLog(selectedProject()),
+    ).map((operation) => operation.log)
   }
 })
 
-watch( () => selectedProjectId.value, async () => {
-  if (props.projects && props.projects.length > 0) {
-    chatLogs.value = sortByUpdatedAt<ResponseMessage>(await fetchMessagesByChannels(await fetchChannels(selectedProject()))).map(message => message.text)
-    userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(await fetchUserNotices(currentUser)).map(userNotice => userNotice.log)
-    operationLogs.value = sortByUpdatedAt<ResponseOperation>(await fetchOperationLog(selectedProject())).map(operation => operation.log)
-  }
-  const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[]
-  usersByProject.value = userIds.map( userId => (userStore.users.find((user) => userId == user.id)) as User )
-})
+watch(
+  () => selectedProjectId.value,
+  async () => {
+    if (props.projects && props.projects.length > 0) {
+      chatLogs.value = sortByUpdatedAt<ResponseMessage>(
+        await fetchMessagesByChannels(await fetchChannels(selectedProject())),
+      ).map((message) => message.text)
+      userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(
+        await fetchUserNotices(currentUser),
+      ).map((userNotice) => userNotice.log)
+      operationLogs.value = sortByUpdatedAt<ResponseOperation>(
+        await fetchOperationLog(selectedProject()),
+      ).map((operation) => operation.log)
+    }
+    const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[]
+    usersByProject.value = userIds.map(
+      (userId) => userStore.users.find((user) => userId == user.id) as User,
+    )
+  },
+)
 
 const getUsersByProject = (): User[] => {
   const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
-  return userIds.map( userId => userStore.users.find((user) => userId == user.id) ) as User[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
+  return userIds.map((userId) => userStore.users.find((user) => userId == user.id)) as User[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
 }
 
-const selectedProject = (): ResponseProject  => {
-  return projectStore.belongingProjects.find( project => project.id == selectedProjectId.value) as ResponseProject
+const selectedProject = (): ResponseProject => {
+  return projectStore.belongingProjects.find(
+    (project) => project.id == selectedProjectId.value,
+  ) as ResponseProject
 }
 
-const menuOptions = props.projects.map(project => {return {label: project.name, key: project.id}})
+const menuOptions = props.projects.map((project) => {
+  return { label: project.name, key: project.id }
+})
 
 const getProject = (id: number): Project => {
-  return projectStore.belongingProjects.find(project => project.id == id) as Project // NOTE: 所属プロジェクトがない場合はprojectSummaryは表示しないため型アサーション
+  return projectStore.belongingProjects.find((project) => project.id == id) as Project // NOTE: 所属プロジェクトがない場合はprojectSummaryは表示しないため型アサーション
 }
 </script>
 
 <template>
   <n-layout has-sider>
-      <n-layout-sider
-        collapse-mode="transform"
-        :collapsed-width="80"
-        :width="200"
-        show-trigger="arrow-circle"
-        content-style="padding: 24px;"
-        bordered="true"
-      >
-        <n-h3 id="project-summary">プロジェクト一覧</n-h3>
-        <ProjectSummarySidebar/>
-        <n-menu
-            :inverted="inverted"
-            :collapsed-width="64"
-            :collapsed-icon-size="22"
-            :options="menuOptions"
-            :on-update:value="(projectId: number) => {selectedProjectId = projectId}"
-          />
-      </n-layout-sider>
-      <n-layout-content content-style="padding: 24px;" v-if="headProject">
-        <div id="my-page-info">
-          <div>
-            <div id="project-info">
-              <div id="project-member">
-                <h1 id="project-name">{{ headProject.name }}</h1>
-                <ProjectDescription :description="getProject(selectedProjectId).description"/>
-                <ProjectMemberSummary :member-names="usersByProject.map(user => user.name)"/>
-              </div>
-              <div id="chat-log">
-                <MessageLog :chat-logs="chatLogs"/>
-              </div>
-              <div id="operation-log">
-                <OperationLog :operation-logs="operationLogs"/>
-              </div>
+    <n-layout-sider
+      collapse-mode="transform"
+      :collapsed-width="80"
+      :width="200"
+      show-trigger="arrow-circle"
+      content-style="padding: 24px;"
+      bordered="true"
+    >
+      <n-h3 id="project-summary">プロジェクト一覧</n-h3>
+      <ProjectSummarySidebar />
+      <n-menu
+        :inverted="inverted"
+        :collapsed-width="64"
+        :collapsed-icon-size="22"
+        :options="menuOptions"
+        :on-update:value="
+          (projectId: number) => {
+            selectedProjectId = projectId
+          }
+        "
+      />
+    </n-layout-sider>
+    <n-layout-content content-style="padding: 24px;" v-if="headProject">
+      <div id="my-page-info">
+        <div>
+          <div id="project-info">
+            <div id="project-member">
+              <h1 id="project-name">{{ headProject.name }}</h1>
+              <ProjectDescription :description="getProject(selectedProjectId).description" />
+              <ProjectMemberSummary :member-names="usersByProject.map((user) => user.name)" />
             </div>
-            <Dashboard v-if="projects.length != 0 && tasks.length != 0" :tasks="tasks" :projects="projects" :selectedProjectId="selectedProjectId" :users="usersByProject"/>
+            <div id="chat-log">
+              <MessageLog :chat-logs="chatLogs" />
+            </div>
+            <div id="operation-log">
+              <OperationLog :operation-logs="operationLogs" />
+            </div>
           </div>
-          <div id="user-notice">
-            <UserNotice :userNoticeLogs="userNoticeLogs"/>
-          </div>
+          <Dashboard
+            v-if="projects.length != 0 && tasks.length != 0"
+            :tasks="tasks"
+            :projects="projects"
+            :selectedProjectId="selectedProjectId"
+            :users="usersByProject"
+          />
         </div>
-      </n-layout-content>
-    </n-layout>
+        <div id="user-notice">
+          <UserNotice :userNoticeLogs="userNoticeLogs" />
+        </div>
+      </div>
+    </n-layout-content>
+  </n-layout>
 </template>
 
 <style scoped>
-#project-member,#chat-log {
+#project-member,
+#chat-log {
   margin-right: 0.5rem;
 }
 
@@ -134,7 +172,7 @@ const getProject = (id: number): Project => {
   text-decoration: underline;
 }
 
-#project-summary{
+#project-summary {
   font-weight: bold;
 }
 </style>

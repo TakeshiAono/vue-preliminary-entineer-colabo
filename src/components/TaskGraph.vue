@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import dayjs from 'dayjs'
+import { ref, watch } from "vue"
+import dayjs from "dayjs"
 
-const props = defineProps<{ user: User, tasks: Task[] | [] }>()
-const data = ref<{data: number[]}[]>([]);
-const graphStartDay = ref<dayjs.Dayjs>(dayjs().subtract(4, 'year'))
+const props = defineProps<{ user: User; tasks: Task[] | [] }>()
+const data = ref<{ data: number[] }[]>([])
+const graphStartDay = ref<dayjs.Dayjs>(dayjs().subtract(4, "year"))
 const options = ref({})
 
 watch([() => props.tasks, () => props.user], () => {
@@ -18,22 +18,22 @@ const updateGraph = () => {
 }
 
 const updateGraphSetting = (dayList: dayjs.Dayjs[]) => {
-  const stringDayList = dayList.map(dayjs => dayjs.format("YY/MM/DD"))
+  const stringDayList = dayList.map((dayjs) => dayjs.format("YY/MM/DD"))
 
   options.value = {
     yaxis: {
       min: 0,
-      max: 100
+      max: 100,
     },
     theme: {
-      mode: "light"
+      mode: "light",
     },
     title: {
-      text: "完了タスク"
+      text: "完了タスク",
     },
     xaxis: {
-      categories: stringDayList
-    }
+      categories: stringDayList,
+    },
   }
 }
 
@@ -54,9 +54,19 @@ const getTaskNumberListByPeriod = (dayList: dayjs.Dayjs[]): number[] => {
   dayList.map((day, index) => {
     const nextIndex = index + 1
     if (nextIndex <= dayList.length - 1) {
-      taskNumberList.push(props.tasks.filter(task => dayList[index] <= dayjs(task.doneAt) && dayjs(task.doneAt) < dayList[nextIndex]).length)
+      taskNumberList.push(
+        props.tasks.filter(
+          (task) => dayList[index] <= dayjs(task.doneAt) && dayjs(task.doneAt) < dayList[nextIndex],
+        ).length,
+      )
     } else {
-      taskNumberList.push(props.tasks.filter(task => dayList[index] <= dayjs(task.doneAt) && dayjs(task.doneAt) < dayList[index].add(1, "month")).length)
+      taskNumberList.push(
+        props.tasks.filter(
+          (task) =>
+            dayList[index] <= dayjs(task.doneAt) &&
+            dayjs(task.doneAt) < dayList[index].add(1, "month"),
+        ).length,
+      )
     }
   })
 
@@ -64,9 +74,11 @@ const getTaskNumberListByPeriod = (dayList: dayjs.Dayjs[]): number[] => {
 }
 
 const updateData = (dataList: number[]) => {
-  data.value = [{
-    data: dataList
-  }]
+  data.value = [
+    {
+      data: dataList,
+    },
+  ]
 }
 </script>
 

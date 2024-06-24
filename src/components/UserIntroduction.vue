@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useUserStore } from '@/stores/userStore';
+import { useUserStore } from "@/stores/userStore"
 
 const userStore = useUserStore()
 </script>
@@ -9,6 +9,4 @@ const userStore = useUserStore()
   <div>{{ userStore.currentUser.introduce }}</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { useProjectStore } from '@/stores/projectStore';
-import { useUserStore } from '@/stores/userStore';
-import { computed, onMounted } from 'vue';
+import { useProjectStore } from "@/stores/projectStore"
+import { useUserStore } from "@/stores/userStore"
+import { computed, onMounted } from "vue"
 
-const userStore = useUserStore();
-const projectStore = useProjectStore();
+const userStore = useUserStore()
+const projectStore = useProjectStore()
 
 const userProjects = computed(() => {
-  if (!userStore.currentUser || !projectStore.allProjects.length) return [];
-  return getUserProjectNames(userStore.currentUser.projectIds);
-});
+  if (!userStore.currentUser || !projectStore.allProjects.length) return []
+  return getUserProjectNames(userStore.currentUser.projectIds)
+})
 
 function getUserProjectNames(projectIds: number[]) {
-  return projectIds.map(id => {
-    const project = projectStore.allProjects.find(project => project.id === id);
-    return project ? project.name : 'Unknown Project';
-  });
+  return projectIds.map((id) => {
+    const project = projectStore.allProjects.find((project) => project.id === id)
+    return project ? project.name : "Unknown Project"
+  })
 }
 
 onMounted(async () => {
-  await projectStore.fetchAllProjects();
-});
+  await projectStore.fetchAllProjects()
+})
 </script>
 
 <template>
@@ -34,6 +34,4 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

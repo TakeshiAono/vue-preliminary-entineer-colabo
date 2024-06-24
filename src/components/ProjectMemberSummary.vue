@@ -21,7 +21,7 @@ const props = defineProps(["memberNames"])
   border: solid;
 }
 
-.member{
+.member {
   margin: 5px;
 }
 </style>

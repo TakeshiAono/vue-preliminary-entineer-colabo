@@ -5,7 +5,9 @@ const props = defineProps(["operationLogs"])
 <template>
   <h1 id="project-operation-log-title">作業履歴</h1>
   <div id="project-operation-log-content">
-    <p class="operation-log" v-for="operationLog in props.operationLogs" :key="operationLog">{{ operationLog }}</p>
+    <p class="operation-log" v-for="operationLog in props.operationLogs" :key="operationLog">
+      {{ operationLog }}
+    </p>
   </div>
 </template>
 
@@ -21,7 +23,7 @@ const props = defineProps(["operationLogs"])
   border: solid;
 }
 
-.operation-log{
+.operation-log {
   margin: 5px;
 }
 </style>
