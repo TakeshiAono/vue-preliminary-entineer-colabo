@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ProjectSummary from '@/components/ProjectSummary.vue';
-import { useProjectStore } from '@/stores/projectStore';
-import { useUserStore } from '@/stores/userStore';
+import ProjectSummary from "@/components/ProjectSummary.vue"
+import { useProjectStore } from "@/stores/projectStore"
+import { useUserStore } from "@/stores/userStore"
 
 const projectStore = useProjectStore()
 const userStore = useUserStore()
@@ -9,8 +9,12 @@ const userStore = useUserStore()
 
 <template>
   <main>
-    <ProjectSummary :users="userStore.getUsers()" :projects="projectStore.belongingProjects" :user-store="userStore"
-      v-if="projectStore.belongingProjects.length > 0" />
+    <ProjectSummary
+      :users="userStore.getUsers()"
+      :projects="projectStore.belongingProjects"
+      :user-store="userStore"
+      v-if="projectStore.belongingProjects.length > 0"
+    />
   </main>
 </template>
 

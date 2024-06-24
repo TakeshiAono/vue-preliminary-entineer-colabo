@@ -142,7 +142,25 @@ type ResponseMilestone = {
 }
 
 type ResponseSearchTasks = {
-  projectId: number;
-  userId: number;
+  projectId: number
+  userId: number
   tasks: ResponseTask[]
+}
+
+type ResponseSkill = {
+  id: number
+  name: string
+  countLog: number
+  UserId: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+type ResponseRole = {
+  id: number
+  name: string
+  countLog: number
+  UserId: number
+  createdAt?: string
+  updatedAt?: string
 }

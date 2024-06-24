@@ -1,4 +1,4 @@
-import UIError from "./UIError";
+import UIError from "./UIError"
 
 export default class InputError extends UIError {
   constructor(message: string) {

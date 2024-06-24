@@ -7,7 +7,6 @@ const props = defineProps(["chatLogs"])
   <div id="project-chat-log-content">
     <p class="chat-log" v-for="chatLog in props.chatLogs" :key="chatLog">{{ chatLog }}</p>
   </div>
-
 </template>
 
 <style scoped>
@@ -22,7 +21,7 @@ const props = defineProps(["chatLogs"])
   border: solid;
 }
 
-.chat-log{
+.chat-log {
   margin: 5px;
 }
 </style>
