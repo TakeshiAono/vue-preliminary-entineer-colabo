@@ -1,12 +1,13 @@
-<script setup lang="ts">
-import { useUserStore } from "@/stores/userStore"
-
-const userStore = useUserStore()
-</script>
-
 <template>
   <h2>自己紹介</h2>
-  <div>{{ userStore.currentUser.introduce }}</div>
+  <div>{{ user?.introduce }}</div>
 </template>
+
+<script setup lang="ts">
+import { User } from '@/types'; // ユーザー型のインポート
+
+// userプロパティの型定義
+defineProps<{ user: User | null }>();
+</script>
 
 <style scoped></style>

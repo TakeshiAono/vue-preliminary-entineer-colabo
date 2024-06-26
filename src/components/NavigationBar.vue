@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useUserStore } from "@/stores/userStore"
-import { RouterLink } from "vue-router"
+import { useUserStore } from "@/stores/userStore";
+import { RouterLink } from "vue-router";
 
 const userStore = useUserStore()
 </script>
@@ -12,7 +12,7 @@ const userStore = useUserStore()
         <div class="wrapper" v-if="userStore.isLogin == 'true' || userStore.isLogin == true">
           <RouterLink to="/myPage" class="nav-content">MyPage</RouterLink>
           <!-- 仮でパスパラメータにid1を入れている。 -->
-          <RouterLink to="/user/1" class="nav-content">Profile</RouterLink>
+          <RouterLink to="/users/2" class="nav-content">Profile</RouterLink>
           <RouterLink to="/projects/search" class="nav-content">projectsSearch</RouterLink>
           <RouterLink to="/logout" class="nav-content">Logout</RouterLink>
         </div>
