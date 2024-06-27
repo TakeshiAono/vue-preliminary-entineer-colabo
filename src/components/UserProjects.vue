@@ -1,14 +1,13 @@
-<!-- UserProjects.vue -->
 <template>
-  <div>
+  <main>
     <h2>参加プロジェクト一覧</h2>
-    <ul v-if="projectIds">
+    <ul v-if="projectIds && projectIds.length > 0">
       <li v-for="projectId in projectIds" :key="projectId">
         {{ getProjectName(projectId) }}
       </li>
     </ul>
     <p v-else>No projects found</p>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">

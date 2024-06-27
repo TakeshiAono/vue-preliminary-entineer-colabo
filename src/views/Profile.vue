@@ -4,13 +4,12 @@
     <h1>{{ user?.name }}さんのプロフィール</h1>
     <UserIntroduction :user="user" />
     <UserProjects :projectIds="user?.projectIds || []" />
-    <!-- <UserFollowers />  -->
-    <p>フォロワー一覧{{ user?.followerIds }}</p>
+    <UserFollowers :userId="user?.id" /> 
   </main>
 </template>
 
 <script setup lang="ts">
-// import UserFollowers from "@/components/UserFollowers.vue";
+import UserFollowers from "@/components/UserFollowers.vue";
 import UserIntroduction from "@/components/UserIntroduction.vue";
 import UserProjects from "@/components/UserProjects.vue";
 import { useProjectStore } from '@/stores/projectStore';
