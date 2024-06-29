@@ -1,11 +1,11 @@
 <template>
   <main>
     <h2>フォロワー一覧</h2>
-    <p v-if="followers.length > 0">
-      <span v-for="follower in followers" :key="follower.id">
+    <ul v-if="followers.length > 0">
+      <li v-for="follower in followers" :key="follower.id">
         {{ follower.name }}
-      </span>
-    </p>
+      </li>
+    </ul>
     <p v-else>No followers found</p>
   </main>
 </template>
