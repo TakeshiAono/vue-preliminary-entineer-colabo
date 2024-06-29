@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import router from "@/router"
-import { nextTick, ref } from "vue"
-import { useRoute } from "vue-router"
+import { ref } from "vue"
 import { useProjectStore } from "@/stores/projectStore"
 
 const emits = defineEmits<{ e: "searchedProjects"; value: Project }>()
-const route = useRoute()
 const projectStore = useProjectStore()
 
 const keyword = ref(null)
