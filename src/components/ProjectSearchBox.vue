@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import router from "@/router"
-import { nextTick, ref } from "vue"
-import { useRoute } from "vue-router"
+import { ref } from "vue"
 import { useProjectStore } from "@/stores/projectStore"
 
 const emits = defineEmits<{ e: "searchedProjects"; value: Project }>()
-const route = useRoute()
 const projectStore = useProjectStore()
 
 const keyword = ref(null)
@@ -120,12 +117,8 @@ const submit = async () => {
       <span>関連技術(and条件): </span>
       <span>
         <div id="tagSearchBox">
-          <div v-for="skill in selectedSkills">
-            <div
-              class="tag"
-              :key="skill[1]"
-              :style="{ backgroundColor: skill[2], color: skill[3] }"
-            >
+          <div v-for="skill in selectedSkills" :key="skill[1]">
+            <div class="tag" :style="{ backgroundColor: skill[2], color: skill[3] }">
               {{ skill[0] }}
             </div>
           </div>

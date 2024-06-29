@@ -95,9 +95,9 @@ export const useUserStore = defineStore(
       VueCookies.set("password", password)
     }
 
-    function _getToken(): string | boolean {
-      return VueCookies.get("token")
-    }
+    // function _getToken(): string | boolean {
+    //   return VueCookies.get("token")
+    // }
 
     function _addUser(user: User): void {
       if (!users.value.some((u) => u.id === user.id)) {

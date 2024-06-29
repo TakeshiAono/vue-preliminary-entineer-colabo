@@ -1,7 +1,6 @@
 import { ref } from "vue"
 import { defineStore } from "pinia"
 import axios from "axios"
-import _ from "lodash"
 
 export const useTaskStore = defineStore(
   "task",
