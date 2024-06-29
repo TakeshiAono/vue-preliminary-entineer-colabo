@@ -3,7 +3,7 @@ import LoginView from "@/views/LoginView.vue"
 import MyPageView from "@/views/MyPageView.vue"
 import AccountView from "@/views/AccountView.vue"
 import { useUserStore } from "@/stores/userStore"
-import Profile from "@/views/Profile.vue"
+import ProfileView from "@/views/ProfileView.vue"
 import ProjectsSearch from "@/views/ProjectsSearch.vue"
 import ChatView from "@/views/ChatView.vue"
 import ProjectView from "@/views/ProjectView.vue"
@@ -46,7 +46,7 @@ const router = createRouter({
     {
       path: "/user/:id",
       name: "profile",
-      component: Profile,
+      component: ProfileView,
       props: true,
     },
     {
