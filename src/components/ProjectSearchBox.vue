@@ -117,12 +117,8 @@ const submit = async () => {
       <span>関連技術(and条件): </span>
       <span>
         <div id="tagSearchBox">
-          <div v-for="skill in selectedSkills">
-            <div
-              class="tag"
-              :key="skill[1]"
-              :style="{ backgroundColor: skill[2], color: skill[3] }"
-            >
+          <div v-for="skill in selectedSkills" :key="skill[1]">
+            <div class="tag" :style="{ backgroundColor: skill[2], color: skill[3] }">
               {{ skill[0] }}
             </div>
           </div>
