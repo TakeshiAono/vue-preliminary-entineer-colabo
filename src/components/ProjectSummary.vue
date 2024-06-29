@@ -5,7 +5,7 @@ import ProjectMemberSummary from "./ProjectMemberSummary.vue"
 import MessageLog from "./MessageLog.vue"
 import UserNotice from "./UserNotice.vue"
 import OperationLog from "./OperationLog.vue"
-import Dashboard from "./Dashboard.vue"
+import DashboardContainer from "./DashboardContainer.vue"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
 import {
@@ -131,7 +131,7 @@ const getProject = (id: number): Project => {
               <OperationLog :operation-logs="operationLogs" />
             </div>
           </div>
-          <Dashboard
+          <DashboardContainer
             v-if="projects.length != 0 && tasks.length != 0"
             :tasks="tasks"
             :projects="projects"
