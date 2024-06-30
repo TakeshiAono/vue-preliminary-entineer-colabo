@@ -5,20 +5,18 @@
     <UserIntroduction :user="user" />
     <UserProjects :projectIds="user?.projectIds || []" />
     <UserFollowers :userId="user?.id" /> 
-    <h2>オファーを出す</h2>
-    <textarea v-model="offerMessage" placeholder="オファーメッセージを入力してください"></textarea>
-    <p><button @click="submitOffer">オファーを出す</button></p>
+    <SubmitOffer :scoutedUserId="user?.id" />
   </main>
 </template>
 
 <script setup lang="ts">
+import SubmitOffer from "@/components/SubmitOffer.vue";
 import UserFollowers from "@/components/UserFollowers.vue";
 import UserIntroduction from "@/components/UserIntroduction.vue";
 import UserProjects from "@/components/UserProjects.vue";
 import { useProjectStore } from '@/stores/projectStore';
 import { useUserStore } from "@/stores/userStore";
 import { User } from "@/types";
-import axios from 'axios';
 import { onMounted, ref } from "vue";
 import { useRoute } from 'vue-router';
 
@@ -28,7 +26,6 @@ const userProjectIds = ref<number[]>([]);
 const route = useRoute();
 const userId = parseInt(route.params.id as string, 10);
 const projectStore = useProjectStore();
-const offerMessage = ref('');
 
 onMounted(async () => {
   try {
@@ -43,20 +40,4 @@ onMounted(async () => {
   }
 });
 
-const submitOffer = async () => {
-  try {
-    console.log('Offer message:', offerMessage.value); // ここで確認
-    const response = await axios.post(`${import.meta.env.VITE_API_SERVER_URI}/offers/create`, {
-      message: offerMessage.value,
-      userId: userStore.currentUser.id,
-      scoutedUserId: userId
-    });
-    console.log('Offer submitted response:', response);
-
-    // オファーが成功したことをユーザーに通知するなど、適切なフィードバックを実装することができます。
-  } catch (error) {
-    console.error('Error submitting offer:', error);
-    // エラーが発生した場合、ユーザーにエラーメッセージを表示するなど、適切に処理します。
-  }
-};
 </script>
