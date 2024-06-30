@@ -3,7 +3,7 @@ import AccountView from "@/views/AccountView.vue"
 import ChatView from "@/views/ChatView.vue"
 import LoginView from "@/views/LoginView.vue"
 import MyPageView from "@/views/MyPageView.vue"
-import Profile from "@/views/Profile.vue"
+import ProfileView from "@/views/ProfileView.vue"
 import ProjectView from "@/views/ProjectView.vue"
 import ProjectsSearch from "@/views/ProjectsSearch.vue"
 import { createRouter, createWebHistory } from "vue-router"
@@ -46,7 +46,7 @@ const router = createRouter({
     {
       path: "/users/:id",
       name: "profile",
-      component: Profile,
+      component: ProfileView,
       props: true,
     },
     {
