@@ -63,7 +63,7 @@ watch(
 }
 
 ul{
-  padding-left: 20px;
+  padding-left: 10px;
 }
 
 li{

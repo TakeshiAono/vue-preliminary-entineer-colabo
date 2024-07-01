@@ -3,7 +3,7 @@
     <h2>オファーを出す</h2>
     <div id="offer-input">
       <textarea v-model="offerMessage" placeholder="オファーメッセージを入力" rows="10" cols="20"></textarea>
-      <p><button @click="submitOffer">オファーを出す</button></p>
+      <p><n-button type="primary" @click="submitOffer">オファーを出す</n-button></p>
     </div>
   </main>
 </template>
@@ -39,7 +39,7 @@ const submitOffer = async () => {
   height: auto;
   border-radius: 10px;
   border: solid;
-  padding: 20px;
+  padding: 10px;
 }
 
 p{
