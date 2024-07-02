@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { onMounted, onBeforeMount, ref, watch } from "vue"
-import ProjectDescription from "./ProjectDescription.vue"
-import ProjectMemberSummary from "./ProjectMemberSummary.vue"
-import MessageLog from "./MessageLog.vue"
-import UserNotice from "./UserNotice.vue"
-import OperationLog from "./OperationLog.vue"
-import DashboardContainer from "./DashboardContainer.vue"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
 import {
-  fetchMessagesByChannels,
-  fetchUserNotices,
-  fetchOperationLog,
-  fetchTasks,
-  fetchChannels,
+fetchChannels,
+fetchMessagesByChannels,
+fetchOperationLog,
+fetchTasks,
+fetchUserNotices,
 } from "@/utils/request"
 import { sortByUpdatedAt } from "@/utils/utils"
+import { onBeforeMount, onMounted, ref, watch } from "vue"
+import DashboardContainer from "./DashboardContainer.vue"
+import MessageLog from "./MessageLog.vue"
+import OperationLog from "./OperationLog.vue"
+import ProjectDescription from "./ProjectDescription.vue"
+import ProjectMemberSummary from "./ProjectMemberSummary.vue"
+import UserNotice from "./UserNotice.vue"
 
 const props = defineProps<{ projects: Project[]; users: User[] }>()
 const projectStore = useProjectStore()

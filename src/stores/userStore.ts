@@ -43,7 +43,7 @@ export const useUserStore = defineStore(
 
     async function getUserInfo(id: number): Promise<ResponseUser> {
       const responseUser = await axios.get<ResponseUser>(`${API_URL}/users/${id}`)
-      return responseUser
+      return responseUser.data
     }
 
     async function accountCreate(name: string, email: string, password: string): Promise<any> {
