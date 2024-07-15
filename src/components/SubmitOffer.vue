@@ -2,31 +2,25 @@
   <main>
     <h2>オファーを出す</h2>
     <div id="offer-input">
-      <textarea v-model="offerMessage" placeholder="オファーメッセージを入力" rows="10" cols="20"></textarea>
+      <textarea v-model="offerStore.offerMessage" placeholder="オファーメッセージを入力" rows="10" cols="20"></textarea>
       <p><n-button type="primary" @click="submitOffer">オファーを出す</n-button></p>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
+import { useOfferStore } from '@/stores/offerStore';
 import { useUserStore } from "@/stores/userStore";
-import axios from 'axios';
-import { ref } from 'vue';
 
 const props = defineProps<{ scoutedUserId: number }>();
 
-const offerMessage = ref('');
 const userStore = useUserStore();
+const offerStore = useOfferStore();
 
 const submitOffer = async () => {
   try {
-    console.log('Offer message:', offerMessage.value); 
-    const response = await axios.post(`${import.meta.env.VITE_API_SERVER_URI}/offers/create`, {
-      message: offerMessage.value,
-      userId: userStore.currentUser.id,
-      scoutedUserId: props.scoutedUserId
-    });
-    console.log('Offer submitted response:', response);
+    console.log('Offer message:', offerStore.offerMessage); 
+    await offerStore.submitOffer(userStore.currentUser.id, props.scoutedUserId);
   } catch (error) {
     console.error('Error submitting offer:', error);
   }
