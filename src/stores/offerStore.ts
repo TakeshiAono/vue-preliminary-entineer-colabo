@@ -12,12 +12,13 @@ export const useOfferStore = defineStore('offerStore', () => {
     offerMessage.value = message;
   };
 
-  const submitOffer = async (userId: number, scoutedUserId: number) => {
+  const submitOffer = async (userId: number, scoutedUserId: number, projectId: number) => {
     try {
       const response = await axios.post(`${API_URL}/offers/create`, {
         message: offerMessage.value,
         userId,
-        scoutedUserId
+        scoutedUserId,
+        projectId
       });
       offers.value.push(response.data);
       offerMessage.value = ''; 
