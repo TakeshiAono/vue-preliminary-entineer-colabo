@@ -1,14 +1,16 @@
 <template>
   <main>
-    <h2>オファーを出す</h2>
+    <h2>オファーメッセージ</h2>
     <div id="offer-input">
       <textarea
         v-model="offerStore.offerMessage"
-        placeholder="オファーメッセージを入力"
-        rows="10"
-        cols="20"
+        placeholder="オファーメッセージを入力してください"
+        rows="30"
+        class="offer-textarea"
       ></textarea>
-      <p><n-button type="primary" @click="submitOffer">オファーを出す</n-button></p>
+      <n-button type="primary" @click="submitOffer" class="offer-submit-btn"
+        >オファーを出す</n-button
+      >
     </div>
   </main>
 </template>
@@ -33,15 +35,23 @@ const submitOffer = async () => {
 </script>
 
 <style scoped>
-#offer-input {
-  width: 200px;
-  height: auto;
-  border-radius: 10px;
-  border: solid;
-  padding: 10px;
+.offer-textarea {
+  width: 100%;
+  outline: none;
+  resize: none;
 }
 
-p {
-  margin: 0;
+#offer-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.offer-submit-btn {
+  margin-top: 10px;
+}
+
+.n-dialog__content {
+  margin-bottom: 0;
 }
 </style>
