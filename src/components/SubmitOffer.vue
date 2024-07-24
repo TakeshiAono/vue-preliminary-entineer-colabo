@@ -2,6 +2,12 @@
   <main>
     <h2>オファーメッセージ</h2>
     <div id="offer-input">
+      <n-select
+        v-model:value="selectedProject"
+        :options="projectOptions"
+        placeholder="プロジェクトを選択"
+        @update:value="logSelectedProject"
+      />
       <textarea
         v-model="offerStore.offerMessage"
         placeholder="オファーメッセージを入力してください"
@@ -17,17 +23,44 @@
 
 <script setup lang="ts">
 import { useOfferStore } from "@/stores/offerStore"
+import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
+import { onMounted, ref } from "vue"
 
 const props = defineProps<{ scoutedUserId: number }>()
 
 const userStore = useUserStore()
+const projectStore = useProjectStore()
 const offerStore = useOfferStore()
 
+const selectedProject = ref<number | null>(null)
+const projectOptions = ref<{ label: string; value: number }[]>([])
+
+onMounted(() => {
+  const projects = projectStore.belongingProjects
+  projectOptions.value = projects.map((project) => ({ label: project.name, value: project.id }))
+})
+
+const logSelectedProject = (value: number) => {
+  console.log("Selected project:", value)
+  selectedProject.value = value
+}
+
 const submitOffer = async () => {
+  if (selectedProject.value === null) {
+    console.error("プロジェクトを選択してください")
+    return
+  }
+
   try {
-    console.log("Offer message:", offerStore.offerMessage)
-    await offerStore.submitOffer(userStore.currentUser.id, props.scoutedUserId)
+    const offerData = {
+      message: offerStore.offerMessage,
+      userId: userStore.currentUser.id,
+      scoutedUserId: props.scoutedUserId,
+      projectId: selectedProject.value,
+    }
+    console.log("Submitting offer data:", offerData)
+    await offerStore.submitOffer(offerData.userId, offerData.scoutedUserId, offerData.projectId)
   } catch (error) {
     console.error("Error submitting offer:", error)
   }
