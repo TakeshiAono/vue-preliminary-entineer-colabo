@@ -7,6 +7,7 @@
       negative-text="キャンセル"
       @negative-click="onNegativeClick"
       class="custom-modal"
+      :footer-class="customFooterClass"
     >
       <SubmitOffer :scoutedUserId="user?.id" />
     </n-modal>
@@ -70,7 +71,8 @@ onMounted(async () => {
   margin-bottom: 8px !important;
 }
 .custom-modal {
-  width: 600px !important;
-  height: 600px !important;
+  width: 50vw !important;
+  max-width: 90vw;
+  max-height: 90vh;
 }
 </style>
