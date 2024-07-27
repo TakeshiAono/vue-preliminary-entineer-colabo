@@ -1,6 +1,11 @@
 <template>
   <main>
     <h2 class="title">オファーメッセージ</h2>
+    <div v-if="errorMessages.length" class="error-message">
+      <ul>
+        <li v-for="msg in errorMessages" :key="msg">{{ msg }}</li>
+      </ul>
+    </div>
     <div id="offer-input">
       <n-select
         v-model:value="selectedProject"
@@ -36,6 +41,7 @@ const offerStore = useOfferStore()
 
 const selectedProject = ref<number | null>(null)
 const projectOptions = ref<{ label: string; value: number }[]>([])
+const errorMessages = ref<string[]>([])
 
 onMounted(() => {
   const projects = projectStore.belongingProjects
@@ -48,9 +54,16 @@ const logSelectedProject = (value: number) => {
 }
 
 const submitOffer = async () => {
+  errorMessages.value = []
+
   if (selectedProject.value === null) {
-    console.error("プロジェクトを選択してください")
-    return
+    errorMessages.value.push("プロジェクトを選択してください")
+  }
+  if (!offerStore.offerMessage.trim()) {
+    errorMessages.value.push("オファーメッセージを入力してください")
+  }
+  if (errorMessages.value.length > 0) {
+    return // エラーメッセージがある場合は処理を中断
   }
 
   try {
@@ -64,19 +77,24 @@ const submitOffer = async () => {
     await offerStore.submitOffer(offerData.userId, offerData.scoutedUserId, offerData.projectId)
   } catch (error) {
     console.error("Error submitting offer:", error)
+    errorMessages.value.push("オファーの送信中にエラーが発生しました")
   }
 }
 </script>
 
 <style scoped>
-.title {
-  margin-bottom: 10px;
-}
 #offer-input {
   width: 100%;
   height: 65vh;
   display: flex;
   flex-direction: column;
+}
+.error-message {
+  color: red;
+  margin-top: 1rem;
+}
+.title {
+  margin-bottom: 10px;
 }
 .offer-selector {
   width: 50%;
