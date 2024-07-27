@@ -9,7 +9,10 @@
     <div id="offer-input">
       <n-select v-model:value="selectedProject" :options="projectOptions" placeholder="プロジェクトを選択" @update:value="logSelectedProject" class="offer-selector"/>
       <textarea v-model="offerStore.offerMessage" placeholder="オファーメッセージを入力してください" rows="30" class="offer-textarea"></textarea>
-      <n-button type="primary" @click="submitOffer" class="offer-submit-btn">オファーを出す</n-button>
+      <div class="button-container">
+        <n-button @click="cancel" class="cancel-btn">キャンセル</n-button>
+        <n-button type="primary" @click="submitOffer" class="offer-submit-btn">オファーを出す</n-button>
+      </div>
     </div>
   </main>
 </template>
@@ -21,6 +24,10 @@ import { useUserStore } from "@/stores/userStore";
 import { onMounted, ref } from 'vue';
 
 const props = defineProps<{ scoutedUserId: number }>();
+
+const emit = defineEmits<{
+  (event: 'cancel'): void;
+}>();
 
 const userStore = useUserStore();
 const projectStore = useProjectStore();
@@ -67,6 +74,10 @@ const submitOffer = async () => {
     errorMessages.value.push('オファーの送信中にエラーが発生しました');
   }
 };
+
+const cancel = () => {
+  emit('cancel');
+};
 </script>
 
 <style scoped>
@@ -94,9 +105,11 @@ const submitOffer = async () => {
   outline: none;
   resize: none;
 }
-.offer-submit-btn{
+.button-container {
+  display: flex;
+  gap: 10px; 
   margin-top: 10px;
-  align-self: flex-end; 
+  align-self: flex-end;
 }
 .n-dialog__content{
   margin-bottom: 0;

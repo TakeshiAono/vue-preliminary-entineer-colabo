@@ -4,12 +4,9 @@
       v-model:show="showModal"
       :mask-closable="false"
       preset="dialog"
-      negative-text="キャンセル"
-      @negative-click="onNegativeClick"
       class="custom-modal"
-      :footer-class="customFooterClass"
     >
-    <SubmitOffer :scoutedUserId="user?.id" />
+    <SubmitOffer :scoutedUserId="user?.id" @cancel="handleCancel"/>
     </n-modal>
     <!-- <p>ログイン中のユーザー{{ userStore.currentUser.name }}</p> -->
     <div id="selected-user-name">
@@ -56,6 +53,9 @@ onMounted(async () => {
   }
 });
 
+const handleCancel = () => {
+  showModal.value = false;
+};
 </script>
 
 <style scoped>
