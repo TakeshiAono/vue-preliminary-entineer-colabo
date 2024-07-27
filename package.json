@@ -14,7 +14,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "fmt:check": "prettier --check src/",
     "format": "prettier --write src/",
-    "github-prettier-action": "npx prettier --check ."
+    "github-prettier-action": "npx prettier --check src/"
   },
   "dependencies": {
     "@vue/cli-service": "^5.0.8",
