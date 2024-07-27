@@ -92,30 +92,30 @@ type ResponseProject = {
 type ResponseTask = {
   id: number
   name: string
-  doneAt: staring | null
-  deadline: staring | null
+  doneAt: string | null
+  deadline: string | null
   description: string | null
   projectId: number | null
   inChargeUserId: number | null
   milestoneId: number | null
-  createdAt: staring
-  updatedAt: staring
+  createdAt: string
+  updatedAt: string
 }
 
 type ResponseUserNotice = {
   id: number
   log: string
   userId: number
-  createdAt: staring
-  updatedAt: staring
+  createdAt: string
+  updatedAt: string
 }
 
 type ResponseOperation = {
   id: number
   projectId: number
   log: string
-  createdAt: staring
-  updatedAt: staring
+  createdAt: string
+  updatedAt: string
 }
 
 type Task = ResponseTask
