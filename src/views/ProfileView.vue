@@ -1,15 +1,7 @@
 <template>
   <main>
-    <n-modal
-      v-model:show="showModal"
-      :mask-closable="false"
-      preset="dialog"
-      negative-text="キャンセル"
-      @negative-click="onNegativeClick"
-      class="custom-modal"
-      :footer-class="customFooterClass"
-    >
-      <SubmitOffer :scoutedUserId="user?.id" />
+    <n-modal v-model:show="showModal" :mask-closable="false" preset="dialog" class="custom-modal">
+      <SubmitOffer :scoutedUserId="user?.id" @cancel="handleCancel" />
     </n-modal>
     <!-- <p>ログイン中のユーザー{{ userStore.currentUser.name }}</p> -->
     <div id="selected-user-name">
@@ -53,6 +45,10 @@ onMounted(async () => {
     console.error("Error fetching user info:", error)
   }
 })
+
+const handleCancel = () => {
+  showModal.value = false
+}
 </script>
 
 <style scoped>
