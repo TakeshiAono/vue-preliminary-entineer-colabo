@@ -79,9 +79,16 @@ const submitOffer = async () => {
       userId: userStore.currentUser.id,
       scoutedUserId: props.scoutedUserId,
       projectId: selectedProject.value,
+<<<<<<< HEAD
     }
     console.log("Submitting offer data:", offerData)
     await offerStore.submitOffer(offerData.userId, offerData.scoutedUserId, offerData.projectId)
+=======
+    };
+    console.log('Submitting offer data:', offerData);
+    await offerStore.submitOffer(offerData.userId, offerData.scoutedUserId, offerData.projectId);
+    emit('success');
+>>>>>>> ec887a7... オファー送信後、モーダルを閉じて送信完了メッセージを表示
   } catch (error) {
     console.error("Error submitting offer:", error)
     errorMessages.value.push("オファーの送信中にエラーが発生しました")
