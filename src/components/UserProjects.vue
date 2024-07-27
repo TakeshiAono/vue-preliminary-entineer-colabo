@@ -1,37 +1,50 @@
-<script setup lang="ts">
-import { useProjectStore } from "@/stores/projectStore"
-import { useUserStore } from "@/stores/userStore"
-import { computed, onMounted } from "vue"
-
-const userStore = useUserStore()
-const projectStore = useProjectStore()
-
-const userProjects = computed(() => {
-  if (!userStore.currentUser || !projectStore.allProjects.length) return []
-  return getUserProjectNames(userStore.currentUser.projectIds)
-})
-
-function getUserProjectNames(projectIds: number[]) {
-  return projectIds.map((id) => {
-    const project = projectStore.allProjects.find((project) => project.id === id)
-    return project ? project.name : "Unknown Project"
-  })
-}
-
-onMounted(async () => {
-  await projectStore.fetchAllProjects()
-})
-</script>
-
 <template>
-  <div v-if="userStore.currentUser">
-    <h2>参加PJ一覧</h2>
-    <ul>
-      <li v-for="projectName in userProjects" :key="projectName">
-        {{ projectName }}
-      </li>
-    </ul>
-  </div>
+  <main>
+    <h2>参加プロジェクト一覧</h2>
+    <div id="project-list">
+      <ul v-if="projectIds && projectIds.length > 0">
+        <li v-for="projectId in projectIds" :key="projectId">
+          {{ getProjectName(projectId) }}
+        </li>
+      </ul>
+      <p v-else>No projects found</p>
+    </div>
+  </main>
 </template>
 
-<style scoped></style>
+<script setup lang="ts">
+import { useProjectStore } from '@/stores/projectStore';
+import { defineProps, ref } from 'vue';
+
+defineProps<{ projectIds?: number[] }>(); // projectIds をオプショナルにする
+
+const projectStore = useProjectStore();
+const allProjectsLoaded = ref(false);
+
+// すべてのプロジェクトデータを読み込む
+projectStore.fetchAllProjects().then(() => {
+  allProjectsLoaded.value = true;
+});
+
+const getProjectName = (projectId: number) => {
+  const project = projectStore.getProjectById(projectId);
+  return project ? project.name : 'Unknown';
+};
+</script>
+
+<style scoped>
+#project-list {
+  width: 200px;
+  height: auto;
+  border-radius: 10px;
+  border: solid;
+}
+
+ul{
+  padding-left: 10px;
+}
+
+li{
+  list-style: none;
+}
+</style>
