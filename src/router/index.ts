@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import LoginView from "@/views/LoginView.vue"
 import MyPageView from "@/views/MyPageView.vue"
+import TasksView from "@/views/TasksView.vue"
 import AccountView from "@/views/AccountView.vue"
 import { useUserStore } from "@/stores/userStore"
 import ProfileView from "@/views/ProfileView.vue"
@@ -25,6 +26,11 @@ const router = createRouter({
       path: "/myPage",
       name: "myPage",
       component: MyPageView,
+    },
+    {
+      path: "/tasks",
+      name: "tasks",
+      component: TasksView,
     },
     {
       path: "/projects/search",

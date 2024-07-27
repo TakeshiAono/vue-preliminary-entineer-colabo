@@ -49,11 +49,11 @@ const selectMilestoneHandler = (milestone: Milestone | undefined) => {
 }
 
 const updateTasks = async () => {
-  selectedTasks.value = await taskStore.searchTasks(
-    props.selectedProjectId,
-    selectedUser.value.id,
-    selectedMilestone.value?.id,
-  )
+  selectedTasks.value = await taskStore.searchTasks({
+    projectId: props.selectedProjectId,
+    userId: selectedUser.value.id,
+    milestoneId: selectedMilestone.value?.id,
+  })
 }
 </script>
 
