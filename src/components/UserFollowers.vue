@@ -13,45 +13,43 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@/stores/userStore";
-import type { User } from '@/types';
-import { defineProps, ref, watch } from 'vue';
+import { useUserStore } from "@/stores/userStore"
+import type { User } from "@/types"
+import { defineProps, ref, watch } from "vue"
 
 const props = defineProps({
   userId: {
     type: Number,
-    required: true
-  }
-});
+    required: true,
+  },
+})
 
-const followers = ref<User[]>([]);
-const userStore = useUserStore();
+const followers = ref<User[]>([])
+const userStore = useUserStore()
 
 const fetchFollowers = async (userId: number) => {
   try {
-    const user = await userStore.getUserInfo(userId);
-    const followerIds = user.followerIds || [];
+    const user = await userStore.getUserInfo(userId)
+    const followerIds = user.followerIds || []
 
-    const followerDetails = await Promise.all(
-      followerIds.map(id => userStore.getUserInfo(id))
-    );
-    followers.value = followerDetails.filter(follower => !!follower);
+    const followerDetails = await Promise.all(followerIds.map((id) => userStore.getUserInfo(id)))
+    followers.value = followerDetails.filter((follower) => !!follower)
   } catch (error) {
-    console.error('Error fetching followers:', error);
+    console.error("Error fetching followers:", error)
   }
-};
+}
 
 watch(
   () => props.userId,
   (newUserId) => {
     if (newUserId) {
-      fetchFollowers(newUserId);
+      fetchFollowers(newUserId)
     } else {
-      followers.value = [];
+      followers.value = []
     }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 </script>
 
 <style scoped>
@@ -62,12 +60,11 @@ watch(
   border: solid;
 }
 
-ul{
+ul {
   padding-left: 10px;
 }
 
-li{
+li {
   list-style: none;
 }
-
 </style>

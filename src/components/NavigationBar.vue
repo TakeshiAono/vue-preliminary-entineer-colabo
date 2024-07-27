@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useUserStore } from "@/stores/userStore";
-import { RouterLink } from "vue-router";
+import { useUserStore } from "@/stores/userStore"
+import { RouterLink } from "vue-router"
 
 const userStore = useUserStore()
 </script>
