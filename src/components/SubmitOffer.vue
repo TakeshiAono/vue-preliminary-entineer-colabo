@@ -82,6 +82,7 @@ const submitOffer = async () => {
     }
     console.log("Submitting offer data:", offerData)
     await offerStore.submitOffer(offerData.userId, offerData.scoutedUserId, offerData.projectId)
+    emit("success")
   } catch (error) {
     console.error("Error submitting offer:", error)
     errorMessages.value.push("オファーの送信中にエラーが発生しました")

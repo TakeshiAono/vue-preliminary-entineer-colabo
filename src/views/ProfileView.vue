@@ -1,13 +1,14 @@
 <template>
   <main>
     <n-modal v-model:show="showModal" :mask-closable="false" preset="dialog" class="custom-modal">
-      <SubmitOffer :scoutedUserId="user?.id" @cancel="handleCancel" />
+      <SubmitOffer :scoutedUserId="user?.id" @cancel="handleCancel" @success="handleSuccess" />
     </n-modal>
     <!-- <p>ログイン中のユーザー{{ userStore.currentUser.name }}</p> -->
     <div id="selected-user-name">
       <h1>{{ user?.name }}さんのプロフィール</h1>
       <n-button @click="showModal = true"> オファーを出す </n-button>
     </div>
+    <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
     <UserIntroduction :user="user" />
     <UserProjects :projectIds="user?.projectIds || []" />
     <UserFollowers :userId="user?.id" />
@@ -25,6 +26,7 @@ import { onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
 
 const showModal = ref(false)
+const successMessage = ref<string | null>(null)
 
 const userStore = useUserStore()
 const user = ref<User | null>(null)
@@ -49,6 +51,11 @@ onMounted(async () => {
 const handleCancel = () => {
   showModal.value = false
 }
+
+const handleSuccess = () => {
+  showModal.value = false
+  successMessage.value = "オファーを送信しました！"
+}
 </script>
 
 <style scoped>
@@ -56,6 +63,10 @@ const handleCancel = () => {
   display: flex;
   align-items: center;
   gap: 15px;
+}
+.success-message {
+  color: green;
+  margin-top: 1rem;
 }
 </style>
 
