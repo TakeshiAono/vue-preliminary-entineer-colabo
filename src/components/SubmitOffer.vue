@@ -1,8 +1,8 @@
 <template>
   <main>
-    <h2>オファーメッセージ</h2>
+    <h2 class="title">オファーメッセージ</h2>
     <div id="offer-input">
-      <n-select v-model:value="selectedProject" :options="projectOptions" placeholder="プロジェクトを選択" @update:value="logSelectedProject" />
+      <n-select v-model:value="selectedProject" :options="projectOptions" placeholder="プロジェクトを選択" @update:value="logSelectedProject" class="offer-selector"/>
       <textarea v-model="offerStore.offerMessage" placeholder="オファーメッセージを入力してください" rows="30" class="offer-textarea"></textarea>
       <n-button type="primary" @click="submitOffer" class="offer-submit-btn">オファーを出す</n-button>
     </div>
@@ -56,22 +56,30 @@ const submitOffer = async () => {
 </script>
 
 <style scoped>
-.offer-textarea {
+.title{
+  margin-bottom: 10px;
+}
+#offer-input {
   width: 100%;
+  height: 65vh;
+  display: flex;
+  flex-direction: column;
+}
+.offer-selector {
+  width: 50%;
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+.offer-textarea {
+  height: 80%;
+  box-sizing: border-box;
   outline: none;
   resize: none;
 }
-
-#offer-input {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
 .offer-submit-btn{
   margin-top: 10px;
+  align-self: flex-end; 
 }
-
 .n-dialog__content{
   margin-bottom: 0;
 }
