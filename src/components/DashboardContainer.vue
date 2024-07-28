@@ -15,7 +15,7 @@ const props = defineProps<{
   users: User[]
 }>()
 const userStore = useUserStore()
-const taskStore = useTaskStore();
+const taskStore = useTaskStore()
 
 const project = ref<Project>(
   props.projects.find((project) => project.id == props.selectedProjectId) as Project,
