@@ -1,13 +1,5 @@
 <template>
   <main>
-    <n-modal
-      v-model:show="showModal"
-      :mask-closable="false"
-      preset="dialog"
-      class="custom-modal"
-    >
-    <SubmitOffer :scoutedUserId="user?.id" @cancel="handleCancel" @success="handleSuccess" />
-    </n-modal>
     <!-- <p>ログイン中のユーザー{{ userStore.currentUser.name }}</p> -->
     <div id="selected-user-name">
       <h1>{{ user?.name }}さんのプロフィール</h1>
@@ -19,6 +11,14 @@
     <UserIntroduction :user="user" />
     <UserProjects :projectIds="user?.projectIds || []" />
     <UserFollowers :userId="user?.id" /> 
+    <SubmitOffer
+      v-if="showModal"
+      :scoutedUserId="user?.id"
+      v-model:show="showModal"
+      @update:show="showModal = $event"
+      @cancel="handleClose"
+      @success="handleSuccess"
+    />
   </main>
 </template>
 
@@ -55,7 +55,7 @@ onMounted(async () => {
   }
 });
 
-const handleCancel = () => {
+const handleClose = () => {
   showModal.value = false;
 };
 
@@ -74,20 +74,6 @@ const handleSuccess = () => {
 .success-message {
   color: green;
   margin-top: 1rem;
-}
-</style>
-
-<style>
-.n-dialog__title .n-dialog__icon {
-  display: none;
-}
-.n-dialog__content{
-  margin-bottom: 8px !important;
-}
-.custom-modal {
-  width: 50vw !important; 
-  max-width: 90vw;
-  max-height: 90vh;
 }
 </style>
 
