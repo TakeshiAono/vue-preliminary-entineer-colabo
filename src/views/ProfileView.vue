@@ -3,7 +3,12 @@
     <!-- <p>ログイン中のユーザー{{ userStore.currentUser.name }}</p> -->
     <div id="selected-user-name">
       <h1>{{ user?.name }}さんのプロフィール</h1>
-      <n-button @click="showModal = true"> オファーを出す </n-button>
+      <n-button
+        v-if="user && userStore.currentUser && user.id !== userStore.currentUser.id"
+        @click="showModal = true"
+      >
+        オファーを出す
+      </n-button>
     </div>
     <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
     <UserIntroduction :user="user" />
@@ -27,7 +32,7 @@ import UserProjects from "@/components/UserProjects.vue"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
 import { User } from "@/types"
-import { onMounted, ref } from "vue"
+import { onMounted, ref, watch } from "vue"
 import { useRoute } from "vue-router"
 
 const showModal = ref(false)
@@ -50,6 +55,20 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error("Error fetching user info:", error)
+  }
+})
+
+watch([() => user.value, () => userStore.currentUser], async ([newUser, currentUser]) => {
+  if (newUser && currentUser) {
+    try {
+      // プロジェクトのオプションをリセット
+      if (newUser.projectIds) {
+        await projectStore.setProjects(newUser.projectIds)
+        userProjectIds.value = projectStore.getBelongingProjectIds()
+      }
+    } catch (error) {
+      console.error("Error updating project options:", error)
+    }
   }
 })
 

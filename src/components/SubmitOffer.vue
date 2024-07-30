@@ -70,6 +70,7 @@ const errorMessages = ref<string[]>([])
 
 onMounted(() => {
   const projects = projectStore.belongingProjects
+  console.log(projects)
   projectOptions.value = projects.map((project) => ({ label: project.name, value: project.id }))
 })
 
