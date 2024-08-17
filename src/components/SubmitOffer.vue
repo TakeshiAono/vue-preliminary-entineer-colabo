@@ -100,6 +100,17 @@ const submitOffer = async () => {
   }
 
   try {
+    // 任意のユーザーがプロジェクトに参加しているか確認
+    const response = await fetch(
+      `${import.meta.env.VITE_API_SERVER_URI}/projects/users/${props.scoutedUserId}/project/${selectedProject.value}/participates`,
+    )
+    const isParticipates = await response.json()
+
+    if (isParticipates) {
+      errorMessages.value.push("このユーザーは本プロジェクトに参加済みです。")
+      return
+    }
+
     const offerData = {
       message: offerStore.offerMessage,
       userId: userStore.currentUser.id,
@@ -116,6 +127,7 @@ const submitOffer = async () => {
 }
 
 const cancel = () => {
+  offerStore.offerMessage = ""
   emit("cancel")
 }
 const handleClose = (value: boolean) => {
