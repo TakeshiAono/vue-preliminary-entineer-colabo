@@ -17,6 +17,7 @@
     <SubmitOffer
       v-if="showModal"
       :scoutedUserId="user?.id"
+      :scoutedUserProjectIds="user?.projectIds || []"
       v-model:show="showModal"
       @update:show="showModal = $event"
       @cancel="handleClose"

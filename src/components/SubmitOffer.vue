@@ -16,7 +16,7 @@
       <div id="offer-input">
         <n-select
           v-model:value="selectedProject"
-          :options="projectOptions"
+          :options="filteredProjectOptions"
           placeholder="プロジェクトを選択"
           @update:value="logSelectedProject"
           class="offer-selector"
@@ -42,9 +42,13 @@
 import { useOfferStore } from "@/stores/offerStore"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
-import { onMounted, ref, watch } from "vue"
+import { computed, onMounted, ref, watch } from "vue"
 
-const props = defineProps<{ scoutedUserId: number; show: boolean }>()
+const props = defineProps<{
+  scoutedUserId: number
+  show: boolean
+  scoutedUserProjectIds: number[]
+}>()
 
 const emit = defineEmits<{
   (event: "cancel"): void
@@ -66,6 +70,9 @@ const offerStore = useOfferStore()
 
 const selectedProject = ref<number | null>(null)
 const projectOptions = ref<{ label: string; value: number }[]>([])
+const filteredProjectOptions = computed(() =>
+  projectOptions.value.filter((option) => !props.scoutedUserProjectIds.includes(option.value)),
+)
 const errorMessages = ref<string[]>([])
 
 onMounted(() => {
