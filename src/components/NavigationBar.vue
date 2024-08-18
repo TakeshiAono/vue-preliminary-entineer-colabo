@@ -10,6 +10,7 @@ const userStore = useUserStore()
     <header>
       <nav>
         <div class="wrapper" v-if="userStore.isLogin == 'true' || userStore.isLogin == true">
+          <RouterLink to="/tasks" class="nav-content">タスク一覧</RouterLink>
           <RouterLink to="/myPage" class="nav-content">MyPage</RouterLink>
           <!-- 仮でパスパラメータにid1を入れている。 -->
           <RouterLink to="/users/1" class="nav-content">Profile</RouterLink>
