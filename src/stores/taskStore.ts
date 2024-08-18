@@ -2,17 +2,6 @@ import { ref } from "vue"
 import { defineStore } from "pinia"
 import axios from "axios"
 
-export type searchTasksParams = {
-  name?: string
-  description?: string
-  projectId?: number
-  userId?: number
-  milestoneId?: number
-  deadlineFromDate?: string
-  deadlineToDate?: string
-  isDone?: boolean
-}
-
 export const useTaskStore = defineStore(
   "task",
   () => {
@@ -58,7 +47,17 @@ export const useTaskStore = defineStore(
         .tasks
     }
 
-    async function searchTasks(params: searchTasksParams): Promise<ResponseTask[]> {
+    async function searchTasks(
+      projectId: number,
+      userId: number,
+      milestoneId: number | undefined,
+    ): Promise<ResponseTask[]> {
+      const params = {
+        projectId,
+        userId,
+        milestoneId,
+      }
+
       const response = await axios.get<ResponseSearchTasks>(`${API_URL}/tasks`, { params })
       const responseTasks: ResponseTask[] = response.data.tasks
 

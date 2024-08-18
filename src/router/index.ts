@@ -3,7 +3,6 @@ import AccountView from "@/views/AccountView.vue"
 import ChatView from "@/views/ChatView.vue"
 import LoginView from "@/views/LoginView.vue"
 import MyPageView from "@/views/MyPageView.vue"
-import TasksView from "@/views/TasksView.vue"
 import ProfileView from "@/views/ProfileView.vue"
 import ProjectView from "@/views/ProjectView.vue"
 import ProjectsSearch from "@/views/ProjectsSearch.vue"
@@ -26,11 +25,6 @@ const router = createRouter({
       path: "/myPage",
       name: "myPage",
       component: MyPageView,
-    },
-    {
-      path: "/tasks",
-      name: "tasks",
-      component: TasksView,
     },
     {
       path: "/projects/search",
