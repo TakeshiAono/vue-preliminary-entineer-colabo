@@ -6,10 +6,10 @@
 </template>
 
 <script setup lang="ts">
-import { User } from '@/types'; // ユーザー型のインポート
+import { User } from "@/types" // ユーザー型のインポート
 
 // userプロパティの型定義
-defineProps<{ user: User | null }>();
+defineProps<{ user: User | null }>()
 </script>
 
 <style scoped>
@@ -20,7 +20,7 @@ defineProps<{ user: User | null }>();
   border: solid;
 }
 
-p{
+p {
   padding-left: 20px;
 }
 </style>

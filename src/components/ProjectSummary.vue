@@ -2,11 +2,11 @@
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
 import {
-fetchChannels,
-fetchMessagesByChannels,
-fetchOperationLog,
-fetchTasks,
-fetchUserNotices,
+  fetchChannels,
+  fetchMessagesByChannels,
+  fetchOperationLog,
+  fetchTasks,
+  fetchUserNotices,
 } from "@/utils/request"
 import { sortByUpdatedAt } from "@/utils/utils"
 import { onBeforeMount, onMounted, ref, watch } from "vue"

@@ -13,23 +13,23 @@
 </template>
 
 <script setup lang="ts">
-import { useProjectStore } from '@/stores/projectStore';
-import { defineProps, ref } from 'vue';
+import { useProjectStore } from "@/stores/projectStore"
+import { defineProps, ref } from "vue"
 
-defineProps<{ projectIds?: number[] }>(); // projectIds をオプショナルにする
+defineProps<{ projectIds?: number[] }>() // projectIds をオプショナルにする
 
-const projectStore = useProjectStore();
-const allProjectsLoaded = ref(false);
+const projectStore = useProjectStore()
+const allProjectsLoaded = ref(false)
 
 // すべてのプロジェクトデータを読み込む
 projectStore.fetchAllProjects().then(() => {
-  allProjectsLoaded.value = true;
-});
+  allProjectsLoaded.value = true
+})
 
 const getProjectName = (projectId: number) => {
-  const project = projectStore.getProjectById(projectId);
-  return project ? project.name : 'Unknown';
-};
+  const project = projectStore.getProjectById(projectId)
+  return project ? project.name : "Unknown"
+}
 </script>
 
 <style scoped>
@@ -40,11 +40,11 @@ const getProjectName = (projectId: number) => {
   border: solid;
 }
 
-ul{
+ul {
   padding-left: 10px;
 }
 
-li{
+li {
   list-style: none;
 }
 </style>

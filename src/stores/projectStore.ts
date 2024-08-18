@@ -19,7 +19,7 @@ export const useProjectStore = defineStore("project", () => {
   }
 
   function getProjectById(projectId: number): ResponseProject | undefined {
-    return allProjects.value.find(project => project.id === projectId);
+    return allProjects.value.find((project) => project.id === projectId)
   }
 
   async function searchProjects(queryParamasString: string): Promise<ResponseProject> {
@@ -60,6 +60,6 @@ export const useProjectStore = defineStore("project", () => {
     getBelongingProjectIds,
     getUserIdsByProject,
     searchProjects,
-    getProjectById
+    getProjectById,
   }
 })
