@@ -31,39 +31,38 @@ const usersByProject = ref<User[]>([])
 
 const currentUser = userStore.currentUser
 
+const fetchData = async () => {
+  try {
+    if (props.projects && props.projects.length > 0) {
+      const channels = await fetchChannels(selectedProject())
+      const messages = await fetchMessagesByChannels(channels)
+      chatLogs.value = sortByUpdatedAt<ResponseMessage>(messages).map((message) => message.text)
+
+      const userNotices = await fetchUserNotices(currentUser)
+      console.log("Fetched User Notices:", userNotices) // デバッグ用ログ
+      userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(userNotices)
+
+      const operations = await fetchOperationLog(selectedProject())
+      operationLogs.value = sortByUpdatedAt<ResponseOperation>(operations).map(
+        (operation) => operation.log,
+      )
+    }
+  } catch (error) {
+    console.error("Failed to fetch data:", error)
+  }
+}
+
 onBeforeMount(async () => {
   usersByProject.value = getUsersByProject()
   tasks.value = await fetchTasks(headProject.value as ResponseProject)
 })
 
-onMounted(async () => {
-  if (props.projects && props.projects.length > 0) {
-    chatLogs.value = sortByUpdatedAt<ResponseMessage>(
-      await fetchMessagesByChannels(await fetchChannels(selectedProject())),
-    ).map((message) => message.text)
-    userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(
-      await fetchUserNotices(currentUser),
-    ).map((userNotice) => userNotice.log)
-    operationLogs.value = sortByUpdatedAt<ResponseOperation>(
-      await fetchOperationLog(selectedProject()),
-    ).map((operation) => operation.log)
-  }
-})
+onMounted(fetchData)
 
 watch(
   () => selectedProjectId.value,
   async () => {
-    if (props.projects && props.projects.length > 0) {
-      chatLogs.value = sortByUpdatedAt<ResponseMessage>(
-        await fetchMessagesByChannels(await fetchChannels(selectedProject())),
-      ).map((message) => message.text)
-      userNoticeLogs.value = sortByUpdatedAt<ResponseUserNotice>(
-        await fetchUserNotices(currentUser),
-      ).map((userNotice) => userNotice.log)
-      operationLogs.value = sortByUpdatedAt<ResponseOperation>(
-        await fetchOperationLog(selectedProject()),
-      ).map((operation) => operation.log)
-    }
+    await fetchData()
     const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[]
     usersByProject.value = userIds.map(
       (userId) => userStore.users.find((user) => userId == user.id) as User,
