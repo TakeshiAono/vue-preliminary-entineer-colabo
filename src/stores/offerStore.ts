@@ -28,5 +28,15 @@ export const useOfferStore = defineStore("offerStore", () => {
     }
   }
 
-  return { offerMessage, offers, setOfferMessage, submitOffer }
+  const fetchOfferDetails = async (offerId: number) => {
+    try {
+      const response = await axios.get(`${API_URL}/offers/${offerId}`)
+      return response.data
+    } catch (error) {
+      console.error("Error fetching offer details:", error)
+      throw error
+    }
+  }
+
+  return { offerMessage, offers, setOfferMessage, submitOffer, fetchOfferDetails }
 })
