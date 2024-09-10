@@ -1,4 +1,5 @@
 <template>
+  <h1 id="project-user-notice-title">お知らせ</h1>
   <div id="project-user-notice-content">
     <p class="user-notice" v-for="userNotice in props.userNoticeLogs" :key="userNotice.id">
       <span v-if="userNotice.offerId" @click="openModal(userNotice)" class="clickable-log">
