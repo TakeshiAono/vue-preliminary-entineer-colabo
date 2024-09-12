@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import { useOfferStore } from "@/stores/offerStore"
+import axios from "axios"
 import { ref } from "vue"
 
 const props = defineProps<{ userNoticeLogs: { id: number; log: string; offerId?: number }[] }>()
@@ -53,7 +54,7 @@ const openModal = async (offerDetails: { log: string; offerId?: number }) => {
   selectedOfferDetails.value = offerDetails
   if (offerDetails.offerId) {
     try {
-      offerContent.value = await offerStore.fetchOfferDetails(offerDetails.offerId) // storeからオファー詳細を取得
+      offerContent.value = await offerStore.fetchOfferDetails(offerDetails.offerId)
     } catch (error) {
       console.error("Error fetching offer details:", error)
     }
@@ -71,6 +72,22 @@ const handleClose = (value: boolean) => {
   if (!value) {
     selectedOfferDetails.value = null
     offerContent.value = null
+  }
+}
+
+const acceptOffer = async () => {
+  if (offerContent.value && offerContent.value.id) {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_SERVER_URI}/offers/accept/${offerContent.value.id}`,
+      )
+      console.log("Offer accepted successfully:", response.data)
+      closeModal()
+    } catch (error) {
+      console.error("Error accepting the offer:", error)
+    }
+  } else {
+    console.error("offerContent or offerId is undefined")
   }
 }
 </script>
