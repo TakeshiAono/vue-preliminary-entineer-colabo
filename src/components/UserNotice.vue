@@ -80,6 +80,11 @@ const acceptOffer = async () => {
       // offerStoreを使ってオファーを受け入れる処理
       await offerStore.acceptOffer(offerContent.value.id)
       console.log("Offer accepted successfully")
+
+      if (selectedOfferDetails.value) {
+        selectedOfferDetails.value.offerId = null
+      }
+
       closeModal()
     } catch (error) {
       console.error("Error accepting the offer:", error)
