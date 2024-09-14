@@ -35,7 +35,6 @@
 
 <script setup lang="ts">
 import { useOfferStore } from "@/stores/offerStore"
-import axios from "axios"
 import { ref } from "vue"
 
 const props = defineProps<{ userNoticeLogs: { id: number; log: string; offerId?: number }[] }>()
@@ -78,10 +77,9 @@ const handleClose = (value: boolean) => {
 const acceptOffer = async () => {
   if (offerContent.value && offerContent.value.id) {
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_SERVER_URI}/offers/accept/${offerContent.value.id}`,
-      )
-      console.log("Offer accepted successfully:", response.data)
+      // offerStoreを使ってオファーを受け入れる処理
+      await offerStore.acceptOffer(offerContent.value.id)
+      console.log("Offer accepted successfully")
       closeModal()
     } catch (error) {
       console.error("Error accepting the offer:", error)

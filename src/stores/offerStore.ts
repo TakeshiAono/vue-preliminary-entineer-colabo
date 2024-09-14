@@ -38,5 +38,15 @@ export const useOfferStore = defineStore("offerStore", () => {
     }
   }
 
-  return { offerMessage, offers, setOfferMessage, submitOffer, fetchOfferDetails }
+  const acceptOffer = async (offerId: number) => {
+    try {
+      const response = await axios.post(`${API_URL}/offers/accept/${offerId}`)
+      console.log("Offer accepted response:", response.data)
+    } catch (error) {
+      console.error("Error accepting offer:", error)
+      throw error
+    }
+  }
+
+  return { offerMessage, offers, setOfferMessage, submitOffer, fetchOfferDetails, acceptOffer }
 })
