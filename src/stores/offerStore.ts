@@ -1,3 +1,4 @@
+import { useProjectStore } from "@/stores/projectStore"
 import axios from "axios"
 import { defineStore } from "pinia"
 import { ref } from "vue"
@@ -7,6 +8,8 @@ export const useOfferStore = defineStore("offerStore", () => {
 
   const offerMessage = ref("")
   const offers = ref([])
+
+  const projectStore = useProjectStore()
 
   const setOfferMessage = (message: string) => {
     offerMessage.value = message
@@ -41,7 +44,16 @@ export const useOfferStore = defineStore("offerStore", () => {
   const acceptOffer = async (offerId: number) => {
     try {
       const response = await axios.post(`${API_URL}/offers/accept/${offerId}`)
-      console.log("Offer accepted response:", response.data)
+      const responseData = response.data // APIのレスポンスデータを取得
+
+      if (responseData && responseData.project) {
+        const project = responseData.project
+        projectStore.addProject(project) // プロジェクトを追加
+      } else {
+        console.error("Project data is missing in the response.")
+      }
+
+      console.log("Offer accepted response:", responseData)
     } catch (error) {
       console.error("Error accepting offer:", error)
       throw error

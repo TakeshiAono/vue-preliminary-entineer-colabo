@@ -50,6 +50,22 @@ export const useProjectStore = defineStore("project", () => {
       ?.userIds
   }
 
+  function addProject(project: ResponseProject) {
+    if (!project || !project.id) {
+      console.error("Invalid project data:", project)
+      return
+    }
+
+    const exists = belongingProjects.value.some((p) => p.id === project.id)
+    if (!exists) {
+      belongingProjects.value.push(project)
+      projectUsersMaps.value.push({
+        projectId: project.id,
+        userIds: project.userIds,
+      })
+    }
+  }
+
   return {
     belongingProjects,
     projectUsersMaps,
@@ -61,5 +77,6 @@ export const useProjectStore = defineStore("project", () => {
     getUserIdsByProject,
     searchProjects,
     getProjectById,
+    addProject,
   }
 })

@@ -29,6 +29,8 @@ const tasks = ref<ResponseTask[]>([])
 const selectedProjectId = ref<number>(headProject.value.id)
 const usersByProject = ref<User[]>([])
 
+const menuOptions = ref<{ label: string; key: number }[]>([])
+
 const currentUser = userStore.currentUser
 
 const fetchData = async () => {
@@ -55,6 +57,11 @@ const fetchData = async () => {
 onBeforeMount(async () => {
   usersByProject.value = getUsersByProject()
   tasks.value = await fetchTasks(headProject.value as ResponseProject)
+
+  menuOptions.value = props.projects.map((project) => ({
+    label: project.name,
+    key: project.id,
+  }))
 })
 
 onMounted(fetchData)
@@ -70,6 +77,18 @@ watch(
   },
 )
 
+watch(
+  () => projectStore.belongingProjects,
+  (newProjects) => {
+    console.log("Updated projects:", newProjects) // デバッグメッセージ
+    menuOptions.value = newProjects.map((project) => ({
+      label: project.name,
+      key: project.id,
+    }))
+  },
+  { deep: true },
+)
+
 const getUsersByProject = (): User[] => {
   const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
   return userIds.map((userId) => userStore.users.find((user) => userId == user.id)) as User[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
@@ -80,10 +99,6 @@ const selectedProject = (): ResponseProject => {
     (project) => project.id == selectedProjectId.value,
   ) as ResponseProject
 }
-
-const menuOptions = props.projects.map((project) => {
-  return { label: project.name, key: project.id }
-})
 
 const getProject = (id: number): Project => {
   return projectStore.belongingProjects.find((project) => project.id == id) as Project // NOTE: 所属プロジェクトがない場合はprojectSummaryは表示しないため型アサーション
