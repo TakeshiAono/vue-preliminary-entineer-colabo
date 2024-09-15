@@ -76,6 +76,7 @@ export const useTaskStore = defineStore(
       searchTasks,
     }
   },
+  console.log("tmp")
   {
     persist: {
       storage: sessionStorage,
