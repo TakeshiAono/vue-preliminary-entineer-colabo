@@ -25,7 +25,12 @@
       </div>
       <div class="button-container">
         <n-button @click="closeModal" class="cancel-btn">閉じる</n-button>
-        <n-button type="primary" @click="acceptOffer" class="offer-accept-btn"
+        <n-button
+          type="primary"
+          @click="acceptOffer"
+          class="offer-accept-btn"
+          :disabled="isOfferAccepted"
+          :style="{ '--n-border-disabled': isButtonDisabled ? 'none' : '' }"
           >オファーを受ける</n-button
         >
       </div>
@@ -47,13 +52,17 @@ const offerContent = ref<{
   message: string
   projectName: string
   userName: string
+  isAccepted?: boolean
 } | null>(null)
+
+const isOfferAccepted = ref(false) // 承諾済みかどうかを追跡
 
 const openModal = async (offerDetails: { log: string; offerId?: number }) => {
   selectedOfferDetails.value = offerDetails
   if (offerDetails.offerId) {
     try {
       offerContent.value = await offerStore.fetchOfferDetails(offerDetails.offerId)
+      isOfferAccepted.value = offerContent.value?.isAccepted ?? false
     } catch (error) {
       console.error("Error fetching offer details:", error)
     }
@@ -77,13 +86,11 @@ const handleClose = (value: boolean) => {
 const acceptOffer = async () => {
   if (offerContent.value && offerContent.value.id) {
     try {
-      // offerStoreを使ってオファーを受け入れる処理
       await offerStore.acceptOffer(offerContent.value.id)
       console.log("Offer accepted successfully")
-
-      if (selectedOfferDetails.value) {
-        selectedOfferDetails.value.offerId = null
-      }
+      // 承諾済みフラグを true に設定
+      isOfferAccepted.value = true
+      offerContent.value.isAccepted = true
 
       closeModal()
     } catch (error) {
@@ -126,6 +133,12 @@ const acceptOffer = async () => {
   gap: 10px;
   margin-top: 10px;
   justify-content: flex-end;
+}
+
+.offer-accept-btn:disabled {
+  background-color: gray;
+  color: white;
+  cursor: default;
 }
 
 .custom-modal {
