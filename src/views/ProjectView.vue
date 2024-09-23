@@ -10,9 +10,7 @@ const project = ref(null)
 const route = useRoute()
 
 onMounted(async () => {
-  console.log("aaa", route.params.id)
   project.value = await projectStore.fetchProject(route.params.id)
-  console.log(project.value)
 })
 </script>
 
