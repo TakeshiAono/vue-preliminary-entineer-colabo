@@ -80,6 +80,23 @@ export const useTaskStore = defineStore(
       }
     }
 
+    async function updateTask(
+      id: number,
+      params: {
+        name: string
+        description: string
+        projectId: number
+        inChargeUserId: number
+      },
+    ) {
+      try {
+        await axios.patch<ResponseTask>(`${API_URL}/tasks/${id}`, params)
+      } catch (error) {
+        console.error("タスクの更新に失敗しました:", error)
+        throw error
+      }
+    }
+
     return {
       userId,
       belongingProjectIds,
@@ -90,6 +107,7 @@ export const useTaskStore = defineStore(
       getTasksByProject,
       searchTasks,
       createTask,
+      updateTask,
     }
   },
   {

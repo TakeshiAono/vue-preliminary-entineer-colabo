@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
+import { ref, onMounted, h } from "vue"
 import { NButton, NModal, NForm, NFormItem, NInput, useMessage } from "naive-ui"
 import type { DataTableColumns } from "naive-ui"
 import TaskSearchContainer from "@/components/TaskSearchContainer.vue"
@@ -12,9 +12,21 @@ interface Task {
   id: number
   name: string
   description: string
+  projectId: string
+  inChargeUserId: string
+}
+
+const emptyTask = {
+  id: 0,
+  name: "",
+  description: "",
+  projectId: "",
+  inChargeUserId: "",
 }
 
 const tasks = ref<Task[] | []>([])
+const editingTask = ref<Task>(emptyTask)
+const showEditTaskModal = ref(false)
 
 const createColumns = (): DataTableColumns<Task> => {
   return [
@@ -30,6 +42,25 @@ const createColumns = (): DataTableColumns<Task> => {
       title: "説明",
       key: "description",
     },
+    {
+      title: "担当者ID",
+      key: "inChargeUserId",
+    },
+    {
+      title: "操作",
+      key: "actions",
+      render(row) {
+        return h(
+          NButton,
+          {
+            type: "info",
+            size: "small",
+            onClick: () => editTask(row),
+          },
+          { default: () => "編集" },
+        )
+      },
+    },
   ]
 }
 
@@ -38,12 +69,55 @@ const columns = createColumns()
 const searchTasks = async (query: searchTasksParams) => {
   const response = await tasksStore.searchTasks(query)
   tasks.value = response
-    .map(({ id, name, description }) => ({
-      id,
-      name,
-      description: description ?? "",
+    .filter(({ id, projectId, inChargeUserId }) => id && projectId && inChargeUserId)
+    .map((task) => ({
+      id: task.id,
+      name: task.name,
+      description: task.description!,
+      projectId: String(task.projectId!),
+      inChargeUserId: String(task.inChargeUserId!),
     }))
     .sort((a, b) => b.id - a.id) // 降順
+}
+
+const editTask = (task: Task) => {
+  editingTask.value = { ...task }
+  showEditTaskModal.value = true
+}
+
+const updateTask = async () => {
+  if (!editingTask.value.name) {
+    message.error("タスク名を入力してください")
+    return
+  }
+  if (!editingTask.value.projectId) {
+    message.error("プロジェクトIDを入力してください")
+    return
+  }
+  if (!editingTask.value.inChargeUserId) {
+    message.error("担当者IDを入力してください")
+    return
+  }
+
+  const id = editingTask.value.id
+
+  const params = {
+    name: editingTask.value.name,
+    description: editingTask.value.description,
+    projectId: parseInt(editingTask.value.projectId),
+    inChargeUserId: parseInt(editingTask.value.inChargeUserId),
+  }
+
+  try {
+    await tasksStore.updateTask(id, params)
+    await searchTasks({})
+    message.success("タスクを更新しました")
+
+    showEditTaskModal.value = false
+    editingTask.value = { ...emptyTask }
+  } catch (error) {
+    message.error("タスク更新に失敗しました")
+  }
 }
 
 onMounted(async () => {
@@ -135,6 +209,30 @@ const registerTask = async () => {
       <template #action>
         <n-button @click="showTaskModal = false">キャンセル</n-button>
         <n-button type="info" @click="registerTask">登録</n-button>
+      </template>
+    </n-modal>
+    <n-modal v-model:show="showEditTaskModal" title="タスク編集" preset="dialog">
+      <n-form>
+        <n-form-item label="タスク名" required>
+          <n-input v-model:value="editingTask.name" placeholder="タスク名を入力" />
+        </n-form-item>
+        <n-form-item label="説明">
+          <n-input
+            v-model:value="editingTask.description"
+            type="textarea"
+            placeholder="タスクの説明を入力"
+          />
+        </n-form-item>
+        <n-form-item label="プロジェクトID" required>
+          <n-input v-model:value="editingTask.projectId" placeholder="プロジェクトIDを入力" />
+        </n-form-item>
+        <n-form-item label="ユーザーID" required>
+          <n-input v-model:value="editingTask.inChargeUserId" placeholder="ユーザーIDを入力" />
+        </n-form-item>
+      </n-form>
+      <template #action>
+        <n-button @click="showEditTaskModal = false">キャンセル</n-button>
+        <n-button type="info" @click="updateTask">更新</n-button>
       </template>
     </n-modal>
   </main>
