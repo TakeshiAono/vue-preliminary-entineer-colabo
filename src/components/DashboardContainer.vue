@@ -76,7 +76,7 @@ const updateTasks = async () => {
         @select="selectUserHandler"
         :projectId="props.selectedProjectId"
       />
-      <TaskGraph :user="selectedUser" :tasks="selectedTasks" />
+      <TaskGraph :tasks="selectedTasks" />
     </div>
   </div>
 </template>

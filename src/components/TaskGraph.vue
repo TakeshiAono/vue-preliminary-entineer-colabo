@@ -2,12 +2,12 @@
 import { ref, watch } from "vue"
 import dayjs from "dayjs"
 
-const props = defineProps<{ user: User; tasks: Task[] | [] }>()
+const props = defineProps<{ tasks: Task[] | [] }>()
 const data = ref<{ data: number[] }[]>([])
 const graphStartDay = ref<dayjs.Dayjs>(dayjs().subtract(4, "year"))
 const options = ref({})
 
-watch([() => props.tasks, () => props.user], () => {
+watch([() => props.tasks], () => {
   updateGraph()
 })
 
