@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ProjectDescription from "@/components/ProjectDescription.vue"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
 import { onMounted, ref } from "vue"
@@ -18,10 +19,8 @@ onMounted(async () => {
 <template>
   <main>
     <h1>ProjectShow</h1>
-    <p>ログイン中: {{ userStore.isLogin }}</p>
     <div v-if="project">
-      <p>{{ project.name }}</p>
-      <p>{{ project.recruitingText }}</p>
+      <ProjectDescription :description="project.description" />
     </div>
   </main>
 </template>
