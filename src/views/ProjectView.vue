@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DashboardContainerForProjectView from "@/components/DashboardContainerForProjectView.vue"
 import ProjectDescription from "@/components/ProjectDescription.vue"
 
 import { useProjectStore } from "@/stores/projectStore"
@@ -12,6 +13,7 @@ const project = ref({ name: "", description: "" })
 const projectUsers = ref([])
 const route = useRoute()
 const projectId = parseInt(route.params.id as string, 10)
+const tasks = ref([])
 
 onMounted(async () => {
   project.value = await projectStore.fetchProject(projectId)
@@ -35,6 +37,13 @@ onMounted(async () => {
           <p v-for="user in projectUsers" :key="user.id">{{ user.name }}</p>
         </div>
       </div>
+      <DashboardContainerForProjectView
+        v-if="projectUsers.length > 0 && project.name !== ''"
+        :tasks="[]"
+        :projects="[project]"
+        :selectedProjectId="projectId"
+        :users="projectUsers"
+      />
     </div>
   </main>
 </template>
