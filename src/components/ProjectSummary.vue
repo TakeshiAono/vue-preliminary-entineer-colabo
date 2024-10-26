@@ -16,6 +16,7 @@ import OperationLog from "./OperationLog.vue"
 import ProjectDescription from "./ProjectDescription.vue"
 import ProjectMemberSummary from "./ProjectMemberSummary.vue"
 import UserNotice from "./UserNotice.vue"
+import { useRouter } from "vue-router"
 
 const props = defineProps<{ projects: Project[]; users: User[] }>()
 const projectStore = useProjectStore()
@@ -30,6 +31,7 @@ const selectedProjectId = ref<number>(headProject.value.id)
 const usersByProject = ref<User[]>([])
 
 const currentUser = userStore.currentUser
+const router = useRouter()
 
 onBeforeMount(async () => {
   usersByProject.value = getUsersByProject()
@@ -120,8 +122,8 @@ const getProject = (id: number): Project => {
         <div>
           <div id="project-info">
             <div id="project-member">
-              <h1 id="project-name">{{ headProject.name }}</h1>
-              <ProjectDescription :description="getProject(selectedProjectId).description" />
+              <h1 id="project-name">{{ projectStore.belongingProjects.find(project => project.id == selectedProjectId)?.name }}</h1>
+              <ProjectDescription :description="getProject(selectedProjectId).description" @jump-project-page="() =>{router.push('projects/' + selectedProjectId); }"/>
               <ProjectMemberSummary :member-names="usersByProject.map((user) => user.name)" />
             </div>
             <div id="chat-log">
