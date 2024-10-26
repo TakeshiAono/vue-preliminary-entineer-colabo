@@ -51,10 +51,9 @@ const closeModal = () => {
         <div v-if="(() => {
           const directoryList = files.filter(file => (typeof file) != 'string')
           return directoryList.length > 0
-          })()">
-          <div v-for="(file) of files.filter(file => (typeof file) != 'string')">
-            <Directory :style="{'margin-left': '20px'}" :name="file.directoryName" :path="name + '/' + file.directoryName" :files="file.files"/>
-          </div>
+          })()"
+        >
+          <Directory :style="{'margin-left': '20px'}" :name="file.directoryName" :path="name + '/' + file.directoryName" :files="file.files"/>
         </div>
       </div>
     </div>
