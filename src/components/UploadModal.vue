@@ -37,9 +37,10 @@ const uploadRegister = async () => {
 }
 
 const getUploadSignature = async () => {
+  const optimaizeDirectoryName = removeLeadingSlash(props.directoryName || "")
   if(newDirectory.value != "" && !!props.directoryName) {
     return await axios.get(
-      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${props.directoryName}%2F${newDirectory.value}`
+      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}%2F${newDirectory.value}`
     )
   } else if(newDirectory.value != "") {
     return await axios.get(
@@ -47,10 +48,12 @@ const getUploadSignature = async () => {
     )
   } else {
     return await axios.get(
-      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${props.directoryName}`
+      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}`
     )
   }
 }
+
+const removeLeadingSlash = (str: string) => str.replace(/^\/+/, '');
 
 const upload = async () => {
   if (!selectedFile.value) {
