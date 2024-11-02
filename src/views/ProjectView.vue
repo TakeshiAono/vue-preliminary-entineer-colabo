@@ -2,9 +2,22 @@
 import ShareFileArea from "@/components/ShareFileArea.vue";
 import UploadModal from "@/components/UploadModal.vue";
 import { CloudUpload } from "@vicons/ionicons5";
-import { ref } from "vue"
+import axios from "axios";
+import { onMounted, ref } from "vue"
+import { useRoute } from "vue-router";
 
 const showModal = ref(false)
+const isValidShareFiles = ref<boolean | null>(null)
+
+const route = useRoute()
+
+onMounted(async () => {
+  if(await isCreatedBucket()) {
+    isValidShareFiles.value = true
+  } else {
+    isValidShareFiles.value = false
+  }
+})
 
 const openModal = () => {
   showModal.value=true
@@ -12,6 +25,20 @@ const openModal = () => {
 
 const closeModal = () => {
   showModal.value=false
+}
+
+const requestUseShareFiles = async (bucketName: string) => {
+  const result = await axios.post<void>(`http://localhost:8080/projects/${route.params.id}/use-share-files/${bucketName}`)
+  if(result.status === 200) {
+    isValidShareFiles.value = true
+  } else {
+    isValidShareFiles.value = false
+  }
+}
+
+const isCreatedBucket = async () => {
+  const result = await axios.get<boolean>(`http://localhost:8080/projects/${route.params.id}/use-share-files`)
+  return result.data
 }
 </script>
 
@@ -47,8 +74,19 @@ const closeModal = () => {
             </n-icon>
           </div>
         </div>
-        <div  :id="'share-file-area'">
-          <ShareFileArea/>
+        <div :id="'share-file-area'">
+          <div v-if="isValidShareFiles === null"  class="content-wrapper">
+            <ShareFileArea/>
+            <n-spin/>
+          </div>
+          <div v-else-if="isValidShareFiles">
+            <ShareFileArea/>
+          </div>
+          <div v-else class="content-wrapper">
+            <n-button type="success" @click="() => {requestUseShareFiles('itrtewn')}">
+              ファイル共有を有効にする
+            </n-button>
+          </div>
         </div>
       </div>
     </div>
@@ -127,5 +165,12 @@ header {
 
 footer {
   background-color: yellow;
+}
+
+.content-wrapper {
+  height: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
