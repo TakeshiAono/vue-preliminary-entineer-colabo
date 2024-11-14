@@ -3,7 +3,7 @@
 import { ref } from "vue"
 // @ts-ignore
 import axios from "axios";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const props = defineProps({
   visible: {
@@ -17,7 +17,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits(["onUpdateSuccess"])
-const router =useRouter()
+const router = useRouter()
+const route = useRoute()
 
 const showModal = ref(false)
 const selectedFile = ref<null | File>(null)
@@ -40,15 +41,15 @@ const getUploadSignature = async () => {
   const optimaizeDirectoryName = removeLeadingSlash(props.directoryName || "")
   if(newDirectory.value != "" && !!props.directoryName) {
     return await axios.get(
-      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}%2F${newDirectory.value}`
+      `http://localhost:8080/projects/${route.params.id}/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}%2F${newDirectory.value}`
     )
   } else if(newDirectory.value != "") {
     return await axios.get(
-      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${newDirectory.value}`
+      `http://localhost:8080/projects/${route.params.id}/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${newDirectory.value}`
     )
   } else {
     return await axios.get(
-      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}`
+      `http://localhost:8080/projects/${route.params.id}/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}`
     )
   }
 }
