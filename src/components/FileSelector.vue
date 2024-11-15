@@ -4,12 +4,14 @@ import { ref } from "vue"
 import saveAs from "file-saver";
 import { DownloadOutline, NewspaperOutline } from '@vicons/ionicons5'
 import axios from "axios";
+import { useRoute } from "vue-router";
 
 const { file, directoryName } = defineProps(["file", "directoryName"])
 const isFileDownloading = ref(false)
+const route = useRoute()
 
 const getDownloadSignature = async () => {
-  return await axios.get(`http://localhost:8080/files/${file}/download-signature-url?directoryName=${directoryName}`)
+  return await axios.get(`http://localhost:8080/projects/${route.params.id}/files/${file}/download-signature-url?directoryName=${directoryName}`)
 }
 
 const fileDownload = async () => {

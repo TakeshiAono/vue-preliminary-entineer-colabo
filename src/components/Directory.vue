@@ -52,14 +52,14 @@ const closeModal = () => {
           return directoryList.length > 0
           })()"
         >
-          <Directory :style="{'margin-left': '20px'}" :name="file.directoryName" :path="name + '/' + file.directoryName" :files="file.files"/>
+          <Directory :style="{'margin-left': '20px'}" :name="file.directoryName" :path="path + '/' + file.directoryName" :files="file.files"/>
         </div>
       </div>
     </div>
 
     <div v-for="(file, index) in files.filter(file => (typeof file) == 'string')">
       <div v-if="isSelected">
-        <FileSelector :file="file" :style="{'margin-left': '20px'}" :directoryName="directoryName"/>
+        <FileSelector :file="file" :style="{'margin-left': '20px'}" :directoryName="path"/>
         <div v-if="(() => {
           const directoryList = files.filter(file => (typeof file) != 'string')
           return directoryList.length > 0
