@@ -34,9 +34,6 @@ const updateTasks = async () => {
   selectedTasks.value = await taskStore.searchTasks({
     projectId: props.selectedProjectId,
   })
-  console.log("searchTasks result:", tasks) // 取得したタスクデータを確認
-  selectedTasks.value = tasks
-  console.log("Selected tasks to be passed:", selectedTasks.value)
 }
 </script>
 
@@ -47,7 +44,7 @@ const updateTasks = async () => {
       <DashboardDeadline :deadline="deadline" />
     </div>
     <div id="task-summary">
-      <TaskSummary v-if="tasks.length != 0" :tasks="selectedTasks" />
+      <TaskSummary v-if="selectedTasks.length != 0" :tasks="selectedTasks" />
     </div>
     <div id="tasks-graph">
       <TaskGraph :tasks="selectedTasks" />
@@ -63,15 +60,23 @@ const updateTasks = async () => {
 #dashboard-content {
   display: flex;
   justify-content: space-around;
+  max-width: 650px;
+  min-width: 300px;
+  width: 100%;
   border-radius: 10px;
   border: solid;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 #project-deadline-info {
   margin: auto 0;
+  flex: 1;
 }
 
 #tasks-graph {
   width: 60%;
+  flex: 2;
 }
 </style>
