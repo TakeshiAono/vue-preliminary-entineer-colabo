@@ -3,12 +3,16 @@ import { ref } from "vue"
 // @ts-ignore
 import saveAs from "file-saver";
 import { DownloadOutline, NewspaperOutline } from '@vicons/ionicons5'
+import { Delete } from '@vicons/carbon'
 import axios from "axios";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useDialog } from "naive-ui";
 
 const { file, directoryName } = defineProps(["file", "directoryName"])
 const isFileDownloading = ref(false)
 const route = useRoute()
+const router = useRouter()
+const dialog = useDialog()
 
 const getDownloadSignature = async () => {
   return await axios.get(`http://localhost:8080/projects/${route.params.id}/files/${file}/download-signature-url?directoryName=${directoryName}`)
@@ -22,6 +26,23 @@ const fileDownload = async () => {
   const blob = new Blob([getFile.data], { type: mineType });
   saveAs(blob, file);
   isFileDownloading.value = false
+}
+
+const deleteFile = async () => {
+  await axios.delete(`http://localhost:8080/projects/${route.params.id}/files/${file}?directoryName=${directoryName}`);
+}
+
+const displayDeleteDialog = () => {
+  dialog.warning({
+    title: 'ファイル削除',
+    content: 'ファイルを削除しますか？',
+    positiveText: 'はい',
+    negativeText: 'いいえ',
+    onPositiveClick: async () => {
+      await deleteFile()
+      router.go(0)
+    },
+  });
 }
 </script>
 
@@ -39,6 +60,9 @@ const fileDownload = async () => {
           <DownloadOutline />
         </n-icon>
       </div>
+      <n-icon class="delete-icon" size="25" @click="displayDeleteDialog">
+        <Delete />
+      </n-icon>
     </div>
 </template>
 

@@ -7,11 +7,13 @@ bulkFetch()
 </script>
 
 <template>
-  <div class="wrapper">
-    <NavigationBar :isLogin="isLogin" />
-  </div>
-
-  <RouterView />
+  <n-dialog-provider>
+    <div class="wrapper">
+      <NavigationBar :isLogin="isLogin" />
+    </div>
+  
+    <RouterView />
+  </n-dialog-provider>
 </template>
 
 <style scoped></style>
