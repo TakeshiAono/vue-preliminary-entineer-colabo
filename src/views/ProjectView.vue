@@ -29,29 +29,48 @@ onMounted(async () => {
 <template>
   <main>
     <h1>{{ project.name }}</h1>
-    <div v-if="project">
-      <ProjectDescription :description="project.description" />
-      <h1 id="project-member-title">メンバー</h1>
-      <div id="project-member-content">
-        <div v-if="projectUsers.length">
-          <p v-for="user in projectUsers" :key="user.id">{{ user.name }}</p>
+    <div v-if="project" id="project-layout">
+      <div id="left-side">
+        <ProjectDescription :description="project.description" class="project-description" />
+        <h1 id="project-member-title">メンバー</h1>
+        <div id="project-member-content">
+          <div v-if="projectUsers.length">
+            <p v-for="user in projectUsers" :key="user.id">{{ user.name }}</p>
+          </div>
         </div>
       </div>
-      <DashboardContainerForProjectView
-        v-if="projectUsers.length > 0 && project.name !== ''"
-        :tasks="[]"
-        :projects="[project]"
-        :selectedProjectId="projectId"
-        :users="projectUsers"
-      />
+      <div id="right-side">
+        <DashboardContainerForProjectView
+          v-if="projectUsers.length > 0 && project.name !== ''"
+          :tasks="[]"
+          :projects="[project]"
+          :selectedProjectId="projectId"
+          :users="projectUsers"
+        />
+      </div>
     </div>
   </main>
 </template>
 
 <style scoped>
+#project-layout {
+  display: flex;
+  gap: 30px;
+}
+
+#left-side {
+  display: flex;
+  flex-direction: column;
+  margin-left: 80px;
+}
+
+#right-side {
+  flex: 2;
+}
+
 #project-member-content {
   width: 200px;
-  height: 100px;
+  height: 300px;
   border-radius: 10px;
   border: solid;
 }

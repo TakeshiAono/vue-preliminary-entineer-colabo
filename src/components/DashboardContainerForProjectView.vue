@@ -59,9 +59,10 @@ const updateTasks = async () => {
 
 #dashboard-content {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
   max-width: 650px;
-  min-width: 300px;
+  min-width: 1000px;
   width: 100%;
   border-radius: 10px;
   border: solid;
@@ -72,11 +73,13 @@ const updateTasks = async () => {
 
 #project-deadline-info {
   margin: auto 0;
+  text-align: center;
   flex: 1;
 }
 
 #tasks-graph {
-  width: 60%;
+  width: 100%;
+  max-width: 100%;
   flex: 2;
 }
 </style>
