@@ -65,6 +65,38 @@ export const useTaskStore = defineStore(
       return responseTasks
     }
 
+    async function createTask(params: {
+      name: string
+      description: string
+      projectId: number
+      inChargeUserId: number
+    }) {
+      try {
+        // タスクをバックエンドに追加
+        await axios.post<ResponseTask>(`${API_URL}/tasks/create`, params)
+      } catch (error) {
+        console.error("タスクの作成に失敗しました:", error)
+        throw error
+      }
+    }
+
+    async function updateTask(
+      id: number,
+      params: {
+        name: string
+        description: string
+        projectId: number
+        inChargeUserId: number
+      },
+    ) {
+      try {
+        await axios.patch<ResponseTask>(`${API_URL}/tasks/${id}`, params)
+      } catch (error) {
+        console.error("タスクの更新に失敗しました:", error)
+        throw error
+      }
+    }
+
     return {
       userId,
       belongingProjectIds,
@@ -74,6 +106,8 @@ export const useTaskStore = defineStore(
       getTasksMaps,
       getTasksByProject,
       searchTasks,
+      createTask,
+      updateTask,
     }
   },
   {

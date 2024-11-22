@@ -3,10 +3,11 @@ import AccountView from "@/views/AccountView.vue"
 import ChatView from "@/views/ChatView.vue"
 import LoginView from "@/views/LoginView.vue"
 import MyPageView from "@/views/MyPageView.vue"
-import TasksView from "@/views/TasksView.vue"
+import OfferView from "@/views/OfferView.vue"
 import ProfileView from "@/views/ProfileView.vue"
 import ProjectView from "@/views/ProjectView.vue"
 import ProjectsSearch from "@/views/ProjectsSearch.vue"
+import TasksView from "@/views/TasksView.vue"
 import { createRouter, createWebHistory } from "vue-router"
 
 const router = createRouter({
@@ -41,6 +42,12 @@ const router = createRouter({
       path: "/projects/show/:id",
       name: "projectShow",
       component: ProjectView,
+      props: true,
+    },
+    {
+      path: "/offers/:id",
+      name: "offerShow",
+      component: OfferView,
       props: true,
     },
     {
