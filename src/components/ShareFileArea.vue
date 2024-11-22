@@ -1,26 +1,25 @@
-
 <script setup lang="ts">
-import axios from 'axios';
+import axios from "axios"
 import { onMounted, ref } from "vue"
 // @ts-ignore
-import { useRoute } from 'vue-router';
-import Directory from './Directory.vue';
-import _ from 'lodash';
-import FileSelector from './FileSelector.vue';
+import { useRoute } from "vue-router"
+import Directory from "./Directory.vue"
+import _ from "lodash"
+import FileSelector from "./FileSelector.vue"
 
 type Response = {
-  "directories": DirectoryType[]
+  directories: DirectoryType[]
 }
 
 type DirectoryType = {
-  "name": string;
-  "files": fileInfoType[];
+  name: string
+  files: fileInfoType[]
 }
 
 type fileInfoType = {
-  "name": string;
-  "file_id": number;
-  "updated_at": string;
+  name: string
+  file_id: number
+  updated_at: string
 }
 
 // const props = defineProps(["chatLogs"])
@@ -30,7 +29,10 @@ const topFiles = ref([])
 
 onMounted(async () => {
   const fileList = await fetchFileList(route.params.id as string)
-  const [files, directoryList]: TreeNode[] = _.partition(fileList, (file) => typeof file === "string")
+  const [files, directoryList]: TreeNode[] = _.partition(
+    fileList,
+    (file) => typeof file === "string",
+  )
   topFiles.value = files
   directories.value = directoryList
 })
@@ -41,34 +43,34 @@ const fetchFileList = async (projectId: string) => {
 }
 
 const buildTree = (keys: string[]): TreeNode => {
-  const root: TreeNode = [];
+  const root: TreeNode = []
 
-  keys.forEach(key => {
-      const parts = key.split("/").filter(part => part !== ""); // "/" でキーを分割し、空の部分を除外
-      let current = root;
+  keys.forEach((key) => {
+    const parts = key.split("/").filter((part) => part !== "") // "/" でキーを分割し、空の部分を除外
+    let current = root
 
-      parts.forEach((part, index) => {
-          if (index === parts.length - 1) {
-              // 最後の部分はファイルとして扱う
-              current.push(part);
-          } else {
-              // ディレクトリを探すか、なければ作成
-              let dir = current.find(
-                  item => typeof item === "object" && (item as DirectoryNode).directoryName === part
-              ) as DirectoryNode;
+    parts.forEach((part, index) => {
+      if (index === parts.length - 1) {
+        // 最後の部分はファイルとして扱う
+        current.push(part)
+      } else {
+        // ディレクトリを探すか、なければ作成
+        let dir = current.find(
+          (item) => typeof item === "object" && (item as DirectoryNode).directoryName === part,
+        ) as DirectoryNode
 
-              if (!dir) {
-                  // ディレクトリが存在しない場合は作成
-                  dir = { directoryName: part, files: [] };
-                  current.push(dir);
-              }
-              // 次の階層に進む
-              current = dir.files;
-          }
-      });
-  });
+        if (!dir) {
+          // ディレクトリが存在しない場合は作成
+          dir = { directoryName: part, files: [] }
+          current.push(dir)
+        }
+        // 次の階層に進む
+        current = dir.files
+      }
+    })
+  })
 
-  return root;
+  return root
 }
 </script>
 
@@ -76,13 +78,16 @@ const buildTree = (keys: string[]): TreeNode => {
   <div id="share-file-area-content">
     <!-- FIXME: ディレクトリにファイルが入っていないとディレクトリコンポーネントが表示されないので、要修正 -->
     <div v-for="(directory, index) in directories" :key="index">
-      <Directory :name="directory.directoryName" :files="directory.files" :path="'/' + directory.directoryName"/>
+      <Directory
+        :name="directory.directoryName"
+        :files="directory.files"
+        :path="'/' + directory.directoryName"
+      />
     </div>
     <div v-for="(file, index) in topFiles" :key="index">
-      <FileSelector :file="file"/>
+      <FileSelector :file="file" />
     </div>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

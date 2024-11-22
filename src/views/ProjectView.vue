@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import ShareFileArea from "@/components/ShareFileArea.vue";
-import UploadModal from "@/components/UploadModal.vue";
-import { CloudUpload } from "@vicons/ionicons5";
-import axios from "axios";
+import ShareFileArea from "@/components/ShareFileArea.vue"
+import UploadModal from "@/components/UploadModal.vue"
+import { CloudUpload } from "@vicons/ionicons5"
+import axios from "axios"
 import { onMounted, ref } from "vue"
-import { useRoute } from "vue-router";
+import { useRoute } from "vue-router"
 
 const showModal = ref(false)
 const isValidShareFiles = ref<boolean | null>(null)
@@ -12,7 +12,7 @@ const isValidShareFiles = ref<boolean | null>(null)
 const route = useRoute()
 
 onMounted(async () => {
-  if(await isCreatedBucket()) {
+  if (await isCreatedBucket()) {
     isValidShareFiles.value = true
   } else {
     isValidShareFiles.value = false
@@ -20,16 +20,18 @@ onMounted(async () => {
 })
 
 const openModal = () => {
-  showModal.value=true
+  showModal.value = true
 }
 
 const closeModal = () => {
-  showModal.value=false
+  showModal.value = false
 }
 
 const requestUseShareFiles = async (bucketName: string) => {
-  const result = await axios.post<void>(`http://localhost:8080/projects/${route.params.id}/use-share-files/${bucketName}`)
-  if(result.status === 200) {
+  const result = await axios.post<void>(
+    `http://localhost:8080/projects/${route.params.id}/use-share-files/${bucketName}`,
+  )
+  if (result.status === 200) {
     isValidShareFiles.value = true
   } else {
     isValidShareFiles.value = false
@@ -37,13 +39,15 @@ const requestUseShareFiles = async (bucketName: string) => {
 }
 
 const isCreatedBucket = async () => {
-  const result = await axios.get<boolean>(`http://localhost:8080/projects/${route.params.id}/use-share-files`)
+  const result = await axios.get<boolean>(
+    `http://localhost:8080/projects/${route.params.id}/use-share-files`,
+  )
   return result.data
 }
 </script>
 
 <template>
-  <div class='project-view-page'>
+  <div class="project-view-page">
     <h1>ProjectShow</h1>
     <div id="project-view">
       <div :id="'wrapper'">
@@ -75,15 +79,22 @@ const isCreatedBucket = async () => {
           </div>
         </div>
         <div :id="'share-file-area'">
-          <div v-if="isValidShareFiles === null"  class="content-wrapper">
-            <ShareFileArea/>
-            <n-spin/>
+          <div v-if="isValidShareFiles === null" class="content-wrapper">
+            <ShareFileArea />
+            <n-spin />
           </div>
           <div v-else-if="isValidShareFiles">
-            <ShareFileArea/>
+            <ShareFileArea />
           </div>
           <div v-else class="content-wrapper">
-            <n-button type="success" @click="() => {requestUseShareFiles('itrtewn')}">
+            <n-button
+              type="success"
+              @click="
+                () => {
+                  requestUseShareFiles('itrtewn')
+                }
+              "
+            >
               ファイル共有を有効にする
             </n-button>
           </div>
@@ -91,7 +102,7 @@ const isCreatedBucket = async () => {
       </div>
     </div>
   </div>
-  <UploadModal :visible="showModal" @onUpdateSuccess="closeModal"/>
+  <UploadModal :visible="showModal" @onUpdateSuccess="closeModal" />
 </template>
 
 <style scoped>
