@@ -62,11 +62,11 @@ const updateTasks = async () => {
   justify-content: center;
   align-items: center;
   max-width: 650px;
-  min-width: 1000px;
+  min-width: 900px;
   width: 100%;
   border-radius: 10px;
   border: solid;
-  padding: 20px;
+  padding: 10px;
   box-sizing: border-box;
   overflow: hidden;
 }

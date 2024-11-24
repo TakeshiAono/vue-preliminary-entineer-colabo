@@ -31,7 +31,7 @@ onMounted(async () => {
     <h1>{{ project.name }}</h1>
     <div v-if="project" id="project-layout">
       <div id="left-side">
-        <ProjectDescription :description="project.description" class="project-description" />
+        <ProjectDescription :description="project.description" :width="'100%'" />
         <h1 id="project-member-title">メンバー</h1>
         <div id="project-member-content">
           <div v-if="projectUsers.length">
@@ -40,6 +40,13 @@ onMounted(async () => {
         </div>
       </div>
       <div id="right-side">
+        <div>
+          <h1>応募フォーム</h1>
+          <div id="application-form-content">
+            <button>参加希望を出す</button>
+          </div>
+        </div>
+
         <DashboardContainerForProjectView
           v-if="projectUsers.length > 0 && project.name !== ''"
           :tasks="[]"
@@ -55,22 +62,31 @@ onMounted(async () => {
 <style scoped>
 #project-layout {
   display: flex;
-  gap: 30px;
+  gap: 50px;
 }
 
 #left-side {
+  flex: 1;
   display: flex;
   flex-direction: column;
   margin-left: 80px;
 }
 
 #right-side {
-  flex: 2;
+  flex: 3;
+  margin-right: 80px;
+}
+
+#application-form-content {
+  max-width: 600px;
+  width: 100%;
+  height: 170px;
+  border-radius: 10px;
+  border: solid;
 }
 
 #project-member-content {
-  width: 200px;
-  height: 300px;
+  height: 320px;
   border-radius: 10px;
   border: solid;
 }
