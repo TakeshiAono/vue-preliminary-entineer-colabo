@@ -1,38 +1,130 @@
 <script setup lang="ts">
-import { useUserStore } from "@/stores/userStore"
+import DashboardContainerForProjectView from "@/components/DashboardContainerForProjectView.vue"
+import ProjectDescription from "@/components/ProjectDescription.vue"
+
 import { useProjectStore } from "@/stores/projectStore"
-import { ref, onMounted } from "vue"
+import { useUserStore } from "@/stores/userStore"
+import axios from "axios"
+import { onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
 
 const userStore = useUserStore()
 const projectStore = useProjectStore()
-const project = ref(null)
+const project = ref({ name: "", description: "" })
+const projectUsers = ref([])
 const route = useRoute()
+const projectId = parseInt(route.params.id as string, 10)
+const tasks = ref([])
+const applicationMessage = ref("")
+
+const submitApplication = async () => {
+  if (!applicationMessage.value.trim()) {
+    alert("メッセージを入力してください。")
+    return
+  }
+
+  try {
+    // バックエンドに送信するデータ
+    const payload = {
+      message: applicationMessage.value,
+      userId: userStore.currentUser.id, // ログイン中のユーザーのIDを取得
+      projectId: projectId,
+    }
+
+    // API 呼び出し
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_SERVER_URI}/applications/create`,
+      payload,
+    )
+
+    // 成功した場合
+    alert("応募が送信されました: " + response.data)
+    applicationMessage.value = "" // メッセージをリセット
+  } catch (error) {
+    console.error("応募の送信中にエラーが発生しました:", error)
+    // alert("応募の送信に失敗しました。")
+  }
+}
 
 onMounted(async () => {
-  project.value = await projectStore.fetchProject(route.params.id)
+  project.value = await projectStore.fetchProject(projectId)
+  if (project.value?.userIds) {
+    const users = await Promise.all(
+      project.value.userIds.map(async (userId: number) => await userStore.getUserInfo(userId)),
+    )
+    projectUsers.value = users
+  }
 })
 </script>
 
 <template>
   <main>
-    <h1>ProjectShow</h1>
-    <p>ログイン中: {{ userStore.isLogin }}</p>
-    <p>{{ project.name }}</p>
-    <p>{{ project.recruitingText }}</p>
+    <h1>{{ project.name }}</h1>
+    <div v-if="project" id="project-layout">
+      <div id="left-side">
+        <ProjectDescription :description="project.description" :width="'100%'" />
+        <h1 id="project-member-title">メンバー</h1>
+        <div id="project-member-content">
+          <div v-if="projectUsers.length">
+            <p v-for="user in projectUsers" :key="user.id">{{ user.name }}</p>
+          </div>
+        </div>
+      </div>
+      <div id="right-side">
+        <div>
+          <h1>応募フォーム</h1>
+          <div id="application-form-content">
+            <textarea
+              v-model="applicationMessage"
+              placeholder="プロジェクトオーナーに向けたメッセージを入力してください"
+              rows="10"
+              style="width: 95%"
+            ></textarea>
+            <button @click="submitApplication">参加希望を出す</button>
+          </div>
+        </div>
+
+        <DashboardContainerForProjectView
+          v-if="projectUsers.length > 0 && project.name !== ''"
+          :tasks="[]"
+          :projects="[project]"
+          :selectedProjectId="projectId"
+          :users="projectUsers"
+        />
+      </div>
+    </div>
   </main>
 </template>
 
 <style scoped>
-p {
-  background-color: red;
+#project-layout {
+  display: flex;
+  gap: 50px;
 }
 
-header {
-  background-color: blue;
+#left-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 80px;
 }
 
-footer {
-  background-color: yellow;
+#right-side {
+  flex: 3;
+  margin-right: 80px;
+}
+
+#application-form-content {
+  max-width: 600px;
+  width: 100%;
+  height: 170px;
+  border-radius: 10px;
+  border: solid;
+}
+
+#project-member-content {
+  height: 320px;
+  border-radius: 10px;
+  border: solid;
 }
 </style>

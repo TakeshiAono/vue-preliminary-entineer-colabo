@@ -11,6 +11,7 @@ watch(
     tasksNumber.value = props.tasks.length
     incompleteTaskNumber.value = props.tasks.filter((task) => !task.doneAt).length
   },
+  { immediate: true },
 )
 </script>
 

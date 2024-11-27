@@ -1,10 +1,12 @@
 <script setup lang="ts">
-const props = defineProps(["description"])
+const props = defineProps(["description", "width"])
 </script>
 
 <template>
   <h1 id="project-description-title">概要</h1>
-  <div id="project-description-content">{{ props.description }}</div>
+  <div id="project-description-content" :style="{ width: props.width }">
+    {{ props.description }}
+  </div>
 </template>
 
 <style scoped>
