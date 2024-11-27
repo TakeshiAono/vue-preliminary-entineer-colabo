@@ -4,6 +4,7 @@ import ProjectDescription from "@/components/ProjectDescription.vue"
 
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
+import axios from "axios"
 import { onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
 
@@ -14,6 +15,36 @@ const projectUsers = ref([])
 const route = useRoute()
 const projectId = parseInt(route.params.id as string, 10)
 const tasks = ref([])
+const applicationMessage = ref("")
+
+const submitApplication = async () => {
+  if (!applicationMessage.value.trim()) {
+    alert("メッセージを入力してください。")
+    return
+  }
+
+  try {
+    // バックエンドに送信するデータ
+    const payload = {
+      message: applicationMessage.value,
+      userId: userStore.currentUser.id, // ログイン中のユーザーのIDを取得
+      projectId: projectId,
+    }
+
+    // API 呼び出し
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_SERVER_URI}/applications/create`,
+      payload,
+    )
+
+    // 成功した場合
+    alert("応募が送信されました: " + response.data)
+    applicationMessage.value = "" // メッセージをリセット
+  } catch (error) {
+    console.error("応募の送信中にエラーが発生しました:", error)
+    // alert("応募の送信に失敗しました。")
+  }
+}
 
 onMounted(async () => {
   project.value = await projectStore.fetchProject(projectId)
@@ -43,7 +74,13 @@ onMounted(async () => {
         <div>
           <h1>応募フォーム</h1>
           <div id="application-form-content">
-            <button>参加希望を出す</button>
+            <textarea
+              v-model="applicationMessage"
+              placeholder="プロジェクトオーナーに向けたメッセージを入力してください"
+              rows="10"
+              style="width: 95%"
+            ></textarea>
+            <button @click="submitApplication">参加希望を出す</button>
           </div>
         </div>
 
