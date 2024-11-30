@@ -10,11 +10,13 @@ bulkFetch()
 <template>
   <NConfigProvider>
     <NMessageProvider>
-      <div class="wrapper">
-        <NavigationBar :isLogin="isLogin" />
-      </div>
+      <n-dialog-provider>
+        <div class="wrapper">
+          <NavigationBar :isLogin="isLogin" />
+        </div>
 
-      <RouterView />
+        <RouterView />
+      </n-dialog-provider>
     </NMessageProvider>
   </NConfigProvider>
 </template>

@@ -39,7 +39,7 @@ const router = createRouter({
       component: ProjectsSearch,
     },
     {
-      path: "/projects/:id",
+      path: "/projects/show/:id",
       name: "projectShow",
       component: ProjectView,
       props: true,
