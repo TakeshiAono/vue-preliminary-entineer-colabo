@@ -6,12 +6,17 @@ import axios from "axios";
 import { onMounted, ref } from "vue"
 import { useRoute } from "vue-router";
 
+import { useProjectStore } from "@/stores/projectStore"
+
 const showModal = ref(false)
 const isValidShareFiles = ref<boolean | null>(null)
 
 const route = useRoute()
+const projectStore = useProjectStore()
+const project = ref(null)
 
 onMounted(async () => {
+  project.value = await projectStore.fetchProject(route.params.id)
   if(await isCreatedBucket()) {
     isValidShareFiles.value = true
   } else {
