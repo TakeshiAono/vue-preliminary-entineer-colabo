@@ -3,7 +3,7 @@ import axios from "axios"
 import { onMounted, ref } from "vue"
 // @ts-ignore
 import { useRoute } from "vue-router"
-import Directory from "./Directory.vue"
+import Directory from "./DirectoryComponent.vue"
 import _ from "lodash"
 import FileSelector from "./FileSelector.vue"
 

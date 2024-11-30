@@ -19,7 +19,7 @@ const route = useRoute()
 
 const dialog = useDialog()
 
-const handleDirectoryClick = (e) => {
+const handleDirectoryClick = () => {
   isSelected.value = !isSelected.value
 }
 
@@ -84,7 +84,7 @@ const displayDeleteDialog = () => {
       </div>
     </div>
 
-    <div v-for="(file, index) in files.filter((file) => typeof file != 'string')">
+    <div v-for="(file, index) in files.filter((file) => typeof file != 'string')" :key="index">
       <div v-if="isSelected">
         <div
           v-if="
@@ -104,7 +104,7 @@ const displayDeleteDialog = () => {
       </div>
     </div>
 
-    <div v-for="(file, index) in files.filter((file) => typeof file == 'string')">
+    <div v-for="(file, index) in files.filter((file) => typeof file == 'string')" :key="index">
       <div v-if="isSelected">
         <FileSelector :file="file" :style="{ 'margin-left': '20px' }" :directoryName="path" />
         <div
