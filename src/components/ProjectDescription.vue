@@ -6,13 +6,7 @@ const emits = defineEmits(["jumpProjectPage"])
 <template>
   <div class="wrapper">
     <h1 id="project-description-title">概要</h1>
-    <n-button
-      round
-      type="primary"
-      @click="emits('jumpProjectPage')"
-    >
-      PJページ
-    </n-button>
+    <n-button round type="primary" @click="emits('jumpProjectPage')"> PJページ </n-button>
   </div>
   <div id="project-description-content">{{ props.description }}</div>
 </template>

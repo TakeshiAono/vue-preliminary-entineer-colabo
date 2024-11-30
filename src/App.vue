@@ -14,7 +14,7 @@ bulkFetch()
         <div class="wrapper">
           <NavigationBar :isLogin="isLogin" />
         </div>
-      
+
         <RouterView />
       </n-dialog-provider>
     </NMessageProvider>

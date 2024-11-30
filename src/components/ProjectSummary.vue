@@ -136,8 +136,20 @@ const getProject = (id: number): Project => {
         <div>
           <div id="project-info">
             <div id="project-member">
-              <h1 id="project-name">{{ projectStore.belongingProjects.find(project => project.id == selectedProjectId)?.name }}</h1>
-              <ProjectDescription :description="getProject(selectedProjectId).description" @jump-project-page="() =>{router.push('projects/show/' + selectedProjectId); }"/>
+              <h1 id="project-name">
+                {{
+                  projectStore.belongingProjects.find((project) => project.id == selectedProjectId)
+                    ?.name
+                }}
+              </h1>
+              <ProjectDescription
+                :description="getProject(selectedProjectId).description"
+                @jump-project-page="
+                  () => {
+                    router.push('projects/show/' + selectedProjectId)
+                  }
+                "
+              />
               <ProjectMemberSummary :member-names="usersByProject.map((user) => user.name)" />
             </div>
             <div id="chat-log">
