@@ -77,10 +77,14 @@ onMounted(async () => {
             <textarea
               v-model="applicationMessage"
               placeholder="プロジェクトオーナーに向けたメッセージを入力してください"
-              rows="10"
-              style="width: 95%"
+              rows="8"
+              style="width: 100%; box-sizing: border-box; border: none; outline: none; resize: none"
             ></textarea>
-            <button @click="submitApplication">参加希望を出す</button>
+            <div class="btn-wrapper">
+              <n-button type="primary" @click="submitApplication" class="application-submit-btn"
+                >参加希望を出す</n-button
+              >
+            </div>
           </div>
         </div>
 
@@ -118,13 +122,23 @@ onMounted(async () => {
   max-width: 600px;
   width: 100%;
   height: 170px;
+  padding: 5px;
+  box-sizing: border-box;
   border-radius: 10px;
   border: solid;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 #project-member-content {
   height: 320px;
   border-radius: 10px;
   border: solid;
+}
+
+.application-submit-btn {
+  display: block;
+  margin-left: auto;
 }
 </style>
