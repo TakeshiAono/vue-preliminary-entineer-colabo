@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import axios from "axios"
+import { api } from "@/api/axios"
 import { onMounted, ref } from "vue"
 // @ts-ignore
 import { useRoute } from "vue-router"
@@ -38,7 +38,7 @@ onMounted(async () => {
 })
 
 const fetchFileList = async (projectId: string) => {
-  const { data } = await axios.get(`http://localhost:8080/projects/${projectId}/files`)
+  const { data } = await api.get(`/projects/${projectId}/files`)
   return buildTree(data)
 }
 
