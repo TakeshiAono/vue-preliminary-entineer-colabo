@@ -19,10 +19,26 @@ const validationMessage = ref<string>("")
 
 const userStore = useUserStore()
 
-const submitHandler = async (): void => {
+const assertValidCredentials: (
+  params: LoginModel,
+) => asserts params is { email: string; password: string } = (params) => {
+  // とりあえずnull, undefined, "", 0は無効な値として弾く
+  if (!params.email) {
+    throw new Error("invalid email")
+  }
+  if (!params.password) {
+    throw new Error("invalid password")
+  }
+
+  return
+}
+
+const submitHandler = async (): Promise<void> => {
   try {
+    assertValidCredentials(loginModel.value)
+
     await userStore.login(loginModel.value.email, loginModel.value.password)
-    await bulkFetch()
+    // await bulkFetch()
     router.push("myPage")
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
