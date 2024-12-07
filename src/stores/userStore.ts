@@ -12,7 +12,7 @@ export interface UserStore {
   haveProjectIds: Ref<number[] | null>
   getUserInfo: (id: number) => Promise<ResponseUser>
   addUsersByProject: (project: Project) => void
-  getUsers: () => void
+  getUsers: () => User[]
   users: User[]
 }
 
@@ -28,7 +28,8 @@ export const useUserStore = defineStore(
       const response = await api.post("/login", { password, email })
       console.log("response.data", response.data)
       isLoggedIn.value = true
-      // await _fetchUserInfo(response.data.id)
+      await _fetchUserInfo(response.data.id)
+
       return response
     }
 

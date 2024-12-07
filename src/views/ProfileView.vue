@@ -32,7 +32,6 @@ import UserFollowers from "@/components/UserFollowers.vue"
 import UserProjects from "@/components/UserProjects.vue"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
-import { User } from "@/types"
 import { onMounted, ref, watch } from "vue"
 import { useRoute } from "vue-router"
 

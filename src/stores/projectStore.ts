@@ -33,7 +33,7 @@ export const useProjectStore = defineStore("project", () => {
   async function setProjects(projectIds: number[]) {
     const projectList: ResponseProject[] = await Promise.all(
       projectIds.map(async (projectId) => {
-        const project = await fetchProject(projectId)
+        const project = await fetchProject(projectId.toString())
         return project
       }),
     )

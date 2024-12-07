@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import router from "@/router"
 import { useUserStore } from "@/stores/userStore"
-import { bulkFetch } from "@/utils/bulk"
 import { ref } from "vue"
 import { AxiosError } from "axios"
 
@@ -38,7 +37,7 @@ const submitHandler = async (): Promise<void> => {
     assertValidCredentials(loginModel.value)
 
     await userStore.login(loginModel.value.email, loginModel.value.password)
-    // await bulkFetch()
+
     router.push("myPage")
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
