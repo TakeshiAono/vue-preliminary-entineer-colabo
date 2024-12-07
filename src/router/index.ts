@@ -17,54 +17,64 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LoginView,
+      meta: { requiresAuth: false },
     },
     {
       path: "/account",
       name: "account",
       component: AccountView,
+      meta: { requiresAuth: false },
     },
     {
       path: "/myPage",
       name: "myPage",
       component: MyPageView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/tasks",
       name: "tasks",
       component: TasksView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/projects/search",
       name: "projectsSearch",
       component: ProjectsSearch,
+      meta: { requiresAuth: true },
     },
     {
       path: "/projects/show/:id",
       name: "projectShow",
       component: ProjectView,
+      meta: { requiresAuth: true },
       props: true,
     },
     {
       path: "/offers/:id",
       name: "offerShow",
       component: OfferView,
+      meta: { requiresAuth: true },
       props: true,
     },
     {
       path: "/chat/:id",
       name: "chatShow",
       component: ChatView,
+      meta: { requiresAuth: true },
       props: true,
     },
     {
       path: "/users/:id",
       name: "profile",
       component: ProfileView,
+      meta: { requiresAuth: true },
       props: true,
     },
     {
       path: "/logout",
       name: "logout",
+      meta: { requiresAuth: true },
       // @ts-ignore
       beforeEnter: (to: any, from: any, next: (path: string) => {}) => {
         const userStore = useUserStore()
@@ -73,6 +83,26 @@ const router = createRouter({
       },
     },
   ],
+})
+
+// グローバルナビゲーションガード
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  const isLoggedIn = userStore.isLoggedIn
+
+  // ログインが必要なページかどうかをチェック
+  const requiresAuth = to.meta.requiresAuth !== false // デフォルトで認証必要
+
+  if (requiresAuth && !isLoggedIn) {
+    // 認証が必要なページで未ログインの場合、ログインページへリダイレクト
+    next("/login")
+  } else if (to.path === "/login" && isLoggedIn) {
+    // ログイン済みでログインページにアクセスした場合、マイページへリダイレクト
+    next("/myPage")
+  } else {
+    // それ以外は通常通り遷移
+    next()
+  }
 })
 
 export default router
