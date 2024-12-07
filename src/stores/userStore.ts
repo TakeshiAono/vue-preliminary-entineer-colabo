@@ -1,12 +1,10 @@
 import { api } from "@/api/axios"
 import { defineStore } from "pinia"
 import { ref, type Ref } from "vue"
-import VueCookies from "vue-cookies"
 
 export interface UserStore {
-  isLogin: Ref<boolean | string>
+  isLoggedIn: Ref<boolean>
   login: (email: string, password: string) => Promise<any>
-  getIsLogin: boolean | string
   accountCreate: (name: string, email: string, password: string) => Promise<any>
   logout: () => Promise<any>
   currentUser: Ref<ResponseUser>
@@ -21,7 +19,7 @@ export interface UserStore {
 export const useUserStore = defineStore(
   "user",
   (): UserStore => {
-    const isLogin = ref(VueCookies.get("token"))
+    const isLoggedIn = ref<boolean>(false)
     const currentUser = ref<ResponseUser | null>(null)
     const users = ref<User[]>([])
     const haveProjectIds = ref<number[] | null>(null)
@@ -29,14 +27,13 @@ export const useUserStore = defineStore(
     async function login(email: string, password: string): Promise<any> {
       const response = await api.post("/login", { password, email })
       console.log("response.data", response.data)
-      isLogin.value = "true"
+      isLoggedIn.value = true
       // await _fetchUserInfo(response.data.id)
       return response
     }
 
     async function logout(): Promise<any> {
-      _setToken("false", "", "")
-      isLogin.value = false
+      isLoggedIn.value = false
       users.value = []
     }
 
@@ -51,9 +48,9 @@ export const useUserStore = defineStore(
         password: password,
         email: email,
       })
-      _setToken("true", email, password)
       await _fetchUserInfo(response.data.id)
-      isLogin.value = "true"
+
+      isLoggedIn.value = true
       return response
     }
 
@@ -100,13 +97,10 @@ export const useUserStore = defineStore(
       })
     }
 
-    const getIsLogin = isLogin.value
-
     return {
-      isLogin,
+      isLoggedIn,
       users,
       login,
-      getIsLogin,
       accountCreate,
       logout,
       currentUser,
