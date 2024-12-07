@@ -1,4 +1,4 @@
-import axios from "axios"
+import { api } from "@/api/axios"
 import { defineStore } from "pinia"
 import { ref, type Ref } from "vue"
 import VueCookies from "vue-cookies"
@@ -21,17 +21,16 @@ export interface UserStore {
 export const useUserStore = defineStore(
   "user",
   (): UserStore => {
-    const API_URL = import.meta.env.VITE_API_SERVER_URI
     const isLogin = ref(VueCookies.get("token"))
     const currentUser = ref<ResponseUser | null>(null)
     const users = ref<User[]>([])
     const haveProjectIds = ref<number[] | null>(null)
 
     async function login(email: string, password: string): Promise<any> {
-      const response = await axios.post(`${API_URL}/login`, { password: password, email: email })
-      _setToken("true", email, password)
+      const response = await api.post("/login", { password, email })
+      console.log("response.data", response.data)
       isLogin.value = "true"
-      await _fetchUserInfo(response.data.id)
+      // await _fetchUserInfo(response.data.id)
       return response
     }
 
@@ -42,12 +41,12 @@ export const useUserStore = defineStore(
     }
 
     async function getUserInfo(id: number): Promise<ResponseUser> {
-      const responseUser = await axios.get<ResponseUser>(`${API_URL}/users/${id}`)
+      const responseUser = await api.get<ResponseUser>(`/users/${id}`)
       return responseUser.data
     }
 
     async function accountCreate(name: string, email: string, password: string): Promise<any> {
-      const response = await axios.post(`${API_URL}/account`, {
+      const response = await api.post("/account", {
         name: name,
         password: password,
         email: email,
@@ -81,23 +80,13 @@ export const useUserStore = defineStore(
     }
 
     async function _fetchUser(userId: number) {
-      const responseUser = await axios.get<ResponseUser>(`${API_URL}/users/${userId}`)
+      const responseUser = await api.get<ResponseUser>(`/users/${userId}`)
       return responseUser.data
     }
 
     async function _storeProjectIds(projectIds: number[]) {
       haveProjectIds.value = projectIds
     }
-
-    function _setToken(token: string | boolean, email: string, password: string) {
-      VueCookies.set("token", token)
-      VueCookies.set("email", email)
-      VueCookies.set("password", password)
-    }
-
-    // function _getToken(): string | boolean {
-    //   return VueCookies.get("token")
-    // }
 
     function _addUser(user: User): void {
       if (!users.value.some((u) => u.id === user.id)) {
