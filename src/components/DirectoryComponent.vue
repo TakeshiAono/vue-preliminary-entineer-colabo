@@ -7,7 +7,7 @@ import FileSelector from "./FileSelector.vue"
 import UploadModal from "./UploadModal.vue"
 import { useDialog } from "naive-ui"
 import { useRoute, useRouter } from "vue-router"
-import axios from "axios"
+import { api } from "@/api/axios"
 
 const { name, files, path } = defineProps(["name", "files", "path"])
 const isSelected = ref(false)
@@ -35,9 +35,7 @@ const closeModal = () => {
 const deleteDirectory = async () => {
   console.log(path)
   console.log(directoryName.value)
-  await axios.delete(
-    `http://localhost:8080/projects/${route.params.id}/directories?directoryName=${path}`,
-  )
+  await api.delete(`/projects/${route.params.id}/directories?directoryName=${path}`)
 }
 
 const displayDeleteDialog = () => {
@@ -84,12 +82,12 @@ const displayDeleteDialog = () => {
       </div>
     </div>
 
-    <div v-for="(file, index) in files.filter((file) => typeof file != 'string')" :key="index">
+    <div v-for="(file, index) in files.filter((file: any) => typeof file != 'string')" :key="index">
       <div v-if="isSelected">
         <div
           v-if="
             (() => {
-              const directoryList = files.filter((file) => typeof file != 'string')
+              const directoryList = files.filter((file: any) => typeof file != 'string')
               return directoryList.length > 0
             })()
           "
@@ -104,13 +102,13 @@ const displayDeleteDialog = () => {
       </div>
     </div>
 
-    <div v-for="(file, index) in files.filter((file) => typeof file == 'string')" :key="index">
+    <div v-for="(file, index) in files.filter((file: any) => typeof file == 'string')" :key="index">
       <div v-if="isSelected">
         <FileSelector :file="file" :style="{ 'margin-left': '20px' }" :directoryName="path" />
         <div
           v-if="
             (() => {
-              const directoryList = files.filter((file) => typeof file != 'string')
+              const directoryList = files.filter((file: any) => typeof file != 'string')
               return directoryList.length > 0
             })()
           "

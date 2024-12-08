@@ -1,6 +1,6 @@
 import { ref } from "vue"
 import { defineStore } from "pinia"
-import axios from "axios"
+import { api } from "@/api/axios"
 
 export type searchTasksParams = {
   name?: string
@@ -16,8 +16,6 @@ export type searchTasksParams = {
 export const useTaskStore = defineStore(
   "task",
   () => {
-    const API_URL = import.meta.env.VITE_API_SERVER_URI
-
     const userId = ref<number | null>(null)
     const belongingProjectIds = ref<number[]>([])
     const tasksMaps = ref<TasksMap[]>([])
@@ -31,9 +29,8 @@ export const useTaskStore = defineStore(
     async function fetchTasks(): Promise<void> {
       const TasksOfProjects = await Promise.all(
         belongingProjectIds.value.map(async (projectId) => {
-          const TasksOfProject = (
-            await axios.get<TasksOfProject>(`${API_URL}/projects/${projectId}/tasks`)
-          ).data
+          const TasksOfProject = (await api.get<TasksOfProject>(`/projects/${projectId}/tasks`))
+            .data
           return TasksOfProject
         }),
       )
@@ -59,7 +56,7 @@ export const useTaskStore = defineStore(
     }
 
     async function searchTasks(params: searchTasksParams): Promise<ResponseTask[]> {
-      const response = await axios.get<ResponseSearchTasks>(`${API_URL}/tasks`, { params })
+      const response = await api.get<ResponseSearchTasks>("/tasks", { params })
       const responseTasks: ResponseTask[] = response.data.tasks
 
       return responseTasks
@@ -73,7 +70,7 @@ export const useTaskStore = defineStore(
     }) {
       try {
         // タスクをバックエンドに追加
-        await axios.post<ResponseTask>(`${API_URL}/tasks/create`, params)
+        await api.post<ResponseTask>("/tasks/create", params)
       } catch (error) {
         console.error("タスクの作成に失敗しました:", error)
         throw error
@@ -90,7 +87,7 @@ export const useTaskStore = defineStore(
       },
     ) {
       try {
-        await axios.patch<ResponseTask>(`${API_URL}/tasks/${id}`, params)
+        await api.patch<ResponseTask>(`/tasks/${id}`, params)
       } catch (error) {
         console.error("タスクの更新に失敗しました:", error)
         throw error

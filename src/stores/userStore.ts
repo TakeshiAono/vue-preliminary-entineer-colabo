@@ -1,60 +1,79 @@
-import axios from "axios"
+import { api } from "@/api/axios"
 import { defineStore } from "pinia"
 import { ref, type Ref } from "vue"
-import VueCookies from "vue-cookies"
 
 export interface UserStore {
-  isLogin: Ref<boolean | string>
+  isLoggedIn: Ref<boolean>
+  checkAuth: () => Promise<void>
   login: (email: string, password: string) => Promise<any>
-  getIsLogin: boolean | string
   accountCreate: (name: string, email: string, password: string) => Promise<any>
-  logout: () => Promise<any>
+  logout: () => Promise<void>
   currentUser: Ref<ResponseUser>
   getCurrentUser: () => User
   haveProjectIds: Ref<number[] | null>
   getUserInfo: (id: number) => Promise<ResponseUser>
   addUsersByProject: (project: Project) => void
-  getUsers: () => void
+  getUsers: () => User[]
   users: User[]
+  checkAuthStatus: () => Promise<boolean>
 }
 
 export const useUserStore = defineStore(
   "user",
   (): UserStore => {
-    const API_URL = import.meta.env.VITE_API_SERVER_URI
-    const isLogin = ref(VueCookies.get("token"))
+    const isLoggedIn = ref<boolean>(false)
     const currentUser = ref<ResponseUser | null>(null)
     const users = ref<User[]>([])
     const haveProjectIds = ref<number[] | null>(null)
 
+    // ログイン状態チェックのメソッド
+    async function checkAuth() {
+      try {
+        await api.post("/auth/refresh")
+        isLoggedIn.value = true
+        return
+      } catch {
+        isLoggedIn.value = false
+        return
+      }
+    }
+
     async function login(email: string, password: string): Promise<any> {
-      const response = await axios.post(`${API_URL}/login`, { password: password, email: email })
-      _setToken("true", email, password)
-      isLogin.value = "true"
+      const response = await api.post("/login", { password, email })
+      console.log("response.data", response.data)
+      isLoggedIn.value = true
       await _fetchUserInfo(response.data.id)
+
       return response
     }
 
-    async function logout(): Promise<any> {
-      _setToken("false", "", "")
-      isLogin.value = false
-      users.value = []
+    async function logout(): Promise<void> {
+      try {
+        await api.post("/auth/logout")
+      } catch (error) {
+        console.error("Logout failed:", error)
+      } finally {
+        isLoggedIn.value = false
+        currentUser.value = null
+        users.value = []
+        haveProjectIds.value = null
+      }
     }
 
     async function getUserInfo(id: number): Promise<ResponseUser> {
-      const responseUser = await axios.get<ResponseUser>(`${API_URL}/users/${id}`)
+      const responseUser = await api.get<ResponseUser>(`/users/${id}`)
       return responseUser.data
     }
 
     async function accountCreate(name: string, email: string, password: string): Promise<any> {
-      const response = await axios.post(`${API_URL}/account`, {
+      const response = await api.post("/account", {
         name: name,
         password: password,
         email: email,
       })
-      _setToken("true", email, password)
       await _fetchUserInfo(response.data.id)
-      isLogin.value = "true"
+
+      isLoggedIn.value = true
       return response
     }
 
@@ -81,23 +100,13 @@ export const useUserStore = defineStore(
     }
 
     async function _fetchUser(userId: number) {
-      const responseUser = await axios.get<ResponseUser>(`${API_URL}/users/${userId}`)
+      const responseUser = await api.get<ResponseUser>(`/users/${userId}`)
       return responseUser.data
     }
 
     async function _storeProjectIds(projectIds: number[]) {
       haveProjectIds.value = projectIds
     }
-
-    function _setToken(token: string | boolean, email: string, password: string) {
-      VueCookies.set("token", token)
-      VueCookies.set("email", email)
-      VueCookies.set("password", password)
-    }
-
-    // function _getToken(): string | boolean {
-    //   return VueCookies.get("token")
-    // }
 
     function _addUser(user: User): void {
       if (!users.value.some((u) => u.id === user.id)) {
@@ -111,13 +120,25 @@ export const useUserStore = defineStore(
       })
     }
 
-    const getIsLogin = isLogin.value
+    async function checkAuthStatus(): Promise<void> {
+      try {
+        const response = await api.get("/auth/check")
+        isLoggedIn.value = true
+
+        await _fetchUserInfo(response.data.id)
+      } catch {
+        isLoggedIn.value = false
+        currentUser.value = null
+        users.value = []
+        haveProjectIds.value = null
+      }
+    }
 
     return {
-      isLogin,
-      users,
+      isLoggedIn,
+      checkAuth,
+      users: users.value,
       login,
-      getIsLogin,
       accountCreate,
       logout,
       currentUser,
@@ -126,6 +147,7 @@ export const useUserStore = defineStore(
       getUserInfo,
       addUsersByProject,
       getUsers,
+      checkAuthStatus,
     }
   },
   {

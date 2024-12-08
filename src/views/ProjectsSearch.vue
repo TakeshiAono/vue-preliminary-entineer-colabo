@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import axios from "axios"
+import { api } from "@/api/axios"
 import { onMounted, ref } from "vue"
 import ProjectSearchBox from "@/components/ProjectSearchBox.vue"
 import SearchedProjectsDisplay from "@/components/SearchedProjectsDisplay.vue"
@@ -11,8 +11,7 @@ onMounted(async () => {
 })
 
 async function fetchProjects() {
-  const API_URL = import.meta.env.VITE_API_SERVER_URI
-  const response = await axios.get(`${API_URL}/projects`)
+  const response = await api.get("/projects")
   return response.data
 }
 </script>

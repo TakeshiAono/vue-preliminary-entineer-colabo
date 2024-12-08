@@ -4,7 +4,7 @@ import { ref } from "vue"
 import saveAs from "file-saver"
 import { DownloadOutline, NewspaperOutline } from "@vicons/ionicons5"
 import { Delete } from "@vicons/carbon"
-import axios from "axios"
+import { api } from "@/api/axios"
 import { useRoute, useRouter } from "vue-router"
 import { useDialog } from "naive-ui"
 
@@ -15,15 +15,15 @@ const router = useRouter()
 const dialog = useDialog()
 
 const getDownloadSignature = async () => {
-  return await axios.get(
-    `http://localhost:8080/projects/${route.params.id}/files/${file}/download-signature-url?directoryName=${directoryName}`,
+  return await api.get(
+    `/projects/${route.params.id}/files/${file}/download-signature-url?directoryName=${directoryName}`,
   )
 }
 
 const fileDownload = async () => {
   isFileDownloading.value = true
   const { data: signature } = await getDownloadSignature()
-  const getFile = await axios.get(`${signature}`, { responseType: "arraybuffer" })
+  const getFile = await api.get(`${signature}`, { responseType: "arraybuffer" })
   const mineType = getFile.headers["content-type"]
   const blob = new Blob([getFile.data], { type: mineType })
   saveAs(blob, file)
@@ -31,9 +31,7 @@ const fileDownload = async () => {
 }
 
 const deleteFile = async () => {
-  await axios.delete(
-    `http://localhost:8080/projects/${route.params.id}/files/${file}?directoryName=${directoryName}`,
-  )
+  await api.delete(`/projects/${route.params.id}/files/${file}?directoryName=${directoryName}`)
 }
 
 const displayDeleteDialog = () => {

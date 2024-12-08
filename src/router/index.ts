@@ -17,54 +17,64 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LoginView,
+      meta: { requiresAuth: false },
     },
     {
       path: "/account",
       name: "account",
       component: AccountView,
+      meta: { requiresAuth: false },
     },
     {
       path: "/myPage",
       name: "myPage",
       component: MyPageView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/tasks",
       name: "tasks",
       component: TasksView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/projects/search",
       name: "projectsSearch",
       component: ProjectsSearch,
+      meta: { requiresAuth: true },
     },
     {
       path: "/projects/show/:id",
       name: "projectShow",
       component: ProjectView,
+      meta: { requiresAuth: true },
       props: true,
     },
     {
       path: "/offers/:id",
       name: "offerShow",
       component: OfferView,
+      meta: { requiresAuth: true },
       props: true,
     },
     {
       path: "/chat/:id",
       name: "chatShow",
       component: ChatView,
+      meta: { requiresAuth: true },
       props: true,
     },
     {
       path: "/users/:id",
       name: "profile",
       component: ProfileView,
+      meta: { requiresAuth: true },
       props: true,
     },
     {
       path: "/logout",
       name: "logout",
+      meta: { requiresAuth: true },
       // @ts-ignore
       beforeEnter: (to: any, from: any, next: (path: string) => {}) => {
         const userStore = useUserStore()
@@ -73,6 +83,31 @@ const router = createRouter({
       },
     },
   ],
+})
+
+// グローバルナビゲーションガード
+router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore()
+
+  // 初回アクセス時は必ず認証状態を確認
+  await userStore.checkAuthStatus()
+
+  // ログインページへの遷移の場合
+  if (to.path === "/login") {
+    if (userStore.isLoggedIn) {
+      next("/myPage")
+      return
+    }
+    next()
+  }
+
+  // その他のページの場合
+  const requiresAuth = to.meta.requiresAuth
+  if (requiresAuth && !userStore.isLoggedIn) {
+    next("/login")
+  } else {
+    next()
+  }
 })
 
 export default router

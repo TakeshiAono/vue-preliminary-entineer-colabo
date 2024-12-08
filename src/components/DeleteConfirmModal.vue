@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
 // @ts-ignore
-import axios from "axios"
+import { api } from "@/api/axios"
 import { useRouter } from "vue-router"
 
 const props = defineProps({
@@ -38,16 +38,16 @@ const uploadRegister = async () => {
 const getUploadSignature = async () => {
   const optimaizeDirectoryName = removeLeadingSlash(props.directoryName || "")
   if (newDirectory.value != "" && !!props.directoryName) {
-    return await axios.get(
-      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}%2F${newDirectory.value}`,
+    return await api.get(
+      `/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}%2F${newDirectory.value}`,
     )
   } else if (newDirectory.value != "") {
-    return await axios.get(
-      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${newDirectory.value}`,
+    return await api.get(
+      `/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${newDirectory.value}`,
     )
   } else {
-    return await axios.get(
-      `http://localhost:8080/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}`,
+    return await api.get(
+      `/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}`,
     )
   }
 }
@@ -61,7 +61,7 @@ const upload = async () => {
 
   const { data: uploadSignatureUrl } = await getUploadSignature()
 
-  axios
+  api
     .put(uploadSignatureUrl, selectedFile.value, {
       headers: {
         "Content-Type": selectedFile.value.type, // 適切なContent-Typeを指定

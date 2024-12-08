@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
-// @ts-ignore
-import axios from "axios"
+import { api } from "@/api/axios"
 import { useRoute, useRouter } from "vue-router"
 
 const props = defineProps({
@@ -39,16 +38,16 @@ const uploadRegister = async () => {
 const getUploadSignature = async () => {
   const optimaizeDirectoryName = removeLeadingSlash(props.directoryName || "")
   if (newDirectory.value != "" && !!props.directoryName) {
-    return await axios.get(
-      `http://localhost:8080/projects/${route.params.id}/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}%2F${newDirectory.value}`,
+    return await api.get(
+      `/projects/${route.params.id}/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}%2F${newDirectory.value}`,
     )
   } else if (newDirectory.value != "") {
-    return await axios.get(
-      `http://localhost:8080/projects/${route.params.id}/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${newDirectory.value}`,
+    return await api.get(
+      `/projects/${route.params.id}/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${newDirectory.value}`,
     )
   } else {
-    return await axios.get(
-      `http://localhost:8080/projects/${route.params.id}/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}`,
+    return await api.get(
+      `/projects/${route.params.id}/files/${selectedFile.value?.name}/upload-signature-url?fileType=${selectedFile.value?.type}&directoryName=${optimaizeDirectoryName}`,
     )
   }
 }
@@ -62,17 +61,17 @@ const upload = async () => {
 
   const { data: uploadSignatureUrl } = await getUploadSignature()
 
-  axios
+  api
     .put(uploadSignatureUrl, selectedFile.value, {
       headers: {
         "Content-Type": selectedFile.value.type, // 適切なContent-Typeを指定
       },
     })
-    .then((response) => {
+    .then((response: any) => {
       console.log("File uploaded successfully", response.data)
       router.go(0)
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.error("Error uploading file", error)
     })
     .finally(() => {
