@@ -9,7 +9,6 @@ import ProjectView from "@/views/ProjectView.vue"
 import ProjectsSearch from "@/views/ProjectsSearch.vue"
 import TasksView from "@/views/TasksView.vue"
 import { createRouter, createWebHistory } from "vue-router"
-import { api } from "@/api/axios"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
