@@ -120,14 +120,17 @@ export const useUserStore = defineStore(
       })
     }
 
-    async function checkAuthStatus(): Promise<boolean> {
+    async function checkAuthStatus(): Promise<void> {
       try {
-        await api.get("/auth/check")
+        const response = await api.get("/auth/check")
         isLoggedIn.value = true
-        return true
+
+        await _fetchUserInfo(response.data.id)
       } catch {
         isLoggedIn.value = false
-        return false
+        currentUser.value = null
+        users.value = []
+        haveProjectIds.value = null
       }
     }
 
