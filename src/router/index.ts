@@ -9,6 +9,7 @@ import ProjectView from "@/views/ProjectView.vue"
 import ProjectsSearch from "@/views/ProjectsSearch.vue"
 import TasksView from "@/views/TasksView.vue"
 import { createRouter, createWebHistory } from "vue-router"
+import { api } from "@/api/axios"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -86,21 +87,26 @@ const router = createRouter({
 })
 
 // グローバルナビゲーションガード
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
-  const isLoggedIn = userStore.isLoggedIn
 
-  // ログインが必要なページかどうかをチェック
-  const requiresAuth = to.meta.requiresAuth !== false // デフォルトで認証必要
+  // 初回アクセス時は必ず認証状態を確認
+  await userStore.checkAuthStatus()
 
-  if (requiresAuth && !isLoggedIn) {
-    // 認証が必要なページで未ログインの場合、ログインページへリダイレクト
+  // ログインページへの遷移の場合
+  if (to.path === "/login") {
+    if (userStore.isLoggedIn) {
+      next("/myPage")
+      return
+    }
+    next()
+  }
+
+  // その他のページの場合
+  const requiresAuth = to.meta.requiresAuth
+  if (requiresAuth && !userStore.isLoggedIn) {
     next("/login")
-  } else if (to.path === "/login" && isLoggedIn) {
-    // ログイン済みでログインページにアクセスした場合、マイページへリダイレクト
-    next("/myPage")
   } else {
-    // それ以外は通常通り遷移
     next()
   }
 })

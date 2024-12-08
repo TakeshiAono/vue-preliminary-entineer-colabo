@@ -4,6 +4,7 @@ import { ref, type Ref } from "vue"
 
 export interface UserStore {
   isLoggedIn: Ref<boolean>
+  checkAuth: () => Promise<void>
   login: (email: string, password: string) => Promise<any>
   accountCreate: (name: string, email: string, password: string) => Promise<any>
   logout: () => Promise<any>
@@ -14,6 +15,7 @@ export interface UserStore {
   addUsersByProject: (project: Project) => void
   getUsers: () => User[]
   users: User[]
+  checkAuthStatus: () => Promise<boolean>
 }
 
 export const useUserStore = defineStore(
@@ -23,6 +25,18 @@ export const useUserStore = defineStore(
     const currentUser = ref<ResponseUser | null>(null)
     const users = ref<User[]>([])
     const haveProjectIds = ref<number[] | null>(null)
+
+    // ログイン状態チェックのメソッド
+    async function checkAuth() {
+      try {
+        await api.post("/auth/refresh")
+        isLoggedIn.value = true
+        return
+      } catch {
+        isLoggedIn.value = false
+        return
+      }
+    }
 
     async function login(email: string, password: string): Promise<any> {
       const response = await api.post("/login", { password, email })
@@ -98,9 +112,21 @@ export const useUserStore = defineStore(
       })
     }
 
+    async function checkAuthStatus(): Promise<boolean> {
+      try {
+        await api.get("/auth/check")
+        isLoggedIn.value = true
+        return true
+      } catch {
+        isLoggedIn.value = false
+        return false
+      }
+    }
+
     return {
       isLoggedIn,
-      users,
+      checkAuth,
+      users: users.value,
       login,
       accountCreate,
       logout,
@@ -110,6 +136,7 @@ export const useUserStore = defineStore(
       getUserInfo,
       addUsersByProject,
       getUsers,
+      checkAuthStatus,
     }
   },
   {
