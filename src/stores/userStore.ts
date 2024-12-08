@@ -7,7 +7,7 @@ export interface UserStore {
   checkAuth: () => Promise<void>
   login: (email: string, password: string) => Promise<any>
   accountCreate: (name: string, email: string, password: string) => Promise<any>
-  logout: () => Promise<any>
+  logout: () => Promise<void>
   currentUser: Ref<ResponseUser>
   getCurrentUser: () => User
   haveProjectIds: Ref<number[] | null>
@@ -47,9 +47,17 @@ export const useUserStore = defineStore(
       return response
     }
 
-    async function logout(): Promise<any> {
-      isLoggedIn.value = false
-      users.value = []
+    async function logout(): Promise<void> {
+      try {
+        await api.post("/auth/logout")
+      } catch (error) {
+        console.error("Logout failed:", error)
+      } finally {
+        isLoggedIn.value = false
+        currentUser.value = null
+        users.value = []
+        haveProjectIds.value = null
+      }
     }
 
     async function getUserInfo(id: number): Promise<ResponseUser> {
