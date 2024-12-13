@@ -7,21 +7,27 @@ import { onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
 
 import { useProjectStore } from "@/stores/projectStore"
+import { useTaskStore } from "@/stores/taskStore"
+import type { Channel } from "@/stores/API"
 
 const showModal = ref(false)
 const isValidShareFiles = ref<boolean | null>(null)
 
 const route = useRoute()
 const projectStore = useProjectStore()
-const project = ref(null)
+const taskStore = useTaskStore()
+const project = ref<Project | null>(null)
+const channels = ref<Channel[] | null>(null)
 
 onMounted(async () => {
-  project.value = await projectStore.fetchProject(route.params.id)
+  project.value = await projectStore.fetchProject(route.params.id as string)
   if (await isCreatedBucket()) {
     isValidShareFiles.value = true
   } else {
     isValidShareFiles.value = false
   }
+
+  channels.value = await projectStore.fetchChannels(project.value.chatRoomIds)
 })
 
 const openModal = () => {
@@ -58,20 +64,29 @@ const isCreatedBucket = async () => {
       <div :id="'wrapper'">
         <h2>PJ概要</h2>
         <div :id="'project-description'">
-          <h2>a</h2>
+          <p>{{ project?.description }}</p>
         </div>
       </div>
       <div :id="'wrapper'">
         <h2>タスク</h2>
         <div :id="'task-summary-area'">
-          <h2>タスクサマリー</h2>
+          <n-scrollbar style="height: 190px">
+            <div v-if="!!project" >
+              <div v-for="task in taskStore?.getTasksByProject(project.id)" :key="task.id">
+                <p>{{ task.name }}</p>
+              </div>
+            </div>
+          </n-scrollbar>
         </div>
       </div>
       <div :id="'wrapper'">
         <h2>チャットチャンネル一覧</h2>
         <div :id="'chat-channel-area'">
-          <h2>#チャンネル1</h2>
-          <h2>#チャンネル2</h2>
+          <div v-if="!!channels" >
+              <div v-for="channel in channels" :key="channel.id">
+                <p># {{ channel.name }}</p>
+              </div>
+            </div>
         </div>
       </div>
       <div :id="'wrapper'">
