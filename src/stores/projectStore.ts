@@ -17,9 +17,9 @@ export const useProjectStore = defineStore("project", () => {
   async function fetchChannels(channelIds: number[]): Promise<ResponseChannel[]> {
     const response = await axios.get<ResponseChannel[]>(`${API_URL}/channels`, {
       params: {
-        ids: channelIds
+        ids: channelIds,
       },
-      paramsSerializer: { indexes: null }
+      paramsSerializer: { indexes: null },
     })
     return response.data
   }
@@ -89,6 +89,6 @@ export const useProjectStore = defineStore("project", () => {
     searchProjects,
     getProjectById,
     addProject,
-    fetchChannels
+    fetchChannels,
   }
 })

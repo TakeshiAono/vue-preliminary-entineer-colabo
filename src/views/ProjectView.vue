@@ -71,7 +71,7 @@ const isCreatedBucket = async () => {
         <h2>タスク</h2>
         <div :id="'task-summary-area'">
           <n-scrollbar style="height: 190px">
-            <div v-if="!!project" >
+            <div v-if="!!project">
               <div v-for="task in taskStore?.getTasksByProject(project.id)" :key="task.id">
                 <p>{{ task.name }}</p>
               </div>
@@ -82,11 +82,11 @@ const isCreatedBucket = async () => {
       <div :id="'wrapper'">
         <h2>チャットチャンネル一覧</h2>
         <div :id="'chat-channel-area'">
-          <div v-if="!!channels" >
-              <div v-for="channel in channels" :key="channel.id">
-                <p># {{ channel.name }}</p>
-              </div>
+          <div v-if="!!channels">
+            <div v-for="channel in channels" :key="channel.id">
+              <p># {{ channel.name }}</p>
             </div>
+          </div>
         </div>
       </div>
       <div :id="'wrapper'">
