@@ -22,7 +22,7 @@ type ResponseUser = {
 }
 type User = ResponseUser
 
-type ResponseChannel = {
+export type ResponseChannel = {
   id: number
   name: string
   userId: number | null
@@ -31,6 +31,8 @@ type ResponseChannel = {
   updatedAt: string
   messageIds: number[]
 }
+
+export type Channel = ResponseChannel
 
 type ResponseChatRoom = {
   id: number

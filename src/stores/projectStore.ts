@@ -1,6 +1,7 @@
 import { api } from "@/api/axios"
 import { defineStore } from "pinia"
 import { ref } from "vue"
+import type { ResponseChannel, ResponseProject } from "./API"
 
 export const useProjectStore = defineStore("project", () => {
   const belongingProjects = ref<ResponseProject[]>([])
@@ -9,6 +10,16 @@ export const useProjectStore = defineStore("project", () => {
 
   async function fetchProject(id: string): Promise<ResponseProject> {
     const response = await api.get(`/projects/${id}`)
+    return response.data
+  }
+
+  async function fetchChannels(channelIds: number[]): Promise<ResponseChannel[]> {
+    const response = await axios.get<ResponseChannel[]>(`${API_URL}/channels`, {
+      params: {
+        ids: channelIds,
+      },
+      paramsSerializer: { indexes: null },
+    })
     return response.data
   }
 
@@ -77,5 +88,6 @@ export const useProjectStore = defineStore("project", () => {
     searchProjects,
     getProjectById,
     addProject,
+    fetchChannels,
   }
 })
