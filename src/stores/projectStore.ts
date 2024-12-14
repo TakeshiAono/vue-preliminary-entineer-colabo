@@ -14,10 +14,11 @@ export const useProjectStore = defineStore("project", () => {
     return response.data
   }
 
-  async function fetchChannels(channelIds: number[]): Promise<ResponseChannel[]> {
+  async function fetchChannels(channelIds: number[], currentUserId: number): Promise<ResponseChannel[]> {
     const response = await axios.get<ResponseChannel[]>(`${API_URL}/channels`, {
       params: {
         ids: channelIds,
+        userId: currentUserId,
       },
       paramsSerializer: { indexes: null },
     })

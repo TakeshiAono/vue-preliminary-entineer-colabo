@@ -9,6 +9,7 @@ import { useRoute, useRouter } from "vue-router"
 import { useProjectStore } from "@/stores/projectStore"
 import { useTaskStore } from "@/stores/taskStore"
 import type { Channel } from "@/stores/API"
+import { useUserStore } from "@/stores/userStore"
 
 const showModal = ref(false)
 const isValidShareFiles = ref<boolean | null>(null)
@@ -16,6 +17,7 @@ const isValidShareFiles = ref<boolean | null>(null)
 const route = useRoute()
 const router = useRouter()
 const projectStore = useProjectStore()
+const userStore = useUserStore()
 const taskStore = useTaskStore()
 const project = ref<Project | null>(null)
 const channels = ref<Channel[] | null>(null)
@@ -28,7 +30,7 @@ onMounted(async () => {
     isValidShareFiles.value = false
   }
 
-  channels.value = await projectStore.fetchChannels(project.value.chatRoomIds)
+  channels.value = await projectStore.fetchChannels(project.value.chatRoomIds, userStore.currentUser.id)
 })
 
 const openModal = () => {

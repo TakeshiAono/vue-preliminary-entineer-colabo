@@ -38,7 +38,7 @@ const router = useRouter()
 const fetchData = async () => {
   try {
     if (props.projects && props.projects.length > 0) {
-      const channels = await fetchChannels(selectedProject())
+      const channels = await fetchChannels(selectedProject(), currentUser.id)
       const messages = await fetchMessagesByChannels(channels)
       chatLogs.value = sortByUpdatedAt<ResponseMessage>(messages).map((message) => message.text)
 
