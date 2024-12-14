@@ -4,7 +4,7 @@ import UploadModal from "@/components/UploadModal.vue"
 import { CloudUpload } from "@vicons/ionicons5"
 import axios from "axios"
 import { onMounted, ref } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 
 import { useProjectStore } from "@/stores/projectStore"
 import { useTaskStore } from "@/stores/taskStore"
@@ -14,6 +14,7 @@ const showModal = ref(false)
 const isValidShareFiles = ref<boolean | null>(null)
 
 const route = useRoute()
+const router = useRouter()
 const projectStore = useProjectStore()
 const taskStore = useTaskStore()
 const project = ref<Project | null>(null)
@@ -83,8 +84,15 @@ const isCreatedBucket = async () => {
         <h2>チャットチャンネル一覧</h2>
         <div :id="'chat-channel-area'">
           <div v-if="!!channels">
-            <div v-for="channel in channels" :key="channel.id">
-              <p># {{ channel.name }}</p>
+            <div :id="'chat-channel-content'" v-for="channel in channels" :key="channel.id">
+              <n-button
+                text
+                type="info"
+                tag="a"
+                @click="() => {router.push(`/channels/${channel.id}`)}"
+              >
+                #{{ channel.name }}
+              </n-button>
             </div>
           </div>
         </div>
@@ -203,5 +211,8 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+#chat-channel-content{
+  margin: 15px;
 }
 </style>

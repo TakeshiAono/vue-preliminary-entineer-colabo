@@ -1,5 +1,6 @@
 import { useUserStore } from "@/stores/userStore"
 import AccountView from "@/views/AccountView.vue"
+import ChannelView from "@/views/ChannelView.vue"
 import ChatView from "@/views/ChatView.vue"
 import LoginView from "@/views/LoginView.vue"
 import MyPageView from "@/views/MyPageView.vue"
@@ -54,6 +55,12 @@ const router = createRouter({
       path: "/chat/:id",
       name: "chatShow",
       component: ChatView,
+      props: true,
+    },
+    {
+      path: "/channels/:id",
+      name: "channelShow",
+      component: ChannelView,
       props: true,
     },
     {
