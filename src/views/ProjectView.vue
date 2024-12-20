@@ -86,7 +86,7 @@ const isCreatedBucket = async () => {
         <div :style="{display: 'flex', flexDirection: 'row'}">
           <h2>チャットチャンネル一覧</h2>
           <n-button type="info" :style="{marginLeft: '20px'}" @click="() => {console.log('作成')}">
-            チャネル作成
+            チャンネル作成
           </n-button>
         </div>
         <div :id="'chat-channel-area'">
