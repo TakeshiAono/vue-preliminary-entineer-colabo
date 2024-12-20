@@ -2,7 +2,7 @@
 import ShareFileArea from "@/components/ShareFileArea.vue"
 import UploadModal from "@/components/UploadModal.vue"
 import { CloudUpload } from "@vicons/ionicons5"
-import axios from "axios"
+import { api } from "@/api/axios"
 import { onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 
@@ -42,9 +42,7 @@ const closeModal = () => {
 }
 
 const requestUseShareFiles = async (bucketName: string) => {
-  const result = await axios.post<void>(
-    `http://localhost:8080/projects/${route.params.id}/use-share-files/${bucketName}`,
-  )
+  const result = await api.post<void>(`/projects/${route.params.id}/use-share-files/${bucketName}`)
   if (result.status === 200) {
     isValidShareFiles.value = true
   } else {
@@ -53,9 +51,7 @@ const requestUseShareFiles = async (bucketName: string) => {
 }
 
 const isCreatedBucket = async () => {
-  const result = await axios.get<boolean>(
-    `http://localhost:8080/projects/${route.params.id}/use-share-files`,
-  )
+  const result = await api.get<boolean>(`/projects/${route.params.id}/use-share-files`)
   return result.data
 }
 </script>
