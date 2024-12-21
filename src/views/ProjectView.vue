@@ -6,7 +6,7 @@ import ProjectDescription from "@/components/ProjectDescription.vue"
 import { useApplicationStore } from "@/stores/applicationStore"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
-import { onMounted, ref } from "vue"
+import { computed, onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
 
 const userStore = useUserStore()
@@ -20,19 +20,31 @@ const applicationMessage = ref("")
 const applicationStore = useApplicationStore()
 
 const successMessage = ref("")
+const errorMessage = ref("")
+
+// プロジェクトメンバーかどうかをチェック
+const isProjectMember = computed(() => {
+  return projectUsers.value.some((user) => user.id === userStore.currentUser?.id)
+})
 
 const handleApplicationSubmit = async (message: string) => {
   try {
+    if (isProjectMember.value) {
+      errorMessage.value = "あなたは既にプロジェクトのメンバーです"
+      return
+    }
+
+    errorMessage.value = ""
+    successMessage.value = ""
     const userStore = useUserStore()
     applicationStore.applicationMessage = message
     await applicationStore.submitApplication(userStore.currentUser.id, projectId)
     successMessage.value = "メッセージが送信されました"
   } catch (error) {
     if (error instanceof Error) {
-      // エラーメッセージも表示
-      successMessage.value = error.message
+      errorMessage.value = error.message // Errorオブジェクトからメッセージを取得
     } else {
-      successMessage.value = "応募の送信中にエラーが発生しました"
+      errorMessage.value = "応募の送信中にエラーが発生しました"
     }
   }
 }
@@ -50,7 +62,11 @@ onMounted(async () => {
 
 <template>
   <main>
-    <div v-if="successMessage" class="success-message">
+    <div v-if="errorMessage" class="message error-message">
+      {{ errorMessage }}
+    </div>
+    <!-- 成功メッセージの表示 -->
+    <div v-if="successMessage" class="message success-message">
       {{ successMessage }}
     </div>
     <h1>{{ project.name }}</h1>
@@ -104,6 +120,15 @@ onMounted(async () => {
 }
 
 .success-message {
+  position: fixed; /* 画面に固定 */
+  top: 50px; /* 上からの距離 */
+  left: 50%; /* 左端から50%の位置 */
+  transform: translateX(-50%); /* 要素の幅の半分だけ左に移動 */
+  padding: 1rem 2rem;
+  color: red;
+  z-index: 50; /* 他の要素の上に表示 */
+}
+.error-message {
   position: fixed; /* 画面に固定 */
   top: 50px; /* 上からの距離 */
   left: 50%; /* 左端から50%の位置 */
