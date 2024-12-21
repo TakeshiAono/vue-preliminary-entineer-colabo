@@ -33,8 +33,12 @@ export const useApplicationStore = defineStore("applicationStore", () => {
       applicationMessage.value = ""
       console.log("Application submitted response:", response)
     } catch (error) {
-      console.error("Error submitting application:", error)
-      throw error // エラーを上位に伝播させる
+      if (axios.isAxiosError(error)) {
+        // バックエンドからのエラーメッセージを取得
+        const errorMessage = error.response?.data?.message || "応募の送信中にエラーが発生しました"
+        throw new Error(errorMessage) // エラーメッセージを含むErrorオブジェクトをスロー
+      }
+      throw new Error("応募の送信中にエラーが発生しました")
     }
   }
 
