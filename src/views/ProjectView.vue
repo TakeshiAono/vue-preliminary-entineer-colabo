@@ -2,9 +2,9 @@
 import DashboardContainerForProjectView from "@/components/DashboardContainerForProjectView.vue"
 import ProjectDescription from "@/components/ProjectDescription.vue"
 
+import { useApplicationStore } from "@/stores/applicationStore"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
-import axios from "axios"
 import { onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
 
@@ -16,33 +16,28 @@ const route = useRoute()
 const projectId = parseInt(route.params.id as string, 10)
 const tasks = ref([])
 const applicationMessage = ref("")
+const applicationStore = useApplicationStore()
+
+const successMessage = ref("")
 
 const submitApplication = async () => {
-  if (!applicationMessage.value.trim()) {
-    alert("メッセージを入力してください。")
-    return
-  }
-
   try {
-    // バックエンドに送信するデータ
-    const payload = {
-      message: applicationMessage.value,
-      userId: userStore.currentUser.id, // ログイン中のユーザーのIDを取得
-      projectId: projectId,
-    }
-
-    // API 呼び出し
-    const response = await axios.post(
-      `${import.meta.env.VITE_API_SERVER_URI}/applications/create`,
-      payload,
-    )
-
-    // 成功した場合
-    alert("応募が送信されました: " + response.data)
-    applicationMessage.value = "" // メッセージをリセット
+    const userStore = useUserStore()
+    applicationStore.applicationMessage = applicationMessage.value
+    await applicationStore.submitApplication(userStore.currentUser.id, projectId)
+    applicationMessage.value = ""
+    // デバッグ用にconsole.logを追加
+    console.log("送信成功")
+    successMessage.value = "メッセージが送信されました"
+    console.log("successMessage:", successMessage.value)
   } catch (error) {
-    console.error("応募の送信中にエラーが発生しました:", error)
-    // alert("応募の送信に失敗しました。")
+    if (error instanceof Error) {
+      successMessage.value = error.message
+    } else {
+      successMessage.value = "応募の送信中にエラーが発生しました"
+    }
+    // エラー時のメッセージもログ出力
+    console.log("エラー時のsuccessMessage:", successMessage.value)
   }
 }
 
@@ -59,6 +54,9 @@ onMounted(async () => {
 
 <template>
   <main>
+    <div v-if="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
     <h1>{{ project.name }}</h1>
     <div v-if="project" id="project-layout">
       <div id="left-side">
@@ -140,5 +138,15 @@ onMounted(async () => {
 .application-submit-btn {
   display: block;
   margin-left: auto;
+}
+
+.success-message {
+  position: fixed; /* 画面に固定 */
+  top: 50px; /* 上からの距離 */
+  left: 50%; /* 左端から50%の位置 */
+  transform: translateX(-50%); /* 要素の幅の半分だけ左に移動 */
+  padding: 1rem 2rem;
+  color: red;
+  z-index: 50; /* 他の要素の上に表示 */
 }
 </style>

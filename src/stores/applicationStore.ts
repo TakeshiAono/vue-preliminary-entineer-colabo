@@ -15,21 +15,28 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     applicationMessage.value = message
   }
 
-  // const submitOffer = async (userId: number, scoutedUserId: number, projectId: number) => {
-  //   try {
-  //     const response = await axios.post(`${API_URL}/offers/create`, {
-  //       message: offerMessage.value,
-  //       userId,
-  //       scoutedUserId,
-  //       projectId,
-  //     })
-  //     offers.value.push(response.data)
-  //     offerMessage.value = ""
-  //     console.log("Offer submitted response:", response)
-  //   } catch (error) {
-  //     console.error("Error submitting offer:", error)
-  //   }
-  // }
+  const submitApplication = async (userId: number, projectId: number) => {
+    try {
+      if (!applicationMessage.value.trim()) {
+        throw new Error("メッセージを入力してください。")
+      }
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_SERVER_URI}/applications/create`,
+        {
+          message: applicationMessage.value,
+          userId,
+          projectId,
+        },
+      )
+      applications.value.push(response.data)
+      applicationMessage.value = ""
+      console.log("Application submitted response:", response)
+    } catch (error) {
+      console.error("Error submitting application:", error)
+      throw error // エラーを上位に伝播させる
+    }
+  }
 
   const fetchApplicationDetails = async (applicationId: number) => {
     try {
@@ -64,6 +71,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
     applicationMessage,
     applications,
     setApplicationMessage,
+    submitApplication,
     fetchApplicationDetails,
     acceptApplication,
   }
