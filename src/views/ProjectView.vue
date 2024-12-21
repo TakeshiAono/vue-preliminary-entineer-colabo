@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ApplicationForm from "@/components/ApplicationForm.vue"
 import DashboardContainerForProjectView from "@/components/DashboardContainerForProjectView.vue"
 import ProjectDescription from "@/components/ProjectDescription.vue"
 
@@ -20,24 +21,19 @@ const applicationStore = useApplicationStore()
 
 const successMessage = ref("")
 
-const submitApplication = async () => {
+const handleApplicationSubmit = async (message: string) => {
   try {
     const userStore = useUserStore()
-    applicationStore.applicationMessage = applicationMessage.value
+    applicationStore.applicationMessage = message
     await applicationStore.submitApplication(userStore.currentUser.id, projectId)
-    applicationMessage.value = ""
-    // デバッグ用にconsole.logを追加
-    console.log("送信成功")
     successMessage.value = "メッセージが送信されました"
-    console.log("successMessage:", successMessage.value)
   } catch (error) {
     if (error instanceof Error) {
+      // エラーメッセージも表示
       successMessage.value = error.message
     } else {
       successMessage.value = "応募の送信中にエラーが発生しました"
     }
-    // エラー時のメッセージもログ出力
-    console.log("エラー時のsuccessMessage:", successMessage.value)
   }
 }
 
@@ -69,22 +65,7 @@ onMounted(async () => {
         </div>
       </div>
       <div id="right-side">
-        <div>
-          <h1>応募フォーム</h1>
-          <div id="application-form-content">
-            <textarea
-              v-model="applicationMessage"
-              placeholder="プロジェクトオーナーに向けたメッセージを入力してください"
-              rows="8"
-              style="width: 100%; box-sizing: border-box; border: none; outline: none; resize: none"
-            ></textarea>
-            <div class="btn-wrapper">
-              <n-button type="primary" @click="submitApplication" class="application-submit-btn"
-                >参加希望を出す</n-button
-              >
-            </div>
-          </div>
-        </div>
+        <ApplicationForm @submit="handleApplicationSubmit" />
 
         <DashboardContainerForProjectView
           v-if="projectUsers.length > 0 && project.name !== ''"
@@ -116,28 +97,10 @@ onMounted(async () => {
   margin-right: 80px;
 }
 
-#application-form-content {
-  max-width: 600px;
-  width: 100%;
-  height: 170px;
-  padding: 5px;
-  box-sizing: border-box;
-  border-radius: 10px;
-  border: solid;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 #project-member-content {
   height: 320px;
   border-radius: 10px;
   border: solid;
-}
-
-.application-submit-btn {
-  display: block;
-  margin-left: auto;
 }
 
 .success-message {
