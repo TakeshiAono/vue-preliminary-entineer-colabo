@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import router from "@/router"
-import axios from "axios"
+import { api } from "@/api/axios"
 import _ from "lodash"
 import { ref, watch } from "vue"
 
@@ -23,8 +23,7 @@ watch(props, async () => {
 })
 
 async function fetchUser(id: number) {
-  const API_URL = import.meta.env.VITE_API_SERVER_URI
-  const response = await axios.get(`${API_URL}/users/${id}`)
+  const response = await api.get(`/users/${id}`)
   return response.data
 }
 

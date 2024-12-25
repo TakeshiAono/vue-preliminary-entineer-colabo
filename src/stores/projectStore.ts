@@ -1,20 +1,30 @@
-import axios from "axios"
+import { api } from "@/api/axios"
 import { defineStore } from "pinia"
 import { ref } from "vue"
+import type { ResponseChannel, ResponseProject } from "./API"
 
 export const useProjectStore = defineStore("project", () => {
-  const API_URL = import.meta.env.VITE_API_SERVER_URI
   const belongingProjects = ref<ResponseProject[]>([])
   const projectUsersMaps = ref<{ projectId: number; userIds: number[] }[]>([])
   const allProjects = ref<ResponseProject[]>([])
 
   async function fetchProject(id: string): Promise<ResponseProject> {
-    const response = await axios.get(`${API_URL}/projects/${id}`)
+    const response = await api.get(`/projects/${id}`)
+    return response.data
+  }
+
+  async function fetchChannels(channelIds: number[]): Promise<ResponseChannel[]> {
+    const response = await axios.get<ResponseChannel[]>(`${API_URL}/channels`, {
+      params: {
+        ids: channelIds,
+      },
+      paramsSerializer: { indexes: null },
+    })
     return response.data
   }
 
   async function fetchAllProjects() {
-    const response = await axios.get(`${API_URL}/projects`)
+    const response = await api.get("/projects")
     allProjects.value = response.data
   }
 
@@ -23,7 +33,7 @@ export const useProjectStore = defineStore("project", () => {
   }
 
   async function searchProjects(queryParamasString: string): Promise<ResponseProject> {
-    const response = await axios.get(`${API_URL}/projects/search?${queryParamasString}`)
+    const response = await api.get(`/projects/search?${queryParamasString}`)
     return response.data
   }
 
@@ -34,7 +44,7 @@ export const useProjectStore = defineStore("project", () => {
   async function setProjects(projectIds: number[]) {
     const projectList: ResponseProject[] = await Promise.all(
       projectIds.map(async (projectId) => {
-        const project = await fetchProject(projectId)
+        const project = await fetchProject(projectId.toString())
         return project
       }),
     )
@@ -78,5 +88,6 @@ export const useProjectStore = defineStore("project", () => {
     searchProjects,
     getProjectById,
     addProject,
+    fetchChannels,
   }
 })

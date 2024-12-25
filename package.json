@@ -17,12 +17,17 @@
     "github-prettier-action": "npx prettier --check src/"
   },
   "dependencies": {
+    "@types/lodash": "^4.17.7",
+    "@vicons/carbon": "^0.12.0",
+    "@vicons/ionicons5": "^0.12.0",
     "@vue/cli-service": "^5.0.8",
     "axios": "^1.6.7",
     "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
     "engine.io-client": "^6.5.3",
     "engine.io-parser": "^5.2.2",
+    "fa-icons": "^0.2.0",
+    "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
     "naive-ui": "^2.38.1",
     "npm": "^10.6.0",

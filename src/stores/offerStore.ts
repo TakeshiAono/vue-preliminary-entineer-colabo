@@ -1,11 +1,9 @@
 import { useProjectStore } from "@/stores/projectStore"
-import axios from "axios"
+import { api } from "@/api/axios"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
 export const useOfferStore = defineStore("offerStore", () => {
-  const API_URL = import.meta.env.VITE_API_SERVER_URI
-
   const offerMessage = ref("")
   const offers = ref([])
 
@@ -17,7 +15,7 @@ export const useOfferStore = defineStore("offerStore", () => {
 
   const submitOffer = async (userId: number, scoutedUserId: number, projectId: number) => {
     try {
-      const response = await axios.post(`${API_URL}/offers/create`, {
+      const response = await api.post("/offers/create", {
         message: offerMessage.value,
         userId,
         scoutedUserId,
@@ -33,7 +31,7 @@ export const useOfferStore = defineStore("offerStore", () => {
 
   const fetchOfferDetails = async (offerId: number) => {
     try {
-      const response = await axios.get(`${API_URL}/offers/${offerId}`)
+      const response = await api.get(`/offers/${offerId}`)
       return response.data
     } catch (error) {
       console.error("Error fetching offer details:", error)
@@ -43,7 +41,7 @@ export const useOfferStore = defineStore("offerStore", () => {
 
   const acceptOffer = async (offerId: number) => {
     try {
-      const response = await axios.post(`${API_URL}/offers/accept/${offerId}`)
+      const response = await api.post(`/offers/accept/${offerId}`)
       const responseData = response.data // APIのレスポンスデータを取得
 
       if (responseData && responseData.project) {

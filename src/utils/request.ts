@@ -1,7 +1,5 @@
-import axios, { type AxiosPromise } from "axios"
+import { api, type AxiosPromise } from "@/api/axios"
 import _ from "lodash"
-
-const API_URL = import.meta.env.VITE_API_SERVER_URI
 
 export const fetchMessagesByChannels = async (
   channels: ResponseChannel[],
@@ -20,14 +18,14 @@ export const fetchMessagesByChannel = async (
 }
 
 export const fetchMessage = async (messageId: number): AxiosPromise<ResponseMessage> => {
-  return axios.get(`${API_URL}/messages/${messageId}`)
+  return api.get(`/messages/${messageId}`)
 }
 
 export async function fetchUserNotices(user: ResponseUser): Promise<ResponseUserNotice[]> {
   const userNoticeIds = user.userNoticeIds
   return await Promise.all(
     userNoticeIds.map(async (id) => {
-      const userNotice = await axios.get(`${API_URL}/userNotices/${id}`)
+      const userNotice = await api.get(`/userNotices/${id}`)
       return userNotice.data
     }),
   )
@@ -37,7 +35,7 @@ export async function fetchOperationLog(project: ResponseProject): Promise<Respo
   const operationIds = project.operationIds
   return await Promise.all(
     operationIds.map(async (id) => {
-      const operation = await axios.get(`${API_URL}/operations/${id}`)
+      const operation = await api.get(`/operations/${id}`)
       return operation.data
     }),
   )
@@ -47,7 +45,7 @@ export async function fetchTasks(project: ResponseProject): Promise<ResponseTask
   const taskIds = project.taskIds
   return await Promise.all(
     taskIds.map(async (id) => {
-      const task = (await axios.get<Task>(`${API_URL}/tasks/${id}`)).data
+      const task = (await api.get<Task>(`/tasks/${id}`)).data
       task.createdAt = new Date(task.createdAt)
       task.updatedAt = new Date(task.updatedAt)
       task.deadline = new Date(task.deadline)
@@ -61,7 +59,7 @@ export const fetchChannelIds = async (project: ResponseProject) => {
   const chatRoomIds = project.chatRoomIds
   const chatChannelIds = await Promise.all(
     chatRoomIds.map(async (id) => {
-      const chatRoom = await axios.get(`${API_URL}/chatRooms/${id}`)
+      const chatRoom = await api.get(`/chatRooms/${id}`)
       return chatRoom.data.channelIds
     }),
   )
@@ -72,7 +70,7 @@ export async function fetchChannels(project: ResponseProject): Promise<ResponseC
   const channelIds = await fetchChannelIds(project)
   return await Promise.all(
     channelIds.map(async (id) => {
-      const channel = await axios.get(`${API_URL}/channels/${id}`)
+      const channel = await api.get(`/channels/${id}`)
       return channel.data
     }),
   )

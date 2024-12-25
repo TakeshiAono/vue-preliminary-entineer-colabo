@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import { onBeforeMount } from "vue"
+
 import ProjectSummary from "@/components/ProjectSummary.vue"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
+import { bulkFetch } from "@/utils/bulk"
 
 const projectStore = useProjectStore()
 const userStore = useUserStore()
+
+onBeforeMount(async () => {
+  await bulkFetch()
+})
 </script>
 
 <template>
