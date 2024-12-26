@@ -1,203 +1,140 @@
 <script setup lang="ts">
-import ShareFileArea from "@/components/ShareFileArea.vue"
-import UploadModal from "@/components/UploadModal.vue"
-import { CloudUpload } from "@vicons/ionicons5"
-import { api } from "@/api/axios"
-import { onMounted, ref } from "vue"
+import ApplicationForm from "@/components/ApplicationForm.vue"
+import DashboardContainerForProjectView from "@/components/DashboardContainerForProjectView.vue"
+import ProjectDescription from "@/components/ProjectDescription.vue"
+
+import { useApplicationStore } from "@/stores/applicationStore"
+import { useProjectStore } from "@/stores/projectStore"
+import { useUserStore } from "@/stores/userStore"
+import { computed, onMounted, ref } from "vue"
 import { useRoute } from "vue-router"
 
-import { useProjectStore } from "@/stores/projectStore"
-import { useTaskStore } from "@/stores/taskStore"
-import type { Channel } from "@/stores/API"
-
-const showModal = ref(false)
-const isValidShareFiles = ref<boolean | null>(null)
-
-const route = useRoute()
+const userStore = useUserStore()
 const projectStore = useProjectStore()
-const taskStore = useTaskStore()
-const project = ref<Project | null>(null)
-const channels = ref<Channel[] | null>(null)
+const project = ref({ name: "", description: "" })
+const projectUsers = ref([])
+const route = useRoute()
+const projectId = parseInt(route.params.id as string, 10)
+const tasks = ref([])
+const applicationMessage = ref("")
+const applicationStore = useApplicationStore()
 
-onMounted(async () => {
-  project.value = await projectStore.fetchProject(route.params.id as string)
-  if (await isCreatedBucket()) {
-    isValidShareFiles.value = true
-  } else {
-    isValidShareFiles.value = false
-  }
+const successMessage = ref("")
+const errorMessage = ref("")
 
-  channels.value = await projectStore.fetchChannels(project.value.chatRoomIds)
+// プロジェクトメンバーかどうかをチェック
+const isProjectMember = computed(() => {
+  return projectUsers.value.some((user) => user.id === userStore.currentUser?.id)
 })
 
-const openModal = () => {
-  showModal.value = true
-}
+const handleApplicationSubmit = async (message: string) => {
+  try {
+    if (isProjectMember.value) {
+      errorMessage.value = "あなたは既にプロジェクトのメンバーです"
+      return
+    }
 
-const closeModal = () => {
-  showModal.value = false
-}
-
-const requestUseShareFiles = async (bucketName: string) => {
-  const result = await api.post<void>(`/projects/${route.params.id}/use-share-files/${bucketName}`)
-  if (result.status === 200) {
-    isValidShareFiles.value = true
-  } else {
-    isValidShareFiles.value = false
+    errorMessage.value = ""
+    successMessage.value = ""
+    const userStore = useUserStore()
+    applicationStore.applicationMessage = message
+    await applicationStore.submitApplication(userStore.currentUser.id, projectId)
+    successMessage.value = "メッセージが送信されました"
+  } catch (error) {
+    if (error instanceof Error) {
+      errorMessage.value = error.message // Errorオブジェクトからメッセージを取得
+    } else {
+      errorMessage.value = "応募の送信中にエラーが発生しました"
+    }
   }
 }
 
-const isCreatedBucket = async () => {
-  const result = await api.get<boolean>(`/projects/${route.params.id}/use-share-files`)
-  return result.data
-}
+onMounted(async () => {
+  project.value = await projectStore.fetchProject(projectId)
+  if (project.value?.userIds) {
+    const users = await Promise.all(
+      project.value.userIds.map(async (userId: number) => await userStore.getUserInfo(userId)),
+    )
+    projectUsers.value = users
+  }
+})
 </script>
 
 <template>
-  <div class="project-view-page">
-    <h1>ProjectShow</h1>
-    <div id="project-view">
-      <div :id="'wrapper'">
-        <h2>PJ概要</h2>
-        <div :id="'project-description'">
-          <p>{{ project?.description }}</p>
-        </div>
-      </div>
-      <div :id="'wrapper'">
-        <h2>タスク</h2>
-        <div :id="'task-summary-area'">
-          <n-scrollbar style="height: 190px">
-            <div v-if="!!project">
-              <div v-for="task in taskStore?.getTasksByProject(project.id)" :key="task.id">
-                <p>{{ task.name }}</p>
-              </div>
-            </div>
-          </n-scrollbar>
-        </div>
-      </div>
-      <div :id="'wrapper'">
-        <h2>チャットチャンネル一覧</h2>
-        <div :id="'chat-channel-area'">
-          <div v-if="!!channels">
-            <div v-for="channel in channels" :key="channel.id">
-              <p># {{ channel.name }}</p>
-            </div>
+  <main>
+    <div v-if="errorMessage" class="message error-message">
+      {{ errorMessage }}
+    </div>
+    <!-- 成功メッセージの表示 -->
+    <div v-if="successMessage" class="message success-message">
+      {{ successMessage }}
+    </div>
+    <h1>{{ project.name }}</h1>
+    <div v-if="project" id="project-layout">
+      <div id="left-side">
+        <ProjectDescription :description="project.description" :width="'100%'" />
+        <h1 id="project-member-title">メンバー</h1>
+        <div id="project-member-content">
+          <div v-if="projectUsers.length">
+            <p v-for="user in projectUsers" :key="user.id">{{ user.name }}</p>
           </div>
         </div>
       </div>
-      <div :id="'wrapper'">
-        <div :class="'share-file-header-wrapper'">
-          <h2>共有ファイル</h2>
-          <div :class="'icon-wrapper'">
-            <n-icon class="upload-icon" size="25" @click="openModal">
-              <CloudUpload />
-            </n-icon>
-          </div>
-        </div>
-        <div :id="'share-file-area'">
-          <div v-if="isValidShareFiles === null" class="content-wrapper">
-            <ShareFileArea />
-            <n-spin />
-          </div>
-          <div v-else-if="isValidShareFiles">
-            <ShareFileArea />
-          </div>
-          <div v-else class="content-wrapper">
-            <n-button
-              type="success"
-              @click="
-                () => {
-                  requestUseShareFiles('itrtewn')
-                }
-              "
-            >
-              ファイル共有を有効にする
-            </n-button>
-          </div>
-        </div>
+      <div id="right-side">
+        <ApplicationForm @submit="handleApplicationSubmit" />
+
+        <DashboardContainerForProjectView
+          v-if="projectUsers.length > 0 && project.name !== ''"
+          :tasks="[]"
+          :projects="[project]"
+          :selectedProjectId="projectId"
+          :users="projectUsers"
+        />
       </div>
     </div>
-  </div>
-  <UploadModal :visible="showModal" @onUpdateSuccess="closeModal" />
+  </main>
 </template>
 
 <style scoped>
-.project-view-page {
+#project-layout {
+  display: flex;
+  gap: 50px;
+}
+
+#left-side {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  margin-left: 80px;
 }
 
-h1 {
-  margin-top: 0px;
-  margin-bottom: 10px;
+#right-side {
+  flex: 3;
+  margin-right: 80px;
 }
 
-h2 {
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-#project-view {
-  display: grid;
-  margin: 10px 10px;
-  gap: 20px;
-  grid-template-rows: 15rem 25rem;
-  grid-template-columns: 1.25fr 2fr;
-}
-
-#wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.share-file-header-wrapper {
-  display: flex;
-  align-items: center;
-}
-
-.icon-wrapper {
-  margin-left: 10px;
-}
-
-#project-description {
+#project-member-content {
+  height: 320px;
+  border-radius: 10px;
   border: solid;
-  border-radius: 20px;
-  flex-grow: 1;
 }
 
-#task-summary-area {
-  border: solid;
-  border-radius: 20px;
-  flex-grow: 1;
+.success-message {
+  position: fixed; /* 画面に固定 */
+  top: 50px; /* 上からの距離 */
+  left: 50%; /* 左端から50%の位置 */
+  transform: translateX(-50%); /* 要素の幅の半分だけ左に移動 */
+  padding: 1rem 2rem;
+  color: red;
+  z-index: 50; /* 他の要素の上に表示 */
 }
-
-#chat-channel-area {
-  border: solid;
-  border-radius: 20px;
-  overflow: auto;
-  flex-grow: 1;
-}
-
-#share-file-area {
-  border: solid;
-  overflow: auto;
-  border-radius: 20px;
-  flex-grow: 1;
-}
-
-header {
-  background-color: blue;
-}
-
-footer {
-  background-color: yellow;
-}
-
-.content-wrapper {
-  height: 350px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.error-message {
+  position: fixed; /* 画面に固定 */
+  top: 50px; /* 上からの距離 */
+  left: 50%; /* 左端から50%の位置 */
+  transform: translateX(-50%); /* 要素の幅の半分だけ左に移動 */
+  padding: 1rem 2rem;
+  color: red;
+  z-index: 50; /* 他の要素の上に表示 */
 }
 </style>
