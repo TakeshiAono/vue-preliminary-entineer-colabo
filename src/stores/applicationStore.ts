@@ -1,3 +1,4 @@
+import { api } from "@/api/axios"
 import { useProjectStore } from "@/stores/projectStore"
 import axios from "axios"
 import { defineStore } from "pinia"
@@ -21,7 +22,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
         throw new Error("メッセージを入力してください。")
       }
 
-      const response = await axios.post(
+      const response = await api.post(
         `${import.meta.env.VITE_API_SERVER_URI}/applications/create`,
         {
           message: applicationMessage.value,
@@ -44,7 +45,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
 
   const fetchApplicationDetails = async (applicationId: number) => {
     try {
-      const response = await axios.get(`${API_URL}/applications/${applicationId}`)
+      const response = await api.get(`${API_URL}/applications/${applicationId}`)
       return response.data
     } catch (error) {
       console.error("Error fetching application details:", error)
@@ -54,7 +55,7 @@ export const useApplicationStore = defineStore("applicationStore", () => {
 
   const acceptApplication = async (applicationId: number) => {
     try {
-      const response = await axios.post(`${API_URL}/applications/accept/${applicationId}`)
+      const response = await api.post(`${API_URL}/applications/accept/${applicationId}`)
       const responseData = response.data // APIのレスポンスデータを取得
 
       if (responseData && responseData.project) {
