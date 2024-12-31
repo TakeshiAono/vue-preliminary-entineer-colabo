@@ -10,6 +10,8 @@ import { useProjectStore } from "@/stores/projectStore"
 import { useTaskStore } from "@/stores/taskStore"
 import type { Channel } from "@/stores/API"
 import { useUserStore } from "@/stores/userStore"
+import { getUsersByProject } from "@/utils/utils"
+import { bulkFetch } from "@/utils/bulk"
 
 const showModal = ref(false)
 const isValidShareFiles = ref<boolean | null>(null)
@@ -21,8 +23,14 @@ const userStore = useUserStore()
 const taskStore = useTaskStore()
 const project = ref<Project | null>(null)
 const channels = ref<Channel[] | null>(null)
+const createChannelVisible = ref<boolean>(false)
+const channelName = ref<string>("")
+const userIds = ref<{label: string, value: number}[]>([])
+const options = ref<{label: string, value: number}[]>([])
 
 onMounted(async () => {
+  // TODO: ブラウザ更新したらstoreの中の値も空になるため全てのコンポーネントでbulkFetchを使用しなければならないためDRY出ないので改善する
+  await bulkFetch()
   project.value = await projectStore.fetchProject(route.params.id as string)
   if (await isCreatedBucket()) {
     isValidShareFiles.value = true
@@ -30,8 +38,22 @@ onMounted(async () => {
     isValidShareFiles.value = false
   }
 
-  channels.value = await projectStore.fetchChannels(project.value.chatRoomIds, userStore.currentUser.id)
+  if (typeof route.params.id != "string") return
+  channels.value = await projectStore.fetchChannels(route.params.id, userStore.currentUser.id)
+  setOptions()
 })
+
+const setOptions = () => {
+  const users = getUsersByProject(projectStore, userStore, route.params.id)
+  const createdOptions = users.map((user) => {
+    return {
+      label: user.name,
+      value: user.id,
+    }
+  })
+
+  options.value = createdOptions
+}
 
 const openModal = () => {
   showModal.value = true
@@ -54,9 +76,34 @@ const isCreatedBucket = async () => {
   const result = await api.get<boolean>(`/projects/${route.params.id}/use-share-files`)
   return result.data
 }
+
+const createChannel = async () => {
+  await api.post<void>(`/channels/create`, {
+    name: channelName.value,
+    userIds: userIds.value,
+    ownerId: userStore.currentUser.id,
+    projectId: route.params.id,
+  })
+}
 </script>
 
 <template>
+  <n-modal
+    :show="createChannelVisible"
+    preset="dialog"
+    positive-text="作成"
+    negative-text="キャンセル"
+    @positive-click="() => {
+      createChannel()
+      createChannelVisible = false
+    }"
+    @negative-click="() => {createChannelVisible = false}"
+  >
+    <div :style="{ display: 'flex', flexDirection: 'row', margin: '10px' }">
+      <n-input v-model:value="channelName" placeholder="チャンネル名" :style="{margin: '10px'}" />
+      <n-select multiple v-model:value="userIds" :options="options" />
+    </div>
+  </n-modal>
   <div class="project-view-page">
     <h1>ProjectShow</h1>
     <div id="project-view">
@@ -81,7 +128,7 @@ const isCreatedBucket = async () => {
       <div :id="'wrapper'">
         <div :style="{display: 'flex', flexDirection: 'row'}">
           <h2>チャットチャンネル一覧</h2>
-          <n-button type="info" :style="{marginLeft: '20px'}" @click="() => {console.log('作成')}">
+          <n-button type="info" :style="{marginLeft: '20px'}" @click="() => {createChannelVisible = true}">
             チャンネル作成
           </n-button>
         </div>
