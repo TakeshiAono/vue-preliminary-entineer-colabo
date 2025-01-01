@@ -8,21 +8,20 @@ import { useRoute, useRouter } from "vue-router"
 
 import { useProjectStore } from "@/stores/projectStore"
 import { useTaskStore } from "@/stores/taskStore"
-import type { Channel } from "@/stores/API"
+import type { ResponseChannel, Channel } from "@/stores/API"
 import { useUserStore } from "@/stores/userStore"
 import { getUsersByProject } from "@/utils/utils"
 import { bulkFetch } from "@/utils/bulk"
 
 const showModal = ref(false)
 const isValidShareFiles = ref<boolean | null>(null)
-
 const route = useRoute()
 const router = useRouter()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
 const taskStore = useTaskStore()
 const project = ref<Project | null>(null)
-const channels = ref<Channel[] | null>(null)
+const channels = ref<Channel[]>([])
 const createChannelVisible = ref<boolean>(false)
 const channelName = ref<string>("")
 const userIds = ref<{label: string, value: number}[]>([])
@@ -78,12 +77,14 @@ const isCreatedBucket = async () => {
 }
 
 const createChannel = async () => {
-  await api.post<void>(`/channels/create`, {
+  const response = await api.post<ResponseChannel>(`/channels/create`, {
     name: channelName.value,
     userIds: userIds.value,
     ownerId: userStore.currentUser.id,
     projectId: route.params.id,
   })
+  console.log("response:", response.data)
+  channels.value = [...channels.value, response.data]
 }
 </script>
 
