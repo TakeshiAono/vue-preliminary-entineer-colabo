@@ -146,6 +146,7 @@ const deleteChannel = async (id: number) => {
             <div :id="'chat-channel-content'" v-for="channel in channels" :key="channel.id">
               <div :style="{ display: 'grid', gridTemplateColumns: '1fr 1fr'}">
                 <n-button
+                  :style="{ marginRight: 'auto' }"
                   text
                   type="info"
                   tag="a"
