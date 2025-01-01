@@ -116,7 +116,7 @@ const deleteChannel = async (id: number) => {
   >
     <div :style="{ display: 'flex', flexDirection: 'row', margin: '10px' }">
       <n-input v-model:value="channelName" placeholder="チャンネル名" :style="{ margin: '10px' }" />
-      <n-select multiple v-model:value="userIds" :options="options" />
+      <n-select multiple v-model:value="userIds" :options="options" :style="{ margin: '10px' }" placeholder="初期メンバー選択" />
     </div>
   </n-modal>
   <div class="project-view-page">
