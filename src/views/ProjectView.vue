@@ -88,9 +88,6 @@ const createChannel = async () => {
 }
 
 const deleteChannel = async (id: number) => {
-  console.log("id:", id);
-  console.log("userStore.currentUser.id:", userStore.currentUser.id);
-
   await api.delete(`/channels/${id}`, {
     data: { ownerId: userStore.currentUser.id } // リクエストボディを指定
   });
