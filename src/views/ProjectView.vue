@@ -86,6 +86,17 @@ const createChannel = async () => {
   console.log("response:", response.data)
   channels.value = [...channels.value, response.data]
 }
+
+const deleteChannel = async (id: number) => {
+  console.log("id:", id);
+  console.log("userStore.currentUser.id:", userStore.currentUser.id);
+
+  await api.delete(`/channels/${id}`, {
+    data: { ownerId: userStore.currentUser.id } // リクエストボディを指定
+  });
+
+  channels.value = channels.value.filter((channel) => channel.id !== id)
+};
 </script>
 
 <template>
@@ -136,14 +147,21 @@ const createChannel = async () => {
         <div :id="'chat-channel-area'">
           <div v-if="!!channels">
             <div :id="'chat-channel-content'" v-for="channel in channels" :key="channel.id">
-              <n-button
-                text
-                type="info"
-                tag="a"
-                @click="() => {router.push(`/channels/${channel.id}`)}"
-              >
-                #{{ channel.name }}
-              </n-button>
+              <div :style="{ display: 'grid', gridTemplateColumns: '1fr 1fr'}">
+                <n-button
+                  text
+                  type="info"
+                  tag="a"
+                  @click="() => {router.push(`/channels/${channel.id}`)}"
+                >
+                  #{{ channel.name }}
+                </n-button>
+                <div v-if="channel.ownerId === userStore.currentUser.id">
+                  <n-button type="error" @click="() => {deleteChannel(channel.id)}">
+                    削除
+                  </n-button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
