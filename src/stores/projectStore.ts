@@ -4,18 +4,18 @@ import { ref } from "vue"
 import type { ResponseChannel, ResponseProject } from "./API"
 
 export interface ProjectStore {
-  belongingProjects: ResponseProject[];
-  projectUsersMaps: { projectId: number; userIds: number[] }[];
-  allProjects: ResponseProject[];
-  fetchProject(id: string): Promise<ResponseProject>;
-  fetchChannels(channelIds: number[], currentUserId: number): Promise<ResponseChannel[]>;
-  fetchAllProjects(): Promise<void>;
-  getProjectById(projectId: number): ResponseProject | undefined;
-  searchProjects(queryParamasString: string): Promise<ResponseProject>;
-  getBelongingProjectIds(): number[];
-  setProjects(projectIds: number[]): Promise<void>;
-  getUserIdsByProject(projectId: number): number[];
-  addProject(project: ResponseProject): void;
+  belongingProjects: ResponseProject[]
+  projectUsersMaps: { projectId: number; userIds: number[] }[]
+  allProjects: ResponseProject[]
+  fetchProject(id: string): Promise<ResponseProject>
+  fetchChannels(channelIds: number[], currentUserId: number): Promise<ResponseChannel[]>
+  fetchAllProjects(): Promise<void>
+  getProjectById(projectId: number): ResponseProject | undefined
+  searchProjects(queryParamasString: string): Promise<ResponseProject>
+  getBelongingProjectIds(): number[]
+  setProjects(projectIds: number[]): Promise<void>
+  getUserIdsByProject(projectId: number): number[]
+  addProject(project: ResponseProject): void
 }
 
 export const useProjectStore = defineStore("project", () => {
@@ -28,11 +28,14 @@ export const useProjectStore = defineStore("project", () => {
     return response.data
   }
 
-  async function fetchChannels(projectId: string, currentUserId: number): Promise<ResponseChannel[]> {
+  async function fetchChannels(
+    projectId: string,
+    currentUserId: number,
+  ): Promise<ResponseChannel[]> {
     const response = await api.get<ResponseChannel[]>(`/projects/${projectId}/channels`, {
       params: {
         userId: currentUserId,
-      }
+      },
     })
     return response.data
   }

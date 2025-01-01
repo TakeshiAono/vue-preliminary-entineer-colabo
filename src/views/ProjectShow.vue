@@ -24,8 +24,8 @@ const project = ref<Project | null>(null)
 const channels = ref<Channel[]>([])
 const createChannelVisible = ref<boolean>(false)
 const channelName = ref<string>("")
-const userIds = ref<{label: string, value: number}[]>([])
-const options = ref<{label: string, value: number}[]>([])
+const userIds = ref<{ label: string; value: number }[]>([])
+const options = ref<{ label: string; value: number }[]>([])
 
 onMounted(async () => {
   // TODO: ブラウザ更新したらstoreの中の値も空になるため全てのコンポーネントでbulkFetchを使用しなければならないためDRY出ないので改善する
@@ -89,11 +89,11 @@ const createChannel = async () => {
 
 const deleteChannel = async (id: number) => {
   await api.delete(`/channels/${id}`, {
-    data: { ownerId: userStore.currentUser.id } // リクエストボディを指定
-  });
+    data: { ownerId: userStore.currentUser.id }, // リクエストボディを指定
+  })
 
   channels.value = channels.value.filter((channel) => channel.id !== id)
-};
+}
 </script>
 
 <template>
@@ -102,14 +102,20 @@ const deleteChannel = async (id: number) => {
     preset="dialog"
     positive-text="作成"
     negative-text="キャンセル"
-    @positive-click="() => {
-      createChannel()
-      createChannelVisible = false
-    }"
-    @negative-click="() => {createChannelVisible = false}"
+    @positive-click="
+      () => {
+        createChannel()
+        createChannelVisible = false
+      }
+    "
+    @negative-click="
+      () => {
+        createChannelVisible = false
+      }
+    "
   >
     <div :style="{ display: 'flex', flexDirection: 'row', margin: '10px' }">
-      <n-input v-model:value="channelName" placeholder="チャンネル名" :style="{margin: '10px'}" />
+      <n-input v-model:value="channelName" placeholder="チャンネル名" :style="{ margin: '10px' }" />
       <n-select multiple v-model:value="userIds" :options="options" />
     </div>
   </n-modal>
@@ -135,27 +141,46 @@ const deleteChannel = async (id: number) => {
         </div>
       </div>
       <div :id="'wrapper'">
-        <div :style="{display: 'flex', flexDirection: 'row'}">
+        <div :style="{ display: 'flex', flexDirection: 'row' }">
           <h2>チャットチャンネル一覧</h2>
-          <n-button type="info" :style="{marginLeft: '20px'}" @click="() => {createChannelVisible = true}">
+          <n-button
+            type="info"
+            :style="{ marginLeft: '20px' }"
+            @click="
+              () => {
+                createChannelVisible = true
+              }
+            "
+          >
             チャンネル作成
           </n-button>
         </div>
         <div :id="'chat-channel-area'">
           <div v-if="!!channels">
             <div :id="'chat-channel-content'" v-for="channel in channels" :key="channel.id">
-              <div :style="{ display: 'grid', gridTemplateColumns: '1fr 1fr'}">
+              <div :style="{ display: 'grid', gridTemplateColumns: '1fr 1fr' }">
                 <n-button
                   :style="{ marginRight: 'auto' }"
                   text
                   type="info"
                   tag="a"
-                  @click="() => {router.push(`/channels/${channel.id}`)}"
+                  @click="
+                    () => {
+                      router.push(`/channels/${channel.id}`)
+                    }
+                  "
                 >
                   #{{ channel.name }}
                 </n-button>
                 <div v-if="channel.ownerId === userStore.currentUser.id">
-                  <n-button type="error" @click="() => {deleteChannel(channel.id)}">
+                  <n-button
+                    type="error"
+                    @click="
+                      () => {
+                        deleteChannel(channel.id)
+                      }
+                    "
+                  >
                     削除
                   </n-button>
                 </div>
@@ -279,7 +304,7 @@ footer {
   justify-content: center;
   align-items: center;
 }
-#chat-channel-content{
+#chat-channel-content {
   margin: 15px;
 }
 </style>

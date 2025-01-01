@@ -66,7 +66,10 @@ export const fetchChannelIds = async (project: ResponseProject) => {
   return _.flatten(chatChannelIds)
 }
 
-export async function fetchChannels(project: ResponseProject, currentUserId: number): Promise<ResponseChannel[]> {
+export async function fetchChannels(
+  project: ResponseProject,
+  currentUserId: number,
+): Promise<ResponseChannel[]> {
   const channelIds = await fetchChannelIds(project)
   return await Promise.all(
     channelIds.map(async (id) => {
