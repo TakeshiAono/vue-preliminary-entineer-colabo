@@ -8,7 +8,7 @@ import {
   fetchTasks,
   fetchUserNotices,
 } from "@/utils/request"
-import { sortByUpdatedAt } from "@/utils/utils"
+import { getUsersByProject, sortByUpdatedAt } from "@/utils/utils"
 import { onBeforeMount, onMounted, ref, watch } from "vue"
 import DashboardContainer from "./DashboardContainer.vue"
 import MessageLog from "./MessageLog.vue"
@@ -38,7 +38,7 @@ const router = useRouter()
 const fetchData = async () => {
   try {
     if (props.projects && props.projects.length > 0) {
-      const channels = await fetchChannels(selectedProject())
+      const channels = await fetchChannels(selectedProject(), currentUser.id)
       const messages = await fetchMessagesByChannels(channels)
       chatLogs.value = sortByUpdatedAt<ResponseMessage>(messages).map((message) => message.text)
 
@@ -57,7 +57,7 @@ const fetchData = async () => {
 }
 
 onBeforeMount(async () => {
-  usersByProject.value = getUsersByProject()
+  usersByProject.value = getUsersByProject(projectStore, userStore, selectedProjectId.value)
   tasks.value = await fetchTasks(headProject.value as ResponseProject)
 
   menuOptions.value = props.projects.map((project) => ({
@@ -90,11 +90,6 @@ watch(
   },
   { deep: true },
 )
-
-const getUsersByProject = (): User[] => {
-  const userIds = projectStore.getUserIdsByProject(selectedProjectId.value) as number[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
-  return userIds.map((userId) => userStore.users.find((user) => userId == user.id)) as User[] // NOTE: プロジェクト1つにつき最低一人はユーザーが存在するため
-}
 
 const selectedProject = (): ResponseProject => {
   return projectStore.belongingProjects.find(

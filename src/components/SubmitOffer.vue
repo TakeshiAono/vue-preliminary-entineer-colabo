@@ -77,12 +77,10 @@ const errorMessages = ref<string[]>([])
 
 onMounted(() => {
   const projects = projectStore.belongingProjects
-  console.log(projects)
   projectOptions.value = projects.map((project) => ({ label: project.name, value: project.id }))
 })
 
 const logSelectedProject = (value: number) => {
-  console.log("Selected project:", value)
   selectedProject.value = value
 }
 
@@ -106,7 +104,6 @@ const submitOffer = async () => {
       scoutedUserId: props.scoutedUserId,
       projectId: selectedProject.value,
     }
-    console.log("Submitting offer data:", offerData)
     await offerStore.submitOffer(offerData.userId, offerData.scoutedUserId, offerData.projectId)
     emit("success")
   } catch (error) {

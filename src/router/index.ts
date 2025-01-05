@@ -1,11 +1,12 @@
 import { useUserStore } from "@/stores/userStore"
 import AccountView from "@/views/AccountView.vue"
+import ChannelView from "@/views/ChannelView.vue"
 import ChatView from "@/views/ChatView.vue"
 import LoginView from "@/views/LoginView.vue"
 import MyPageView from "@/views/MyPageView.vue"
 import OfferView from "@/views/OfferView.vue"
 import ProfileView from "@/views/ProfileView.vue"
-import ProjectView from "@/views/ProjectView.vue"
+import ProjectShow from "@/views/ProjectShow.vue"
 import ProjectsSearch from "@/views/ProjectsSearch.vue"
 import TasksView from "@/views/TasksView.vue"
 import { createRouter, createWebHistory } from "vue-router"
@@ -46,7 +47,7 @@ const router = createRouter({
     {
       path: "/projects/show/:id",
       name: "projectShow",
-      component: ProjectView,
+      component: ProjectShow,
       meta: { requiresAuth: true },
       props: true,
     },
@@ -62,6 +63,12 @@ const router = createRouter({
       name: "chatShow",
       component: ChatView,
       meta: { requiresAuth: true },
+      props: true,
+    },
+    {
+      path: "/channels/:id",
+      name: "channelShow",
+      component: ChannelView,
       props: true,
     },
     {
