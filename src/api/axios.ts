@@ -1,4 +1,4 @@
-import { api } from "@/api/axios"
+import axios from "axios"
 import { useUserStore } from "@/stores/userStore"
 export type { AxiosPromise } from "axios"
 
