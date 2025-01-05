@@ -1,17 +1,17 @@
 <script setup lang="ts">
+import { api } from "@/api/axios"
 import ShareFileArea from "@/components/ShareFileArea.vue"
 import UploadModal from "@/components/UploadModal.vue"
 import { CloudUpload } from "@vicons/ionicons5"
-import { api } from "@/api/axios"
 import { onMounted, ref } from "vue"
 import { useRoute, useRouter } from "vue-router"
 
+import type { Channel, ResponseChannel } from "@/stores/API"
 import { useProjectStore } from "@/stores/projectStore"
 import { useTaskStore } from "@/stores/taskStore"
-import type { ResponseChannel, Channel } from "@/stores/API"
 import { useUserStore } from "@/stores/userStore"
-import { getUsersByProject } from "@/utils/utils"
 import { bulkFetch } from "@/utils/bulk"
+import { getUsersByProject } from "@/utils/utils"
 
 const showModal = ref(false)
 const isValidShareFiles = ref<boolean | null>(null)
