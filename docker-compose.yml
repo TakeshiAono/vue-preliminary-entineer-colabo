@@ -12,3 +12,18 @@ services:
     ports:
     - "5173:5173"
     - "8081:8081"
+
+  vue-app-production:
+    image: node:20.11.1-slim
+    tty: true
+    working_dir: /app
+    environment:
+      - NODE_ENV=production
+    volumes:
+    - ./:/app
+    command: sh -c "npm i && npm run production"
+    ports:
+    - "5173:5173"
+    - "8081:8081"
+    profiles:
+      - prod
