@@ -16,8 +16,8 @@ app.use(VueApexCharts)
 
 pinia.use(piniaPluginPersistedstate)
 
-const socket = io() // Socket.ioのインスタンスを作成
+// const socket = io() // Socket.ioのインスタンスを作成
 
-app.provide("socket", socket) // Vue 3のprovideを使用してインスタンスを提供
+// app.provide("socket", socket) // Vue 3のprovideを使用してインスタンスを提供
 
 app.mount("#app")
