@@ -49,7 +49,7 @@ export const useUserStore = defineStore(
 
     async function logout(): Promise<void> {
       try {
-        await api.post("/auth/logout")
+        await api.post("/logout")
       } catch (error) {
         console.error("Logout failed:", error)
       } finally {
