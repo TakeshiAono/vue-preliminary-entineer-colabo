@@ -15,7 +15,15 @@ const userStore = useUserStore()
           <!-- 仮でパスパラメータにid1を入れている。 -->
           <RouterLink to="/users/1" class="nav-content">Profile</RouterLink>
           <RouterLink to="/projects/search" class="nav-content">projectsSearch</RouterLink>
-          <RouterLink to="/login" class="nav-content" @click.prevent="async () => { await userStore.logout() }">
+          <RouterLink
+            to="/login"
+            class="nav-content"
+            @click.prevent="
+              async () => {
+                await userStore.logout()
+              }
+            "
+          >
             Logout
           </RouterLink>
         </div>
