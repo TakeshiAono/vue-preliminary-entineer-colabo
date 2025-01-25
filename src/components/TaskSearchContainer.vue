@@ -62,17 +62,17 @@ const submit = async () => {
           placeholder=""
         />
       </div>
-      <div>
-        <span>担当者ID: </span>
+      <!-- <div> -->
+        <!-- <span>担当者ID: </span> -->
         <!-- TODO セレクトボックスから選択 -->
-        <n-input
+        <!-- <n-input
           class="input"
           v-model:value="userId"
           type="number"
           pattern="^[0-9]+$"
           placeholder=""
-        />
-      </div>
+        /> -->
+      <!-- </div> -->
     </div>
     <div>
       <n-button type="primary" id="searchSubmit" @click="submit()"> 検索 </n-button>

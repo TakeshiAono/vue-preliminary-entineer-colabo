@@ -5,8 +5,10 @@ import type { DataTableColumns } from "naive-ui"
 import TaskSearchContainer from "@/components/TaskSearchContainer.vue"
 import { useTaskStore } from "@/stores/taskStore"
 import type { searchTasksParams } from "@/stores/taskStore"
+import { useUserStore } from "@/stores/userStore"
 
 const tasksStore = useTaskStore()
+const userStore = useUserStore()
 
 interface Task {
   id: number
@@ -42,10 +44,10 @@ const createColumns = (): DataTableColumns<Task> => {
       title: "説明",
       key: "description",
     },
-    {
-      title: "担当者ID",
-      key: "inChargeUserId",
-    },
+    // {
+    //   title: "担当者ID",
+    //   key: "inChargeUserId",
+    // },
     {
       title: "操作",
       key: "actions",
@@ -94,10 +96,10 @@ const updateTask = async () => {
     message.error("プロジェクトIDを入力してください")
     return
   }
-  if (!editingTask.value.inChargeUserId) {
-    message.error("担当者IDを入力してください")
-    return
-  }
+  // if (!editingTask.value.inChargeUserId) {
+  //   message.error("担当者IDを入力してください")
+  //   return
+  // }
 
   const id = editingTask.value.id
 
@@ -105,12 +107,12 @@ const updateTask = async () => {
     name: editingTask.value.name,
     description: editingTask.value.description,
     projectId: parseInt(editingTask.value.projectId),
-    inChargeUserId: parseInt(editingTask.value.inChargeUserId),
+    inChargeUserId: userStore.currentUser.id,
   }
 
   try {
     await tasksStore.updateTask(id, params)
-    await searchTasks({})
+    await searchTasks({userId: params.inChargeUserId})
     message.success("タスクを更新しました")
 
     showEditTaskModal.value = false
@@ -121,7 +123,7 @@ const updateTask = async () => {
 }
 
 onMounted(async () => {
-  searchTasks({})
+  searchTasks({userId: userStore.currentUser.id})
 })
 
 // タスク登録モーダル関連の状態
@@ -144,21 +146,21 @@ const registerTask = async () => {
     message.error("プロジェクトIDを入力してください")
     return
   }
-  if (!taskInChargeUserId.value) {
-    message.error("担当者IDを入力してください")
-    return
-  }
+  // if (!taskInChargeUserId.value) {
+  //   message.error("担当者IDを入力してください")
+  //   return
+  // }
 
   const params = {
     name: taskName.value,
     description: taskDescription.value,
     projectId: parseInt(taskProjectId.value),
-    inChargeUserId: parseInt(taskInChargeUserId.value),
+    inChargeUserId: userStore.currentUser.id,
   }
 
   try {
     await tasksStore.createTask(params)
-    await searchTasks({})
+    await searchTasks({userId: params.inChargeUserId})
     message.success("タスクを作成しました")
 
     showTaskModal.value = false
