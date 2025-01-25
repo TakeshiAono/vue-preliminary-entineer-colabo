@@ -63,9 +63,9 @@ const submit = async () => {
         />
       </div>
       <!-- <div> -->
-        <!-- <span>担当者ID: </span> -->
-        <!-- TODO セレクトボックスから選択 -->
-        <!-- <n-input
+      <!-- <span>担当者ID: </span> -->
+      <!-- TODO セレクトボックスから選択 -->
+      <!-- <n-input
           class="input"
           v-model:value="userId"
           type="number"

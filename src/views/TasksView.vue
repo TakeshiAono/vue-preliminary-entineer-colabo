@@ -112,7 +112,7 @@ const updateTask = async () => {
 
   try {
     await tasksStore.updateTask(id, params)
-    await searchTasks({userId: params.inChargeUserId})
+    await searchTasks({ userId: params.inChargeUserId })
     message.success("タスクを更新しました")
 
     showEditTaskModal.value = false
@@ -123,7 +123,7 @@ const updateTask = async () => {
 }
 
 onMounted(async () => {
-  searchTasks({userId: userStore.currentUser.id})
+  searchTasks({ userId: userStore.currentUser.id })
 })
 
 // タスク登録モーダル関連の状態
@@ -160,7 +160,7 @@ const registerTask = async () => {
 
   try {
     await tasksStore.createTask(params)
-    await searchTasks({userId: params.inChargeUserId})
+    await searchTasks({ userId: params.inChargeUserId })
     message.success("タスクを作成しました")
 
     showTaskModal.value = false
