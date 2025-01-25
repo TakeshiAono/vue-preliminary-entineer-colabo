@@ -47,7 +47,7 @@ onBeforeMount(async () => {
           try {
             await projectStore.createProject(newProjectName, userStore.currentUser.id)
           } finally {
-            router.go({path: '/myPage', force: true})
+            router.go({ path: '/myPage', force: true })
           }
         }
       "
