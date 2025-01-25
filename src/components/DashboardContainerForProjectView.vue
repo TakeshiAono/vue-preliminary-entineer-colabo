@@ -4,6 +4,7 @@ import { onMounted, ref, watch } from "vue"
 import DashboardDeadline from "./DashboardDeadline.vue"
 import TaskGraph from "./TaskGraph.vue"
 import TaskSummary from "./TaskSummary.vue"
+import { useUserStore } from "@/stores/userStore"
 
 const props = defineProps<{
   tasks: Task[]
@@ -11,6 +12,7 @@ const props = defineProps<{
   selectedProjectId: number
 }>()
 const taskStore = useTaskStore()
+const userStore = useUserStore()
 
 const project = ref<Project>(
   props.projects.find((project) => project.id == props.selectedProjectId) as Project,
@@ -32,6 +34,7 @@ watch(
 
 const updateTasks = async () => {
   selectedTasks.value = await taskStore.searchTasks({
+    userId: userStore.currentUser.id,
     projectId: props.selectedProjectId,
   })
 }
