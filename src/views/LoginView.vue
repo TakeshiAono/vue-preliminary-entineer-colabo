@@ -27,7 +27,7 @@ const rules = {
     required: true,
     message: "正しいメールアドレスを入力してください",
     validator: (rule: any, value: string | null) => {
-      if(process.env.NODE_ENV == "development"){
+      if (process.env.NODE_ENV == "development") {
         return
       } else {
         return new Promise((resolve, reject) => {
@@ -84,18 +84,10 @@ const submitHandler = async (): Promise<void> => {
       </n-alert>
       <n-form ref="formRef" :model="loginModel" :rules="rules" id="login-form">
         <n-form-item path="email" label="Email">
-          <n-auto-complete
-            v-model:value="loginModel.email"
-            type="email"
-            @keydown.enter.prevent
-          />
+          <n-auto-complete v-model:value="loginModel.email" type="email" @keydown.enter.prevent />
         </n-form-item>
         <n-form-item path="password" label="Password">
-          <n-input
-            v-model:value="loginModel.password"
-            type="password"
-            @keydown.enter.prevent
-          />
+          <n-input v-model:value="loginModel.password" type="password" @keydown.enter.prevent />
         </n-form-item>
         <div style="display: flex; justify-content: flex-end">
           <n-button

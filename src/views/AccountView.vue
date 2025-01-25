@@ -2,7 +2,7 @@
 import router from "@/router"
 import { useUserStore } from "@/stores/userStore"
 import { ref } from "vue"
-import type { FormInst } from 'naive-ui'
+import type { FormInst } from "naive-ui"
 
 type AccountModel = {
   email: string | null
@@ -24,30 +24,30 @@ const formRef = ref<FormInst | null>(null)
 const rules = {
   email: {
     required: true,
-    message: '正しいメールアドレスを入力してください',
+    message: "正しいメールアドレスを入力してください",
     validator: (rule: any, value: string | null) => {
       return new Promise((resolve, reject) => {
         if (!value) {
-          reject('メールアドレスを入力してください')
+          reject("メールアドレスを入力してください")
         }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (!emailRegex.test(value)) {
-          reject('正しいメールアドレスを入力してください')
+          reject("正しいメールアドレスを入力してください")
         }
         resolve(true)
       })
     },
-    trigger: 'blur',
+    trigger: "blur",
   },
   name: {
     required: true,
-    message: '名前を入力してください',
-    trigger: 'blur',
+    message: "名前を入力してください",
+    trigger: "blur",
   },
   password: {
     required: true,
-    message: 'パスワードを入力してください',
-    trigger: 'blur',
+    message: "パスワードを入力してください",
+    trigger: "blur",
   },
 }
 
@@ -56,19 +56,18 @@ const userStore = useUserStore()
 const submitHandler = async (): Promise<void> => {
   try {
     await formRef.value?.validate()
-    console.log('Validation passed')
+    console.log("Validation passed")
     await userStore.accountCreate(
       accountModel.value.name,
       accountModel.value.email,
-      accountModel.value.password
+      accountModel.value.password,
     )
     router.push("myPage")
   } catch (error) {
-    console.error('Validation or account creation error:', error)
+    console.error("Validation or account creation error:", error)
     errorVisible.value = true
   }
 }
-
 </script>
 
 <template>
@@ -90,11 +89,7 @@ const submitHandler = async (): Promise<void> => {
         </n-form-item>
         <div style="display: flex; justify-content: flex-end">
           <n-button
-            :disabled="
-              !accountModel.name ||
-              !accountModel.email ||
-              !accountModel.password
-            "
+            :disabled="!accountModel.name || !accountModel.email || !accountModel.password"
             round
             type="primary"
             @click="submitHandler"
