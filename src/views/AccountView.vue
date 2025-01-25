@@ -2,6 +2,7 @@
 import router from "@/router"
 import { useUserStore } from "@/stores/userStore"
 import { ref } from "vue"
+import type { FormInst } from 'naive-ui'
 
 type AccountModel = {
   email: string | null
@@ -16,21 +17,58 @@ const accountModel = ref<AccountModel>({
   name: null,
   introduce: null,
 })
+
 const errorVisible = ref<boolean>(false)
+const formRef = ref<FormInst | null>(null)
+
+const rules = {
+  email: {
+    required: true,
+    message: '正しいメールアドレスを入力してください',
+    validator: (rule: any, value: string | null) => {
+      return new Promise((resolve, reject) => {
+        if (!value) {
+          reject('メールアドレスを入力してください')
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(value)) {
+          reject('正しいメールアドレスを入力してください')
+        }
+        resolve(true)
+      })
+    },
+    trigger: 'blur',
+  },
+  name: {
+    required: true,
+    message: '名前を入力してください',
+    trigger: 'blur',
+  },
+  password: {
+    required: true,
+    message: 'パスワードを入力してください',
+    trigger: 'blur',
+  },
+}
 
 const userStore = useUserStore()
 
-const submitHandler = (): void => {
-  userStore
-    .accountCreate(accountModel.value.name, accountModel.value.email, accountModel.value.password)
-    .then(() => {
-      router.push("myPage")
-    })
-    .catch((error) => {
-      console.log(error)
-      errorVisible.value = true
-    })
+const submitHandler = async (): Promise<void> => {
+  try {
+    await formRef.value?.validate()
+    console.log('Validation passed')
+    await userStore.accountCreate(
+      accountModel.value.name,
+      accountModel.value.email,
+      accountModel.value.password
+    )
+    router.push("myPage")
+  } catch (error) {
+    console.error('Validation or account creation error:', error)
+    errorVisible.value = true
+  }
 }
+
 </script>
 
 <template>
@@ -40,12 +78,12 @@ const submitHandler = (): void => {
       <n-alert title="認証エラー" type="error" v-if="errorVisible">
         このメールアドレスはすでに登録済みです。
       </n-alert>
-      <n-form ref="formRef" :model="accountModel" id="account-form">
+      <n-form ref="formRef" :model="accountModel" :rules="rules" id="account-form">
         <n-form-item path="name" label="Name">
           <n-input v-model:value="accountModel.name" type="name" @keydown.enter.prevent />
         </n-form-item>
         <n-form-item path="email" label="Email">
-          <n-input v-model:value="accountModel.email" type="email" @keydown.enter.prevent />
+          <n-auto-complete v-model:value="accountModel.email" type="email" @keydown.enter.prevent />
         </n-form-item>
         <n-form-item path="password" label="Password">
           <n-input v-model:value="accountModel.password" type="password" @keydown.enter.prevent />
@@ -53,9 +91,9 @@ const submitHandler = (): void => {
         <div style="display: flex; justify-content: flex-end">
           <n-button
             :disabled="
-              accountModel.name == null ||
-              accountModel.email == null ||
-              accountModel.password == null
+              !accountModel.name ||
+              !accountModel.email ||
+              !accountModel.password
             "
             round
             type="primary"
