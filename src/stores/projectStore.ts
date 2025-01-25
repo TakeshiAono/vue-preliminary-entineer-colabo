@@ -16,12 +16,32 @@ export interface ProjectStore {
   setProjects(projectIds: number[]): Promise<void>
   getUserIdsByProject(projectId: number): number[]
   addProject(project: ResponseProject): void
+  createProject(): void
 }
 
 export const useProjectStore = defineStore("project", () => {
   const belongingProjects = ref<ResponseProject[]>([])
   const projectUsersMaps = ref<{ projectId: number; userIds: number[] }[]>([])
   const allProjects = ref<ResponseProject[]>([])
+
+  async function createProject(
+    projectName: string,
+    currentUserId: number,
+  ): Promise<ResponseProject> {
+    const project = await api.post(`/projects/create`, {
+      name: projectName,
+      owner: {
+        id: currentUserId,
+      },
+      iconUrl: null,
+      description: null,
+      deadline: null,
+      meetingFrequencyCode: null,
+      useTechnology: null,
+      recruitingMemberJob: {},
+      recruitingText: null,
+    })
+  }
 
   async function fetchProject(id: string): Promise<ResponseProject> {
     const response = await api.get(`/projects/${id}`)
@@ -106,5 +126,6 @@ export const useProjectStore = defineStore("project", () => {
     getProjectById,
     addProject,
     fetchChannels,
+    createProject,
   }
 })
