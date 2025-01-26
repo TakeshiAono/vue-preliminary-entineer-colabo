@@ -1,6 +1,7 @@
 import { api } from "@/api/axios"
 import { defineStore } from "pinia"
 import { ref, type Ref } from "vue"
+import type { ResponseUser } from "./API"
 
 export interface UserStore {
   isLoggedIn: Ref<boolean>
@@ -134,6 +135,10 @@ export const useUserStore = defineStore(
       }
     }
 
+    async function putUser(user: User): Promise<void> {
+      await api.put(`/users/${user.id}`, user)
+    }
+
     return {
       isLoggedIn,
       checkAuth,
@@ -148,6 +153,7 @@ export const useUserStore = defineStore(
       addUsersByProject,
       getUsers,
       checkAuthStatus,
+      putUser
     }
   },
   {

@@ -4,6 +4,22 @@
     <div id="selected-user-name">
       <h1>{{ user?.name }}さんのプロフィール</h1>
       <n-button
+        strong
+        secondary
+        circle
+        type="warning"
+        v-if="route.params.id == userStore.currentUser.id"
+        @click="
+          () => {
+            editModal = true
+          }
+        "
+      >
+        <n-icon size="20">
+          <CreateOutline />
+        </n-icon>
+      </n-button>
+      <n-button
         v-if="user && userStore.currentUser && user.id !== userStore.currentUser.id"
         @click="showModal = true"
       >
@@ -23,6 +39,65 @@
       @cancel="handleClose"
       @success="handleSuccess"
     />
+    <n-modal
+      :show="editModal"
+      preset="dialog"
+      positive-text="変更"
+      negative-text="キャンセル"
+      @positive-click="
+        async () => {
+          try {
+            userStore.currentUser.password = newPassword
+            await userStore.putUser(
+              userStore.currentUser
+            )
+          } finally {
+            router.go({ path: `/users/${userStore.currentUser.id}`, force: true })
+          }
+        }
+      "
+      @negative-click="
+        () => {
+          editModal = false
+        }
+      "
+      title="プロジェクト編集"
+    >
+      <div id="project-name-input">
+        <div>
+          <h3>ユーザー名</h3>
+          <n-input
+            v-model:value="userStore.currentUser.name"
+            type="text"
+            placeholder=""
+          />
+        </div>
+        <div>
+          <h3>メールアドレス</h3>
+          <n-input
+            v-model:value="userStore.currentUser.email"
+            type="text"
+            placeholder=""
+          />
+        </div>
+        <div>
+          <h3>パスワード</h3>
+          <n-input
+            v-model:value="newPassword"
+            type="text"
+            placeholder=""
+          />
+        </div>
+        <div>
+          <h3>紹介文</h3>
+          <n-input
+            v-model:value="userStore.currentUser.introduce"
+            type="text"
+            placeholder=""
+          />
+        </div>
+      </div>
+    </n-modal>
   </main>
 </template>
 
@@ -32,18 +107,22 @@ import UserFollowers from "@/components/UserFollowers.vue"
 import UserProjects from "@/components/UserProjects.vue"
 import { useProjectStore } from "@/stores/projectStore"
 import { useUserStore } from "@/stores/userStore"
+import { CreateOutline } from "@vicons/ionicons5"
 import { onMounted, ref, watch } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 
 const showModal = ref(false)
+const editModal = ref(false)
 const successMessage = ref<string | null>(null)
 
 const userStore = useUserStore()
 const user = ref<User | null>(null)
 const userProjectIds = ref<number[]>([])
+const newPassword = ref<string>("")
 const route = useRoute()
 const userId = parseInt(route.params.id as string, 10)
 const projectStore = useProjectStore()
+const router = useRouter()
 
 onMounted(async () => {
   try {
