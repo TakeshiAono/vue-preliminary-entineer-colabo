@@ -48,9 +48,7 @@
         async () => {
           try {
             userStore.currentUser.password = newPassword
-            await userStore.putUser(
-              userStore.currentUser
-            )
+            await userStore.putUser(userStore.currentUser)
           } finally {
             router.go({ path: `/users/${userStore.currentUser.id}`, force: true })
           }
@@ -66,35 +64,19 @@
       <div id="project-name-input">
         <div>
           <h3>ユーザー名</h3>
-          <n-input
-            v-model:value="userStore.currentUser.name"
-            type="text"
-            placeholder=""
-          />
+          <n-input v-model:value="userStore.currentUser.name" type="text" placeholder="" />
         </div>
         <div>
           <h3>メールアドレス</h3>
-          <n-input
-            v-model:value="userStore.currentUser.email"
-            type="text"
-            placeholder=""
-          />
+          <n-input v-model:value="userStore.currentUser.email" type="text" placeholder="" />
         </div>
         <div>
           <h3>パスワード</h3>
-          <n-input
-            v-model:value="newPassword"
-            type="text"
-            placeholder=""
-          />
+          <n-input v-model:value="newPassword" type="text" placeholder="" />
         </div>
         <div>
           <h3>紹介文</h3>
-          <n-input
-            v-model:value="userStore.currentUser.introduce"
-            type="text"
-            placeholder=""
-          />
+          <n-input v-model:value="userStore.currentUser.introduce" type="text" placeholder="" />
         </div>
       </div>
     </n-modal>

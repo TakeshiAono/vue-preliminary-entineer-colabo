@@ -153,7 +153,7 @@ export const useUserStore = defineStore(
       addUsersByProject,
       getUsers,
       checkAuthStatus,
-      putUser
+      putUser,
     }
   },
   {
