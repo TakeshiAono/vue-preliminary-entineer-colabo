@@ -23,12 +23,10 @@ export const useProjectStore = defineStore("project", () => {
   const belongingProjects = ref<ResponseProject[]>([])
   const projectUsersMaps = ref<{ projectId: number; userIds: number[] }[]>([])
   const allProjects = ref<ResponseProject[]>([])
+  const selectedProjectsAtMyPage = ref<Project>()
 
-  async function createProject(
-    projectName: string,
-    currentUserId: number,
-  ): Promise<ResponseProject> {
-    const project = await api.post(`/projects/create`, {
+  async function createProject(projectName: string, currentUserId: number): Promise<void> {
+    await api.post(`/projects/create`, {
       name: projectName,
       owner: {
         id: currentUserId,
@@ -40,6 +38,17 @@ export const useProjectStore = defineStore("project", () => {
       useTechnology: null,
       recruitingMemberJob: {},
       recruitingText: null,
+    })
+  }
+
+  async function putProject(
+    projectName: string,
+    description: string,
+    projectId: number,
+  ): Promise<void> {
+    await api.put(`/projects/${projectId}`, {
+      name: projectName,
+      description: description,
     })
   }
 
@@ -90,6 +99,13 @@ export const useProjectStore = defineStore("project", () => {
     })
     projectUsersMaps.value = [...projectUsersMaps.value, ...createdProjectUsersMaps]
     belongingProjects.value = projectList
+    selectedProjectsAtMyPage.value = projectList[0]
+  }
+
+  function selectProject(projectId: number) {
+    selectedProjectsAtMyPage.value = belongingProjects.value.find(
+      (project) => project.id == projectId,
+    )
   }
 
   function getUserIdsByProject(projectId: number) {
@@ -117,6 +133,7 @@ export const useProjectStore = defineStore("project", () => {
     belongingProjects,
     projectUsersMaps,
     allProjects,
+    selectedProjectsAtMyPage,
     fetchProject,
     fetchAllProjects,
     setProjects,
@@ -127,5 +144,7 @@ export const useProjectStore = defineStore("project", () => {
     addProject,
     fetchChannels,
     createProject,
+    putProject,
+    selectProject,
   }
 })

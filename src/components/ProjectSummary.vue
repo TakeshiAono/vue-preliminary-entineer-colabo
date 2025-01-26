@@ -17,6 +17,7 @@ import ProjectDescription from "./ProjectDescription.vue"
 import ProjectMemberSummary from "./ProjectMemberSummary.vue"
 import UserNotice from "./UserNotice.vue"
 import { useRouter } from "vue-router"
+import { CreateOutline } from "@vicons/ionicons5"
 
 const props = defineProps<{ projects: Project[]; users: User[] }>()
 const projectStore = useProjectStore()
@@ -31,6 +32,7 @@ const selectedProjectId = ref<number>(headProject.value.id)
 const usersByProject = ref<User[]>([])
 
 const menuOptions = ref<{ label: string; key: number }[]>([])
+const modalVisible = ref(false)
 
 const currentUser = userStore.currentUser
 const router = useRouter()
@@ -122,6 +124,7 @@ const getProject = (id: number): Project => {
         :on-update:value="
           (projectId: number) => {
             selectedProjectId = projectId
+            projectStore.selectProject(projectId)
           }
         "
       />
@@ -131,12 +134,30 @@ const getProject = (id: number): Project => {
         <div>
           <div id="project-info">
             <div id="project-member">
-              <h1 id="project-name">
-                {{
-                  projectStore.belongingProjects.find((project) => project.id == selectedProjectId)
-                    ?.name
-                }}
-              </h1>
+              <div :style="{ display: 'flex', alignItems: 'center' }">
+                <h1 id="project-name" :style="{ marginRight: '10px' }">
+                  {{
+                    projectStore.belongingProjects.find(
+                      (project) => project.id == selectedProjectId,
+                    )?.name
+                  }}
+                </h1>
+                <n-button
+                  strong
+                  secondary
+                  circle
+                  type="warning"
+                  @click="
+                    () => {
+                      modalVisible = true
+                    }
+                  "
+                >
+                  <n-icon size="20">
+                    <CreateOutline />
+                  </n-icon>
+                </n-button>
+              </div>
               <ProjectDescription
                 :description="getProject(selectedProjectId).description"
                 @jump-project-page="
@@ -168,6 +189,50 @@ const getProject = (id: number): Project => {
       </div>
     </n-layout-content>
   </n-layout>
+  <n-modal
+    :show="modalVisible"
+    preset="dialog"
+    positive-text="変更"
+    negative-text="キャンセル"
+    @positive-click="
+      async () => {
+        try {
+          await projectStore.putProject(
+            projectStore.selectedProjectsAtMyPage.name,
+            projectStore.selectedProjectsAtMyPage?.description,
+            projectStore.selectedProjectsAtMyPage.id,
+          )
+        } finally {
+          router.go({ path: '/myPage', force: true })
+        }
+      }
+    "
+    @negative-click="
+      () => {
+        modalVisible = false
+      }
+    "
+    title="プロジェクト編集"
+  >
+    <div id="project-name-input">
+      <div>
+        <h3>プロジェクト名</h3>
+        <n-input
+          v-model:value="projectStore.selectedProjectsAtMyPage.name"
+          type="text"
+          placeholder=""
+        />
+      </div>
+      <div>
+        <h4>概要</h4>
+        <n-input
+          v-model:value="projectStore.selectedProjectsAtMyPage.description"
+          type="textarea"
+          placeholder=""
+        />
+      </div>
+    </div>
+  </n-modal>
 </template>
 
 <style scoped>
