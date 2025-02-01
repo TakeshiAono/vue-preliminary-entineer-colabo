@@ -235,35 +235,24 @@ const getProject = (id: number): Project => {
 
 <style scoped>
 #project-layout {
-  /* height: 100vh; */
   height: 100%;
-  /* flex-grow: 1; */
-  /* align-items: center; */
-  /* max-height: auto; */
-  /* background-color: blue; */
 }
 
 #grid-wrapper {
-  /* background-color: green; */
   width: 100%;
   flex-grow: 1;
-  /* height: 100%; */
   display: flex;
   flex-direction: column;
-  /* max-height: 100vh; */
 }
 
 #grid-container {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: 1fr 1fr;
-  /* justify-items: end; */
-  /* place-content: center; */
   gap: 20px;
   margin: 0px 30px;
   flex: 1;
   padding: 20px;
-  /* height: auto; */
 }
 
 #project-description-container {
@@ -285,7 +274,6 @@ const getProject = (id: number): Project => {
   grid-column-end: 13;
   grid-row-start: 1;
   grid-row-end: 1;
-  /* height: 250px; */
 }
 
 #chat-log-container {
