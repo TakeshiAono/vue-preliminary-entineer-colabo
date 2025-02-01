@@ -105,7 +105,7 @@ const getProject = (id: number): Project => {
 </script>
 
 <template>
-  <n-layout has-sider>
+  <n-layout has-sider id="project-layout">
     <n-layout-sider
       collapse-mode="transform"
       :collapsed-width="80"
@@ -129,52 +129,50 @@ const getProject = (id: number): Project => {
         "
       />
     </n-layout-sider>
-    <n-layout-content content-style="padding: 24px;" v-if="headProject">
-      <div id="my-page-info">
-        <div>
-          <div id="project-info">
-            <div id="project-member">
-              <div :style="{ display: 'flex', alignItems: 'center' }">
-                <h1 id="project-name" :style="{ marginRight: '10px' }">
-                  {{
-                    projectStore.belongingProjects.find(
-                      (project) => project.id == selectedProjectId,
-                    )?.name
-                  }}
-                </h1>
-                <n-button
-                  strong
-                  secondary
-                  circle
-                  type="warning"
-                  @click="
-                    () => {
-                      modalVisible = true
-                    }
-                  "
-                >
-                  <n-icon size="20">
-                    <CreateOutline />
-                  </n-icon>
-                </n-button>
-              </div>
-              <ProjectDescription
-                :description="getProject(selectedProjectId).description"
-                @jump-project-page="
-                  () => {
-                    router.push('projects/show/' + selectedProjectId)
-                  }
-                "
-              />
-              <ProjectMemberSummary :member-names="usersByProject.map((user) => user.name)" />
-            </div>
-            <div id="chat-log">
-              <MessageLog :chat-logs="chatLogs" />
-            </div>
-            <div id="operation-log">
-              <OperationLog :operation-logs="operationLogs" />
-            </div>
-          </div>
+    <div id="grid-wrapper">
+      <div :style="{ display: 'flex', alignItems: 'start' }">
+        <h2 id="project-name" :style="{ margin: '10px' }">
+          {{
+            projectStore.belongingProjects.find((project) => project.id == selectedProjectId)?.name
+          }}
+        </h2>
+        <n-button
+          strong
+          secondary
+          circle
+          type="warning"
+          @click="
+            () => {
+              modalVisible = true
+            }
+          "
+        >
+          <n-icon size="20">
+            <CreateOutline />
+          </n-icon>
+        </n-button>
+      </div>
+      <div id="grid-container">
+        <div id="project-member-container">
+          <ProjectMemberSummary :member-names="usersByProject.map((user) => user.name)" />
+        </div>
+        <div id="project-description-container">
+          <ProjectDescription
+            :description="getProject(selectedProjectId).description"
+            @jump-project-page="
+              () => {
+                router.push('projects/show/' + selectedProjectId)
+              }
+            "
+          />
+        </div>
+        <div id="chat-log-container">
+          <MessageLog :chat-logs="chatLogs" />
+        </div>
+        <div id="operation-log-container">
+          <OperationLog :operation-logs="operationLogs" />
+        </div>
+        <div id="dashboard-container">
           <DashboardContainer
             v-if="projects.length != 0 && tasks.length != 0"
             :tasks="tasks"
@@ -183,11 +181,11 @@ const getProject = (id: number): Project => {
             :users="usersByProject"
           />
         </div>
-        <div id="user-notice">
+        <div id="user-notice-container">
           <UserNotice :userNoticeLogs="userNoticeLogs" />
         </div>
       </div>
-    </n-layout-content>
+    </div>
   </n-layout>
   <n-modal
     :show="modalVisible"
@@ -236,31 +234,79 @@ const getProject = (id: number): Project => {
 </template>
 
 <style scoped>
-#project-member,
-#chat-log {
-  margin-right: 0.5rem;
+#project-layout {
+  /* height: 100vh; */
+  height: 100%;
+  /* flex-grow: 1; */
+  /* align-items: center; */
+  /* max-height: auto; */
+  /* background-color: blue; */
 }
 
-#user-notice {
-  margin-left: 0.5rem;
-}
-
-#my-page-info {
+#grid-wrapper {
+  /* background-color: green; */
+  width: 100%;
+  flex-grow: 1;
+  /* height: 100%; */
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  /* max-height: 100vh; */
 }
 
-#project-info {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+#grid-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 1fr 1fr;
+  /* justify-items: end; */
+  /* place-content: center; */
+  gap: 20px;
+  margin: 0px 30px;
+  flex: 1;
+  padding: 20px;
+  /* height: auto; */
 }
 
-#project-name {
-  text-decoration: underline;
+#project-description-container {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  grid-row-start: 1;
+  grid-row-end: 1;
 }
 
-#project-summary {
-  font-weight: bold;
+#project-member-container {
+  grid-column-start: 4;
+  grid-column-end: 7;
+  grid-row-start: 1;
+  grid-row-end: 1;
+}
+
+#dashboard-container {
+  grid-column-start: 7;
+  grid-column-end: 13;
+  grid-row-start: 1;
+  grid-row-end: 1;
+  /* height: 250px; */
+}
+
+#chat-log-container {
+  grid-column-start: 1;
+  grid-column-end: 5;
+  grid-row-start: 2;
+  grid-row-end: 2;
+  flex-grow: 1;
+}
+
+#user-notice-container {
+  grid-column-start: 5;
+  grid-column-end: 9;
+  grid-row-start: 2;
+  grid-row-end: 2;
+}
+
+#operation-log-container {
+  grid-column-start: 9;
+  grid-column-end: 13;
+  grid-row-start: 2;
+  grid-row-end: 2;
 }
 </style>

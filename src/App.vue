@@ -8,14 +8,21 @@ import { NConfigProvider, NMessageProvider } from "naive-ui"
   <NConfigProvider>
     <NMessageProvider>
       <n-dialog-provider>
-        <div class="wrapper">
-          <NavigationBar />
-        </div>
-
+        <NavigationBar />
         <RouterView />
       </n-dialog-provider>
     </NMessageProvider>
   </NConfigProvider>
 </template>
 
-<style scoped></style>
+<style scoped>
+.n-config-provider {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+main {
+  height: 100%;
+}
+</style>

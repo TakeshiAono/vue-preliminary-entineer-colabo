@@ -55,49 +55,99 @@ const updateTasks = async () => {
     milestoneId: selectedMilestone.value?.id,
   })
 }
+
+const tasksNumber = ref(0)
+const incompleteTaskNumber = ref(0)
+
+watch(
+  () => props.tasks,
+  () => {
+    tasksNumber.value = props.tasks.length
+    incompleteTaskNumber.value = props.tasks.filter((task) => !task.doneAt).length
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
-  <h1 id="dashboard-title">ダッシュボード</h1>
-  <div id="milestone-content">
-    <MilestoneSelector :projectId="props.selectedProjectId" @select="selectMilestoneHandler" />
-  </div>
-  <div id="dashboard-content">
+  <h2 id="dashboard-title">ダッシュボード</h2>
+  <div id="dashboard-grid-container">
+    <div id="milestone-content">
+      <MilestoneSelector :projectId="props.selectedProjectId" @select="selectMilestoneHandler" />
+    </div>
     <div id="project-deadline-info">
       <DashboardDeadline :deadline="deadline" />
     </div>
-    <div id="task-summary">
-      <TaskSummary v-if="tasks.length != 0" :tasks="selectedTasks" />
+    <div id="incomplete-task" v-if="tasks.length != 0" :tasks="selectedTasks">
+      <p>❌ 残課題</p>
+      {{ incompleteTaskNumber }}
     </div>
-    <div id="tasks-graph">
+    <div id="complete-task" v-if="tasks.length != 0" :tasks="selectedTasks">
+      <p>✅ 完了課題</p>
+      {{ props.tasks.length - incompleteTaskNumber }}
+    </div>
+    <div id="progress-ratio" v-if="tasks.length != 0" :tasks="selectedTasks">
+      <p>全体進捗率</p>
+      {{ Math.round(((props.tasks.length - incompleteTaskNumber) / tasksNumber) * 100) || 0 }} %
+    </div>
+    <div id="user-task-selector">
       <UserTaskSelector
         :users="users"
         :initUser="initUser"
         @select="selectUserHandler"
         :projectId="props.selectedProjectId"
       />
+    </div>
+    <div id="tasks-graph">
       <TaskGraph :tasks="selectedTasks" />
     </div>
   </div>
 </template>
 
 <style scoped>
-#dashboard-title {
-  text-decoration: underline;
+#dashboard-grid-container {
+  display: grid;
+  grid-template-areas:
+    "mic mic uts uts"
+    "pdi ict cot prr"
+    "tgr tgr tgr tgr"
+    "tgr tgr tgr tgr";
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 80px 80px 1fr 1fr;
+  place-items: center;
+  border: solid;
+  border-radius: 10px;
 }
 
-#dashboard-content {
-  display: flex;
-  justify-content: space-around;
-  border-radius: 10px;
-  border: solid;
+#incomplete-task {
+  grid-area: ict;
+}
+
+#complete-task {
+  grid-area: cot;
+}
+
+#progress-ratio {
+  grid-area: prr;
+}
+
+#milestone-content {
+  grid-area: mic;
 }
 
 #project-deadline-info {
-  margin: auto 0;
+  grid-area: pdi;
+}
+
+#task-summary {
+  grid-area: tsu;
+}
+
+#user-task-selector {
+  grid-area: uts;
 }
 
 #tasks-graph {
-  width: 60%;
+  grid-area: tgr;
 }
 </style>
