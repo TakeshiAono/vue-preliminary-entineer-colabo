@@ -108,7 +108,7 @@ const getProject = (id: number): Project => {
   <n-layout has-sider id="project-layout">
     <n-layout-sider
       collapse-mode="transform"
-      :collapsed-width="80"
+      :collapsed-width="30"
       :width="200"
       show-trigger="arrow-circle"
       content-style="padding: 24px;"
@@ -153,9 +153,6 @@ const getProject = (id: number): Project => {
         </n-button>
       </div>
       <div id="grid-container">
-        <div id="project-member-container">
-          <ProjectMemberSummary :member-names="usersByProject.map((user) => user.name)" />
-        </div>
         <div id="project-description-container">
           <ProjectDescription
             :description="getProject(selectedProjectId).description"
@@ -166,12 +163,6 @@ const getProject = (id: number): Project => {
             "
           />
         </div>
-        <div id="chat-log-container">
-          <MessageLog :chat-logs="chatLogs" />
-        </div>
-        <div id="operation-log-container">
-          <OperationLog :operation-logs="operationLogs" />
-        </div>
         <div id="dashboard-container">
           <DashboardContainer
             v-if="projects.length != 0 && tasks.length != 0"
@@ -180,6 +171,15 @@ const getProject = (id: number): Project => {
             :selectedProjectId="selectedProjectId"
             :users="usersByProject"
           />
+        </div>
+        <div id="project-member-container">
+          <ProjectMemberSummary :member-names="usersByProject.map((user) => user.name)" />
+        </div>
+        <div id="chat-log-container">
+          <MessageLog :chat-logs="chatLogs" />
+        </div>
+        <div id="operation-log-container">
+          <OperationLog :operation-logs="operationLogs" />
         </div>
         <div id="user-notice-container">
           <UserNotice :userNoticeLogs="userNoticeLogs" />
@@ -296,5 +296,21 @@ const getProject = (id: number): Project => {
   grid-column-end: 13;
   grid-row-start: 2;
   grid-row-end: 2;
+}
+
+@media screen and (max-width: 850px) {
+  #grid-container {
+    display: block;
+  }
+  #project-description-container,
+  #dashboard-container,
+  #project-member-container,
+  #chat-log-container,
+  #operation-log-container,
+  #user-notice-container
+  {
+    min-height: 100px;
+    padding: 10px;
+  }
 }
 </style>

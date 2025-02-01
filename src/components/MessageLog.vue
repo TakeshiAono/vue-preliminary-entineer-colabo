@@ -27,6 +27,7 @@ const props = defineProps(["chatLogs"])
   height: 100%;
   border-radius: 10px;
   border: solid;
+  min-height: 50px;
 }
 
 .chat-log {
