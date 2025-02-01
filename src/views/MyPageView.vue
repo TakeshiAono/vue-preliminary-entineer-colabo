@@ -20,58 +20,50 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <main>
-    <n-button
-      type="primary"
-      @click="
-        () => {
-          modalVisible = true
+  <n-button
+    style="width: 140px"
+    type="primary"
+    @click="
+      () => {
+        modalVisible = true
+      }
+    "
+  >
+    プロジェクト作成
+  </n-button>
+  <ProjectSummary
+    id="project-summary-wrapper"
+    :users="userStore.getUsers()"
+    :projects="projectStore.belongingProjects"
+    :user-store="userStore"
+    v-if="projectStore.belongingProjects.length > 0"
+  />
+  <n-modal
+    :show="modalVisible"
+    preset="dialog"
+    positive-text="作成"
+    negative-text="キャンセル"
+    @positive-click="
+      async () => {
+        try {
+          await projectStore.createProject(newProjectName, userStore.currentUser.id)
+        } finally {
+          router.go({ path: '/myPage', force: true })
         }
-      "
-    >
-      プロジェクト作成
-    </n-button>
-    <ProjectSummary
-      :users="userStore.getUsers()"
-      :projects="projectStore.belongingProjects"
-      :user-store="userStore"
-      v-if="projectStore.belongingProjects.length > 0"
-    />
-    <n-modal
-      :show="modalVisible"
-      preset="dialog"
-      positive-text="作成"
-      negative-text="キャンセル"
-      @positive-click="
-        async () => {
-          try {
-            await projectStore.createProject(newProjectName, userStore.currentUser.id)
-          } finally {
-            router.go({ path: '/myPage', force: true })
-          }
-        }
-      "
-      @negative-click="
-        () => {
-          modalVisible = false
-        }
-      "
-      title="新規プロジェクト作成"
-    >
-      <div id="project-name-input">
-        <span>プロジェクト名 </span>
-        <input type="text" v-model="newProjectName" />
-      </div>
-    </n-modal>
-  </main>
+      }
+    "
+    @negative-click="
+      () => {
+        modalVisible = false
+      }
+    "
+    title="新規プロジェクト作成"
+  >
+    <div id="project-name-input">
+      <span>プロジェクト名 </span>
+      <input type="text" v-model="newProjectName" />
+    </div>
+  </n-modal>
 </template>
 
-<style scoped>
-header {
-  background-color: blue;
-}
-
-footer {
-  background-color: yellow;
-}
-</style>
+<style scoped></style>

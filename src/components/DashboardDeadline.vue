@@ -32,6 +32,6 @@ const deadline = computed(() => calcDeadline(props.deadline))
 }
 
 .deadline {
-  font-size: 2em;
+  font-size: 1.2em;
 }
 </style>

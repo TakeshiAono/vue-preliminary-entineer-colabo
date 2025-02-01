@@ -1,17 +1,19 @@
 <template>
-  <h1 id="project-user-notice-title">お知らせ</h1>
-  <div id="project-user-notice-content">
-    <p class="user-notice" v-for="userNotice in props.userNoticeLogs" :key="userNotice.id">
-      <span v-if="userNotice.offerId" @click="openModal(userNotice)" class="clickable-log">
-        {{ userNotice.log }}
-      </span>
-      <span v-if="userNotice.applicationId" @click="openModal(userNotice)" class="clickable-log">
-        {{ userNotice.log }}
-      </span>
-      <span v-else>
-        {{ userNotice.log }}
-      </span>
-    </p>
+  <div id="container">
+    <h2 id="project-user-notice-title">お知らせ</h2>
+    <div id="project-user-notice-content">
+      <p class="user-notice" v-for="userNotice in props.userNoticeLogs" :key="userNotice.id">
+        <span v-if="userNotice.offerId" @click="openModal(userNotice)" class="clickable-log">
+          {{ userNotice.log }}
+        </span>
+        <span v-if="userNotice.applicationId" @click="openModal(userNotice)" class="clickable-log">
+          {{ userNotice.log }}
+        </span>
+        <span v-else>
+          {{ userNotice.log }}
+        </span>
+      </p>
+    </div>
 
     <n-modal
       v-model:show="showModal"
@@ -176,15 +178,22 @@ const acceptApplication = async () => {
 </script>
 
 <style scoped>
+#container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 #project-user-notice-title {
   text-decoration: underline;
 }
 
 #project-user-notice-content {
-  width: 200px;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   border-radius: 10px;
   border: solid;
+  min-height: 50px;
 }
 
 .user-notice {

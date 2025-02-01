@@ -3,24 +3,33 @@ const props = defineProps(["operationLogs"])
 </script>
 
 <template>
-  <h1 id="project-operation-log-title">作業履歴</h1>
-  <div id="project-operation-log-content">
-    <p class="operation-log" v-for="operationLog in props.operationLogs" :key="operationLog">
-      {{ operationLog }}
-    </p>
+  <div id="container">
+    <h2 id="project-operation-log-title">作業履歴</h2>
+    <div id="project-operation-log-content">
+      <p class="operation-log" v-for="operationLog in props.operationLogs" :key="operationLog">
+        {{ operationLog }}
+      </p>
+    </div>
   </div>
 </template>
 
 <style scoped>
+#container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 #project-operation-log-title {
   text-decoration: underline;
 }
 
 #project-operation-log-content {
-  width: 200px;
-  height: 80%;
+  width: 100%;
+  height: 100%;
   border-radius: 10px;
   border: solid;
+  min-height: 50px;
 }
 
 .operation-log {
