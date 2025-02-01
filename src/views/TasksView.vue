@@ -6,9 +6,13 @@ import TaskSearchContainer from "@/components/TaskSearchContainer.vue"
 import { useTaskStore } from "@/stores/taskStore"
 import type { searchTasksParams } from "@/stores/taskStore"
 import { useUserStore } from "@/stores/userStore"
+import { getUsersByProject } from "@/utils/utils"
+import { useProjectStore } from "@/stores/projectStore"
+import { watch } from "vue"
 
 const tasksStore = useTaskStore()
 const userStore = useUserStore()
+const projectStore = useProjectStore()
 
 interface Task {
   id: number
@@ -29,6 +33,8 @@ const emptyTask = {
 const tasks = ref<Task[] | []>([])
 const editingTask = ref<Task>(emptyTask)
 const showEditTaskModal = ref(false)
+const userOptions = ref<{ label: string; value: number }[]>([])
+const projectOptions = ref<{ label: string; value: number }[]>([])
 
 const createColumns = (): DataTableColumns<Task> => {
   return [
@@ -172,6 +178,42 @@ const registerTask = async () => {
     message.error("タスク作成に失敗しました")
   }
 }
+
+onMounted(async () => {
+  setProjectOptions()
+})
+
+watch([() => taskProjectId.value], () => {
+  setUserOptions(taskProjectId.value)
+})
+
+watch([() => editingTask.value.projectId], () => {
+  setUserOptions(editingTask.value.projectId)
+})
+
+const setUserOptions = (projectId: string) => {
+  const users = getUsersByProject(projectStore, userStore, projectId)
+  const createdOptions = users.map((user) => {
+    return {
+      label: user.name,
+      value: `${user.id}`,
+    }
+  })
+
+  userOptions.value = createdOptions
+}
+
+const setProjectOptions = () => {
+  const projects = projectStore.belongingProjects
+  const createdOptions = projects.map((project) => {
+    return {
+      label: project.name,
+      value: project.id,
+    }
+  })
+
+  projectOptions.value = createdOptions
+}
 </script>
 
 <template>
@@ -201,11 +243,22 @@ const registerTask = async () => {
             placeholder="タスクの説明を入力"
           />
         </n-form-item>
-        <n-form-item label="プロジェクトID" required>
-          <n-input v-model:value="taskProjectId" placeholder="プロジェクトIDを入力" />
+        <n-form-item label="プロジェクト" required>
+          <n-select
+            multiple
+            v-model:value="taskProjectId"
+            :options="projectOptions"
+            :style="{ margin: '10px' }"
+            placeholder="プロジェクトを入力"
+          />
         </n-form-item>
-        <n-form-item label="ユーザーID" required>
-          <n-input v-model:value="taskInChargeUserId" placeholder="ユーザーIDを入力" />
+        <n-form-item label="ユーザー" required>
+          <n-select
+            v-model:value="taskInChargeUserId"
+            :options="userOptions"
+            :style="{ margin: '10px' }"
+            placeholder="ユーザーを選択"
+          />
         </n-form-item>
       </n-form>
       <template #action>
@@ -225,11 +278,13 @@ const registerTask = async () => {
             placeholder="タスクの説明を入力"
           />
         </n-form-item>
-        <n-form-item label="プロジェクトID" required>
-          <n-input v-model:value="editingTask.projectId" placeholder="プロジェクトIDを入力" />
-        </n-form-item>
-        <n-form-item label="ユーザーID" required>
-          <n-input v-model:value="editingTask.inChargeUserId" placeholder="ユーザーIDを入力" />
+        <n-form-item label="ユーザー" required>
+          <n-select
+            v-model:value="editingTask.inChargeUserId"
+            :options="userOptions"
+            :style="{ margin: '10px' }"
+            placeholder="ユーザーを選択"
+          />
         </n-form-item>
       </n-form>
       <template #action>
@@ -240,16 +295,4 @@ const registerTask = async () => {
   </main>
 </template>
 
-<style scoped>
-p {
-  background-color: red;
-}
-
-header {
-  background-color: blue;
-}
-
-footer {
-  background-color: yellow;
-}
-</style>
+<style scoped></style>
