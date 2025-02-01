@@ -307,8 +307,7 @@ const getProject = (id: number): Project => {
   #project-member-container,
   #chat-log-container,
   #operation-log-container,
-  #user-notice-container
-  {
+  #user-notice-container {
     min-height: 100px;
     padding: 10px;
   }

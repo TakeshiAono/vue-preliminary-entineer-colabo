@@ -21,7 +21,7 @@ onBeforeMount(async () => {
 
 <template>
   <n-button
-    style="width: 140px;"
+    style="width: 140px"
     type="primary"
     @click="
       () => {
@@ -66,5 +66,4 @@ onBeforeMount(async () => {
   </n-modal>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
