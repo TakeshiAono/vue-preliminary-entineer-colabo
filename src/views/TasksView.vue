@@ -184,15 +184,19 @@ onMounted(async () => {
 })
 
 watch([() => taskProjectId.value], () => {
-  setUserOptions()
+  setUserOptions(taskProjectId.value)
 })
 
-const setUserOptions = () => {
-  const users = getUsersByProject(projectStore, userStore, taskProjectId.value)
+watch([() => editingTask.value.projectId], () => {
+  setUserOptions(editingTask.value.projectId)
+})
+
+const setUserOptions = (projectId: string) => {
+  const users = getUsersByProject(projectStore, userStore, projectId)
   const createdOptions = users.map((user) => {
     return {
       label: user.name,
-      value: user.id,
+      value: `${user.id}`,
     }
   })
 
@@ -274,11 +278,13 @@ const setProjectOptions = () => {
             placeholder="タスクの説明を入力"
           />
         </n-form-item>
-        <n-form-item label="プロジェクトID" required>
-          <n-input v-model:value="editingTask.projectId" placeholder="プロジェクトIDを入力" />
-        </n-form-item>
-        <n-form-item label="ユーザーID" required>
-          <n-input v-model:value="editingTask.inChargeUserId" placeholder="ユーザーIDを入力" />
+        <n-form-item label="ユーザー" required>
+          <n-select
+            v-model:value="editingTask.inChargeUserId"
+            :options="userOptions"
+            :style="{ margin: '10px' }"
+            placeholder="ユーザーを選択"
+          />
         </n-form-item>
       </n-form>
       <template #action>
@@ -290,15 +296,4 @@ const setProjectOptions = () => {
 </template>
 
 <style scoped>
-p {
-  background-color: red;
-}
-
-header {
-  background-color: blue;
-}
-
-footer {
-  background-color: yellow;
-}
 </style>
