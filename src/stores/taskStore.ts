@@ -94,6 +94,15 @@ export const useTaskStore = defineStore(
       }
     }
 
+    async function deleteTask(id: number) {
+      try {
+        await api.delete(`/tasks/${id}`)
+      } catch (error) {
+        console.error("タスクの削除に失敗しました:", error)
+        throw error
+      }
+    }
+
     return {
       userId,
       belongingProjectIds,
@@ -105,6 +114,7 @@ export const useTaskStore = defineStore(
       searchTasks,
       createTask,
       updateTask,
+      deleteTask,
     }
   },
   {

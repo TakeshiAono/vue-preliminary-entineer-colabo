@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, h } from "vue"
-import { NButton, NModal, NForm, NFormItem, NInput, useMessage } from "naive-ui"
+import { NButton, NModal, NForm, NFormItem, NInput, useMessage, useDialog } from "naive-ui"
 import type { DataTableColumns } from "naive-ui"
 import TaskSearchContainer from "@/components/TaskSearchContainer.vue"
 import { useTaskStore } from "@/stores/taskStore"
@@ -13,6 +13,7 @@ import { watch } from "vue"
 const tasksStore = useTaskStore()
 const userStore = useUserStore()
 const projectStore = useProjectStore()
+const dialog = useDialog()
 
 interface Task {
   id: number
@@ -58,15 +59,27 @@ const createColumns = (): DataTableColumns<Task> => {
       title: "操作",
       key: "actions",
       render(row) {
-        return h(
-          NButton,
-          {
-            type: "info",
-            size: "small",
-            onClick: () => editTask(row),
-          },
-          { default: () => "編集" },
-        )
+        return h("div", [
+          h(
+            NButton,
+            {
+              type: "info",
+              size: "small",
+              style: "margin-right: 8px",
+              onClick: () => editTask(row),
+            },
+            { default: () => "編集" },
+          ),
+          h(
+            NButton,
+            {
+              type: "error",
+              size: "small",
+              onClick: () => deleteTask(row.id),
+            },
+            { default: () => "削除" },
+          ),
+        ])
       },
     },
   ]
@@ -213,6 +226,25 @@ const setProjectOptions = () => {
   })
 
   projectOptions.value = createdOptions
+}
+
+// 削除処理の関数を追加
+const deleteTask = async (id: number) => {
+  dialog.warning({
+    title: "タスク削除",
+    content: "このタスクを削除しますか？",
+    positiveText: "はい",
+    negativeText: "いいえ",
+    onPositiveClick: async () => {
+      try {
+        await tasksStore.deleteTask(id)
+        await searchTasks({ userId: userStore.currentUser.id })
+        message.success("タスクを削除しました")
+      } catch (error) {
+        message.error("タスク削除に失敗しました")
+      }
+    },
+  })
 }
 </script>
 
